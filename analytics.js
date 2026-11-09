@@ -2,7 +2,7 @@
 
 (() => {
   const endpoint = "https://jia-li-website-analytics.yrweexnfqa.chatgpt.site";
-  const live = location.origin === "https://huster-lishuangjia.github.io";
+  const live = ["https://huster-lishuangjia.github.io", "https://li2ga.github.io"].includes(location.origin);
   const status = document.querySelector("[data-stat-status]");
   let recorded = false;
   let optedOut = false;
