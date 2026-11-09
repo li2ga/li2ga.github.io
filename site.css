@@ -27,7 +27,7 @@ h1 [lang="zh-CN"]{font-family:NameChinese,'SimSun',serif;font-size:28px;font-wei
 .bio>p{text-align:justify;margin:13px 0}
 .bio .contact-links{text-align:center;margin-top:17px;line-height:1.9}
 .contact-links>span[aria-hidden]{padding:0 5px}
-.portrait{margin:17px 0 0;display:flex;justify-content:center;align-items:center;padding:0 10px}
+.portrait{margin:17px 0 0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0 10px}
 .portrait-frame {
  position:relative;
  width:230px;
@@ -35,7 +35,12 @@ h1 [lang="zh-CN"]{font-family:NameChinese,'SimSun',serif;font-size:28px;font-wei
 }
 .portrait a{display:block;width:100%;max-width:230px}
 .portrait img{width:100%;max-width:230px;height:auto;object-fit:contain}
-.portrait-charm,.portrait-sparkle {
+.portrait-decoration {
+ position:absolute;
+ inset:0;
+ pointer-events:none;
+}
+.portrait-charm,.portrait-sparkle,.portrait-planet {
  position:absolute;
  pointer-events:none;
  overflow:visible;
@@ -79,6 +84,62 @@ h1 [lang="zh-CN"]{font-family:NameChinese,'SimSun',serif;font-size:28px;font-wei
  width:24px;
  animation:portrait-twinkle 4.6s ease-in-out infinite alternate;
 }
+.portrait-planet {
+ top:-16px;
+ right:-9px;
+ width:56px;
+ height:auto;
+ animation:portrait-float 6s ease-in-out infinite alternate;
+}
+.planet-ring {
+ fill:none;
+ stroke:#c38d3c;
+ stroke-width:1.6;
+ stroke-linecap:round;
+}
+.planet-band {
+ fill:none;
+ stroke:#e4bd73;
+ stroke-width:2;
+ stroke-linecap:round;
+}
+.portrait-orbit-sparkle {
+ top:17px;
+ left:-11px;
+ right:auto;
+ bottom:auto;
+ width:19px;
+ animation-delay:-2.3s;
+}
+.portrait-style-switch {
+ display:flex;
+ gap:2px;
+ margin-top:17px;
+ padding:2px;
+ border:1px solid #eadcc8;
+ border-radius:18px;
+ background:#fff;
+}
+.portrait-style-switch button {
+ min-height:28px;
+ padding:4px 9px;
+ border:0;
+ border-radius:14px;
+ background:transparent;
+ color:#775c40;
+ font-size:11px;
+ line-height:1.4;
+ white-space:nowrap;
+}
+.portrait-style-switch button:hover {
+ background:#fff8ec;
+ color:#ad4c00;
+}
+.portrait-style-switch button[aria-pressed=true] {
+ background:#fff0d7;
+ color:#a64600;
+ font-weight:700;
+}
 @keyframes portrait-sway {
  from{transform:rotate(var(--sway-start))}
  to{transform:rotate(var(--sway-end))}
@@ -86,6 +147,10 @@ h1 [lang="zh-CN"]{font-family:NameChinese,'SimSun',serif;font-size:28px;font-wei
 @keyframes portrait-twinkle {
  from{opacity:.5;transform:scale(.82) rotate(-8deg)}
  to{opacity:1;transform:scale(1) rotate(8deg)}
+}
+@keyframes portrait-float {
+ from{transform:translateY(-3px) rotate(-4deg)}
+ to{transform:translateY(3px) rotate(4deg)}
 }
 h2{font-size:25px;font-weight:400;line-height:1.3;text-decoration:underline;text-decoration-color:#fba524;text-decoration-thickness:1px;text-underline-offset:3px;margin:0 0 15px}
 h3{font-size:14px;line-height:1.32;margin:0}
@@ -225,14 +290,15 @@ main>section:not(.about){margin-top:29px}
 }
 @media(pointer:coarse){
  .language-switch button{min-height:44px}
+ .portrait-style-switch button{min-height:44px}
 }
 @media(prefers-reduced-motion:reduce){
  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
  #effect-layer{display:none}
- .portrait-charm,.portrait-sparkle{animation:none}
+ .portrait-charm,.portrait-sparkle,.portrait-planet{animation:none}
 }
 @media print{
- .portrait-charm,.portrait-sparkle{display:none}
+ .portrait-decoration,.portrait-style-switch{display:none!important}
  .visitor-statistics{display:none!important}
  .language-switch,.demo-toggle,.celebrate-button,.copy-citation,#effect-layer,.skip-link{display:none!important}
  .homepage{max-width:none}

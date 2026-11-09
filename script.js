@@ -37,6 +37,21 @@
     button.addEventListener("click", () => setLanguage(button.dataset.setLang));
   });
 
+  function setPortraitStyle(next) {
+    const style = next === "planet" ? "planet" : "stars";
+    document.querySelectorAll("[data-portrait-decoration]").forEach(decoration => {
+      decoration.hidden = decoration.dataset.portraitDecoration !== style;
+    });
+    document.querySelectorAll("[data-portrait-style]").forEach(button => {
+      button.setAttribute("aria-pressed", String(button.dataset.portraitStyle === style));
+    });
+    try { localStorage.setItem("jia-li-portrait-style", style); } catch (_) { /* Keep switching available when storage is disabled. */ }
+  }
+
+  document.querySelectorAll("[data-portrait-style]").forEach(button => {
+    button.addEventListener("click", () => setPortraitStyle(button.dataset.portraitStyle));
+  });
+
   document.querySelectorAll(".copy-citation").forEach(button => {
     if (!navigator.clipboard || !window.isSecureContext) return;
     button.hidden = false;
@@ -171,4 +186,8 @@
   try { saved = localStorage.getItem("jia-li-language") || "en"; } catch (_) { /* Keep the default. */ }
   setLanguage(saved);
   document.querySelector(".language-switch").hidden = false;
+  let savedPortraitStyle = "stars";
+  try { savedPortraitStyle = localStorage.getItem("jia-li-portrait-style") || "stars"; } catch (_) { /* Keep the original decoration. */ }
+  setPortraitStyle(savedPortraitStyle);
+  document.querySelectorAll(".portrait-style-switch").forEach(control => { control.hidden = false; });
 })();
