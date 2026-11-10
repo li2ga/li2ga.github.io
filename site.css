@@ -208,6 +208,12 @@ main>section:not(.about){margin-top:29px}
 .coursework{font-size:12px;line-height:1.45}
 .honors-list li{margin:7px 0;line-height:1.4}
 .honor-year{white-space:nowrap}
+.honors-more{margin:8px 0 0 23px}
+.honors-more summary{width:fit-content;max-width:100%;color:#b35400;cursor:pointer;line-height:1.6;padding:3px 0}
+.honors-more summary:hover{color:#8c3c00}
+.honors-collapse,.honors-more[open] .honors-expand{display:none}
+.honors-more[open] .honors-collapse{display:inline}
+.honors-more .honors-list{padding-left:17px;margin:9px 0 0}
 .misc-list li{margin:9px 0;line-height:1.45}
 .site-footer{padding:16px 20px 14px;border-top:1px solid #ddd;text-align:center;font-size:11px;color:#555;margin-top:28px}
 .site-footer p{margin:0;line-height:1.5}
@@ -269,6 +275,7 @@ main>section:not(.about){margin-top:29px}
  main>section:not(.about){margin-top:25px}
  .news,.inset-section{width:96%}
  .news-list,.honors-list,.misc-list{padding-left:20px}
+ .honors-more{margin-left:3px}
  .paper{display:block;padding:17px 0 4px}
  .figure-column{padding:0 16px}
  .paper-media{width:100%}
