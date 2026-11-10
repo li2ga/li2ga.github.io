@@ -101,7 +101,7 @@
     if (visible && !lotusRequested) {
       lotusRequested = true;
       let loaded = 0;
-      for (const source of ['assets/backgrounds/fire-lotus-evolution-v1.webp', 'assets/backgrounds/fire-lotus-cold-v1.webp']) {
+      for (const source of ['assets/backgrounds/fire-lotus-evolution-v1.png', 'assets/backgrounds/fire-lotus-cold-v1.png']) {
         const image = new Image();
         image.onload = () => {
           if (++loaded !== 2) return;
@@ -353,6 +353,8 @@
 
   const layer = document.getElementById("effect-layer");
   const emoji = [
+    // 新的火莲站标，作为第一枚点击粒子；原有图案顺序保留。
+    { image: "assets/favicon.svg" },
     // 原来的 15 个全部保留。
     "✨", "🤖", "🥳", "⚡", "🌾", "💧", "🔥", "🤩", "🌈", "🚀", "🥇", "🏆", "💎", "🌌", "🪐",
     // 星星、流星与闪光。
