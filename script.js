@@ -655,6 +655,7 @@
   ];
   // 备选（尚未启用）：["✨", "🤖", "🦾", "🌱", "🪐", "🚀"]
   let emojiIndex = 0;
+  const clickIconSources = new Map(Array.from(document.getElementById('click-icon-library')?.content.querySelectorAll('img') || [], image => [image.dataset.particleSrc, image.src]));
   function animateParticle(element, frames, options) {
     layer.appendChild(element);
     element.animate(frames, options).finished.then(() => element.remove()).catch(() => element.remove());
@@ -666,7 +667,7 @@
     const item = document.createElement(typeof symbol === "string" ? "span" : "img");
     item.className = "click-emoji";
     if (typeof symbol === "string") item.textContent = symbol;
-    else { item.src = symbol.image; item.alt = ""; item.width = 22; item.height = 22; }
+    else { item.src = clickIconSources.get(symbol.image) || symbol.image; item.dataset.particleSrc = symbol.image; item.alt = ""; item.width = 22; item.height = 22; }
     item.style.left = `${Math.max(12, Math.min(innerWidth - 25, event.clientX - 8))}px`;
     item.style.top = `${event.clientY - 16}px`;
     animateParticle(item, [{ transform: "translateY(0) scale(1.2)", opacity: 1 }, { transform: "translateY(-65px) scale(1.4)", opacity: 0 }], { duration: 1100, easing: "ease-out" });
