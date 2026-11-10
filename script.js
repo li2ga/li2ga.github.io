@@ -45,6 +45,13 @@
 
   // Ease pointer depth separately from CSS floating; stop requesting frames once settled.
   const atmosphere = document.querySelector(".page-atmosphere");
+  const meteorSky = document.querySelector('.sky-meteors');
+  function syncMeteorSky() {
+    meteorSky?.classList.toggle('is-active', !document.hidden && !reducedMotion.matches);
+  }
+  document.addEventListener('visibilitychange', syncMeteorSky);
+  reducedMotion.addEventListener('change', syncMeteorSky);
+  syncMeteorSky();
   const widePointer = window.matchMedia("(min-width: 1041px) and (pointer: fine)");
   let atmosphereFrame = 0;
   let pointerX = 0;
