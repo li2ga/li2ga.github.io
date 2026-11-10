@@ -106,6 +106,7 @@
   const wideBackground = window.matchMedia("(min-width: 1041px)");
   const autoBackgroundButton = document.querySelector('[data-background="auto"]');
   let backgroundChoice = "trajectory";
+  let backgroundVisibility = "clear";
   let backgroundTimer = 0;
   const lotusScene = atmosphere?.querySelector('[data-background-scene="lotus"]');
   const lotusOptions = document.querySelector('.lotus-options');
@@ -410,13 +411,15 @@
     try {
       localStorage.setItem("jia-li-background", backgroundChoice);
       localStorage.setItem("jia-li-background-layout", atmosphere.dataset.backgroundLayout);
+      localStorage.setItem("jia-li-background-visibility", backgroundVisibility);
     } catch (_) { /* Keep the controls usable without storage. */ }
     // A shared comparison URL should not override a later manual choice on reload.
     try {
       const url = new URL(location.href);
-      if (url.searchParams.has("background") || url.searchParams.has("placement")) {
+      if (url.searchParams.has("background") || url.searchParams.has("placement") || url.searchParams.has("visibility")) {
         url.searchParams.delete("background");
         url.searchParams.delete("placement");
+        url.searchParams.delete("visibility");
         history.replaceState(null, "", url.href);
       }
     } catch (_) { /* Static-file previews also work without history access. */ }
@@ -445,15 +448,26 @@
     syncLotusMotion();
     if (save) saveBackgroundPreferences();
   }
+  function chooseBackgroundVisibility(visibility, save = true) {
+    backgroundVisibility = visibility === "subtle" ? "subtle" : "clear";
+    if (atmosphere) atmosphere.dataset.backgroundVisibility = backgroundVisibility;
+    document.querySelectorAll("button[data-background-visibility]").forEach(button => {
+      button.setAttribute("aria-pressed", String(button.dataset.backgroundVisibility === backgroundVisibility));
+    });
+    if (save) saveBackgroundPreferences();
+  }
   if (atmosphere && backgroundSwitch) {
     showLotusStage(lotusStage);
     let savedBackground = "trajectory";
     let savedPlacement = "fixed";
+    let savedVisibility = "clear";
     try {
       savedBackground = localStorage.getItem("jia-li-background") || savedBackground;
       savedPlacement = localStorage.getItem("jia-li-background-layout") || savedPlacement;
+      savedVisibility = localStorage.getItem("jia-li-background-visibility") || savedVisibility;
     } catch (_) { /* Use the original design by default. */ }
     const comparison = new URLSearchParams(location.search);
+    chooseBackgroundVisibility(comparison.get("visibility") || savedVisibility, false);
     chooseBackgroundLayout(comparison.get("placement") || savedPlacement, false);
     chooseBackground(comparison.get("background") || savedBackground, false);
     backgroundSwitch.hidden = false;
@@ -462,6 +476,9 @@
     });
     document.querySelectorAll("button[data-background-layout]").forEach(button => {
       button.addEventListener("click", () => chooseBackgroundLayout(button.dataset.backgroundLayout));
+    });
+    document.querySelectorAll("button[data-background-visibility]").forEach(button => {
+      button.addEventListener("click", () => chooseBackgroundVisibility(button.dataset.backgroundVisibility));
     });
     lotusButtons.forEach(button => {
       button.addEventListener('click', () => {
