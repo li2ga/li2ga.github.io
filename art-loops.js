@@ -40,6 +40,14 @@
         p.x+=.009*wave*height;
         p.y+=.0045*sin(uv.x*27.+t*2.)*height;
         light=.1*sin(uv.y*39.-t*4.+uv.x*13.)+.035*sin(t*3.);
+        if(variant>7.5&&variant<8.5){
+          // The new metal rims stay rigid; flame light travels around their orbit.
+          p=uv;
+          p.x+=.0025*wave*height;
+          p.y+=.0015*sin(uv.x*27.+t*2.)*height;
+          float orbit=atan(uv.y-.46,uv.x-.5);
+          light+=.11*pow(max(0.,cos(orbit*2.-t*2.)),18.);
+        }
         if(variant>4.5&&variant<6.5){
           float a=atan(uv.y-.42,uv.x-.5);
           light+=.07*pow(max(0.,cos(a*3.-t*2.)),12.);

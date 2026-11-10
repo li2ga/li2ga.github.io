@@ -122,7 +122,7 @@
     fixed: { offsets: [0, 4, 2, 6], holds: [5600, 8300, 6500, 9700] },
     page: { offsets: [0, 1, 3, 5], holds: [4300, 6100, 7600, 5200] }
   };
-  const lotusStageHolds = [1, 1.18, .91, 1.11, 1.26, 1.14, .95, 1.22];
+  const lotusStageHolds = [1, 1.18, .91, 1.11, 1.26, 1.14, .95, 1.22, 1.24];
   const lotusItems = [...(lotusScene?.querySelectorAll('[data-lotus-instance]') || [])].map((element, index) => ({
     element, index, stage: null, desiredStage: null, pending: false, error: false,
     timer: 0, dueAt: 0, remaining: null, request: 0
@@ -148,6 +148,11 @@
     return lotusItems.filter(item => lotusLayout === 'page' || item.index < 2);
   }
   function saveLotusPlayback(stage = null) {
+    if (new URLSearchParams(location.search).has('lotus')) {
+      const url = new URL(location.href);
+      url.searchParams.delete('lotus');
+      history.replaceState(null, '', url.pathname + url.search + url.hash);
+    }
     try {
       localStorage.setItem('jia-li-lotus-paused', lotusPaused ? '1' : '0');
       localStorage.setItem('jia-li-lotus-stage', String(stage ?? lotusStage));
@@ -489,6 +494,14 @@
       savedArtMotion = localStorage.getItem('jia-li-art-motion') || savedArtMotion;
     } catch (_) { /* Use the original design by default. */ }
     const comparison = new URLSearchParams(location.search);
+    const requestedLotus = lotusButtons.find(button => button.dataset.lotusName === comparison.get('lotus'));
+    if (requestedLotus) {
+      lotusPaused = true;
+      lotusStage = Number(requestedLotus.dataset.lotusStage);
+      lotusItems.forEach(item => { item.desiredStage = lotusStage; });
+      backgroundUserInitiated = true;
+      showLotusStage(lotusStage);
+    }
     chooseArtMotion(comparison.get('artmotion') || savedArtMotion, false);
     chooseBackgroundVisibility(comparison.get("visibility") || savedVisibility, false);
     chooseBackgroundLayout(comparison.get("placement") || savedPlacement, false);
