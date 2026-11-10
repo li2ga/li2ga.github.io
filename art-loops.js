@@ -40,6 +40,14 @@
         p.x+=.009*wave*height;
         p.y+=.0045*sin(uv.x*27.+t*2.)*height;
         light=.1*sin(uv.y*39.-t*4.+uv.x*13.)+.035*sin(t*3.);
+        if(variant>8.5&&variant<9.5){
+          // Read the new framework from its core outward, keeping the metal rigid.
+          p=uv;
+          vec2 radial=vec2(uv.x-.5,(uv.y-.48)*.75);
+          float angle=atan(radial.y,radial.x);
+          float outward=sin(length(radial)*46.-t*3.);
+          light=.045*sin(t*2.)+.16*pow(max(0.,outward),18.)*(.7+.3*cos(angle*10.));
+        }
         if(variant>7.5&&variant<8.5){
           // The new metal rims stay rigid; flame light travels around their orbit.
           p=uv;
