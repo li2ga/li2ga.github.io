@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-11-10T18:56:00.617139+00:00",
+  "source": "https://jia-li-website-analytics.yrweexnfqa.chatgpt.site",
+  "data": {
+    "pageviews": 48,
+    "visitors": 20,
+    "countries": [
+      {
+        "country": "US",
+        "views": 39
+      },
+      {
+        "country": "DE",
+        "views": 2
+      },
+      {
+        "country": "NL",
+        "views": 2
+      },
+      {
+        "country": "IS",
+        "views": 1
+      },
+      {
+        "country": "LV",
+        "views": 1
+      },
+      {
+        "country": "PT",
+        "views": 1
+      },
+      {
+        "country": "CA",
+        "views": 1
+      },
+      {
+        "country": "BR",
+        "views": 1
+      }
+    ],
+    "days": [
+      {
+        "day": "2026-11-09",
+        "views": 25
+      },
+      {
+        "day": "2026-11-10",
+        "views": 23
+      }
+    ]
+  }
+}
