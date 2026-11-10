@@ -214,33 +214,42 @@ strong,h3{font-weight:700}
 .companion-depth{position:relative;width:100%;height:100%}
 .ambient-raster{display:block;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity 1s ease;filter:saturate(.8)}
 .ambient-raster[data-art-ready]{opacity:1}
+.ambient-presence{position:relative;width:100%;height:100%}
 .companion-depth,.line-procession-depth{transform:translate3d(calc(var(--trace-x,0px)*var(--companion-depth,.6)),calc(var(--trace-y,0px)*var(--companion-depth,.6)),0)}
 .lotus-companion{opacity:.52;left:max(12px,calc((100vw - 1500px)/2));top:57vh;--companion-depth:.48}
-.lotus-companion .ambient-raster{animation:companion-breath 17s ease-in-out -7s infinite alternate;animation-play-state:var(--scene-motion,paused)}
+.lotus-companion .ambient-presence{animation:companion-breath 29s ease-in-out -7s infinite;animation-play-state:var(--scene-motion,paused)}
 .lotus-companion-1{left:auto;right:max(12px,calc((100vw - 1500px)/2));top:5vh;opacity:.46;--companion-depth:.82}
-.lotus-companion-1 .ambient-raster{animation-duration:23s;animation-delay:-15s}
+.lotus-companion-1 .ambient-presence{animation-duration:37s;animation-delay:-19s}
 .lotus-companion-2,.lotus-companion-3{display:none}
 .page-atmosphere[data-background-layout=page] .lotus-companion-0{top:18%}
 .page-atmosphere[data-background-layout=page] .lotus-companion-1{top:41%}
 .page-atmosphere[data-background-layout=page] .lotus-companion-2{display:block;top:65%;opacity:.4;scale:.84;--companion-depth:.72}
 .page-atmosphere[data-background-layout=page] .lotus-companion-3{display:block;left:auto;right:max(12px,calc((100vw - 1500px)/2));top:87%;opacity:.42;scale:.9}
-.lotus-companion-2 .ambient-raster{animation-duration:21s;animation-delay:-12s}
-.lotus-companion-3 .ambient-raster{animation-duration:19s;animation-delay:-3s}
-@keyframes companion-breath{from{transform:translate3d(-3px,5px,0);opacity:.65}to{transform:translate3d(5px,-8px,0);opacity:1}}
-.line-procession{left:max(12px,calc((100vw - 1500px)/2));top:43vh;aspect-ratio:4/5;opacity:.7;--procession-time:30s;--procession-phase:-2s;--companion-depth:.65}
-.line-procession-right{left:auto;right:max(12px,calc((100vw - 1500px)/2));top:5vh;--procession-time:39s;--procession-phase:-18s;--companion-depth:.4}
+.lotus-companion-2 .ambient-presence{animation-duration:31s;animation-delay:-17s}
+.lotus-companion-3 .ambient-presence{animation-duration:43s;animation-delay:-3s}
+@keyframes companion-breath{0%,100%{transform:translate3d(-3px,5px,0);opacity:.025;filter:saturate(.55) blur(1.5px)}35%,55%{opacity:.35;filter:saturate(.72) blur(.45px)}70%{transform:translate3d(5px,-8px,0)}85%{opacity:.07}}
+.ruler-fire{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;fill:none;stroke:#edaa5b;stroke-width:7;stroke-linecap:round;filter:blur(2.5px);opacity:.5}
+.ambient-raster:not([data-art-ready])+.ruler-fire{visibility:hidden}
+.ruler-fire path{stroke-dasharray:42 31 9 43;animation:ruler-fire-rise 7s linear infinite;animation-play-state:var(--scene-motion,paused)}
+.ruler-fire path:nth-child(2){stroke:#d98d5e;stroke-width:4;animation-duration:9s;animation-delay:-3s}
+.ruler-fire path:nth-child(3){stroke:#e6bf77;stroke-width:5;animation-duration:6s;animation-delay:-2s}
+@keyframes ruler-fire-rise{from{stroke-dashoffset:0}to{stroke-dashoffset:250}}
+.line-procession{left:max(12px,calc((100vw - 1500px)/2));top:43vh;aspect-ratio:4/5;opacity:.62;--procession-time:40s;--procession-phase:-2s;--companion-depth:.65}
+.line-procession-right{left:auto;right:max(12px,calc((100vw - 1500px)/2));top:5vh;--procession-time:52s;--procession-phase:-18s;--companion-depth:.4}
 .line-procession-depth{position:absolute;inset:0}
 .line-visitor{position:absolute;inset:0;opacity:0;animation:line-visitor-pass var(--procession-time) linear infinite;animation-delay:var(--procession-phase);animation-play-state:var(--scene-motion,paused)}
-.line-visitor-1{animation-delay:calc(var(--procession-phase) - var(--procession-time)/3)}
-.line-visitor-2{animation-delay:calc(var(--procession-phase) - var(--procession-time)*2/3)}
+.line-visitor-1{animation-delay:calc(var(--procession-phase) - var(--procession-time)/4)}
+.line-visitor-2{animation-delay:calc(var(--procession-phase) - var(--procession-time)*2/4)}
+.line-visitor-3{animation-delay:calc(var(--procession-phase) - var(--procession-time)*3/4)}
+.line-visitor .ambient-presence{filter:saturate(.66) blur(.55px);animation-delay:inherit}
 .line-visitor .ambient-raster{animation:line-visitor-outline var(--procession-time) linear infinite;animation-delay:inherit;animation-play-state:var(--scene-motion,paused)}
 .line-visitor .ambient-accent{stroke-width:2}
-.line-scan{position:absolute;inset:6% 0;background:linear-gradient(90deg,transparent 48%,#c3a16f5c 50%,transparent 51%);opacity:0;animation:line-scan-pass calc(var(--procession-time)/3) ease-out infinite;animation-delay:var(--procession-phase);animation-play-state:var(--scene-motion,paused)}
+.line-scan{position:absolute;inset:6% 0;background:linear-gradient(90deg,transparent 48%,#c3a16f5c 50%,transparent 51%);opacity:0;animation:line-scan-pass calc(var(--procession-time)/4) ease-out infinite;animation-delay:var(--procession-phase);animation-play-state:var(--scene-motion,paused)}
 .page-atmosphere[data-background-layout=page] .line-procession{top:27%}
 .page-atmosphere[data-background-layout=page] .line-procession-right{top:66%}
-@keyframes line-visitor-pass{0%{opacity:0;transform:translateX(-44px)}3%{opacity:.12}8%,22%{opacity:.64}27%{opacity:.3}33%,100%{opacity:0;transform:translateX(38px)}}
+@keyframes line-visitor-pass{0%{opacity:0;transform:translateX(-44px)}3%{opacity:.025}7%,16%{opacity:.24}21%{opacity:.06}25%,100%{opacity:0;transform:translateX(38px)}}
 @keyframes line-visitor-outline{0%{clip-path:inset(0 100% 0 0)}8%,100%{clip-path:inset(0 -5% 0 -5%)}}
-@keyframes line-scan-pass{0%{opacity:0;transform:translateX(-45%)}10%{opacity:.6}25%{opacity:0;transform:translateX(45%)}100%{opacity:0;transform:translateX(45%)}}
+@keyframes line-scan-pass{0%{opacity:0;transform:translateX(-45%)}10%{opacity:.15}25%{opacity:0;transform:translateX(45%)}100%{opacity:0;transform:translateX(45%)}}
 /* Fixed sky is independent of scene choice, page placement and pointer depth. */
 .sky-meteors{position:fixed;inset:0;z-index:2;overflow:hidden;pointer-events:none;contain:strict}
 .meteor-flight{position:absolute;left:8%;top:5%;width:clamp(110px,14vw,215px);height:2px;transform:rotate(31deg);--meteor-time:31s;--meteor-phase:3s;--meteor-distance:550px}
@@ -252,7 +261,7 @@ strong,h3{font-weight:700}
 .sky-meteors.is-active .meteor-streak{animation-play-state:running}
 @keyframes meteor-crossing{0%{opacity:0;transform:translateX(-100px) scaleX(.6)}.5%{opacity:.68}3.5%{opacity:.5}5%{opacity:0;transform:translateX(var(--meteor-distance)) scaleX(1)}100%{opacity:0;transform:translateX(var(--meteor-distance)) scaleX(1)}}
 @media(max-width:1040px){.meteor-flight{width:110px;--meteor-distance:330px}.meteor-streak{height:1px}.meteor-flight-2,.meteor-flight-3{display:none}}
-@media(prefers-reduced-motion:reduce){.sky-meteors{display:none}.lotus-companion .ambient-raster,.line-visitor,.line-visitor .ambient-raster,.line-scan{animation:none!important}.line-visitor-0{opacity:.4}}
+@media(prefers-reduced-motion:reduce){.sky-meteors{display:none}.lotus-companion .ambient-presence,.line-visitor,.line-visitor .ambient-raster,.line-scan,.ruler-fire path{animation:none!important}.lotus-companion .ambient-presence{opacity:.22}.line-visitor-0{opacity:.16}}
 @media print{.sky-meteors{display:none!important}}
 .language-switch{display:flex;width:max-content;gap:2px;align-items:center;margin:4px 5px 0 auto;padding:3px;border:1px solid #e9d8be;border-radius:6px;background:#fff;font-size:12px}
 .language-switch button{background:transparent;border:0;border-radius:3px;color:#555;padding:5px 12px;min-height:32px;font-size:12px;line-height:1.4}
