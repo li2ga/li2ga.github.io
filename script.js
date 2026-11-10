@@ -569,6 +569,39 @@
     button.addEventListener("click", () => setLanguage(button.dataset.setLang));
   });
 
+  const nameFontSwitch = document.querySelector('.name-font-switch');
+  function setNameFont(value, save = true) {
+    const font = value === 'original' ? 'original' : 'classic';
+    document.documentElement.dataset.nameFont = font;
+    document.querySelectorAll('button[data-name-font]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.nameFont === font));
+    });
+    if (save) {
+      try { localStorage.setItem('jia-li-name-font', font); } catch (_) { /* Keep switching available without storage. */ }
+      const url = new URL(location.href);
+      if (url.searchParams.has('namefont')) {
+        url.searchParams.delete('namefont');
+        history.replaceState(null, '', url.pathname + url.search + url.hash);
+      }
+    }
+  }
+  document.querySelectorAll('button[data-name-font]').forEach(button => {
+    button.addEventListener('click', () => setNameFont(button.dataset.nameFont));
+  });
+  if (nameFontSwitch) {
+    setNameFont(document.documentElement.dataset.nameFont, false);
+    nameFontSwitch.hidden = false;
+    document.addEventListener('click', event => {
+      if (!nameFontSwitch.contains(event.target)) nameFontSwitch.open = false;
+    });
+    nameFontSwitch.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        nameFontSwitch.open = false;
+        nameFontSwitch.querySelector('summary').focus({ preventScroll: true });
+      }
+    });
+  }
+
   function setPortraitStyle(next) {
     const style = next === "planet" ? "planet" : "stars";
     document.querySelectorAll("[data-portrait-decoration]").forEach(decoration => {

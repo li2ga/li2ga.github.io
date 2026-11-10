@@ -5,6 +5,7 @@
 @font-face{font-family:Lato;font-style:italic;font-weight:700;font-display:swap;src:url('assets/fonts/lato-bold-italic.woff2') format('woff2')}
 @font-face{font-family:NameLatin;font-style:normal;font-weight:500;font-display:swap;src:url('assets/fonts/name-latin.ttf') format('truetype')}
 @font-face{font-family:NameChinese;font-style:normal;font-weight:500;font-display:swap;src:url('assets/fonts/name-chinese.ttf') format('truetype')}
+@font-face{font-family:NameClassic;font-style:normal;font-weight:700;font-display:swap;src:url('assets/fonts/name-classic.otf') format('opentype')}
 *{box-sizing:border-box}
 body{position:relative;margin:8px;background:#fff;color:#000;font:14px/1.32 Lato,Verdana,Helvetica,'Microsoft YaHei',sans-serif}
 [hidden]{display:none!important}
@@ -75,6 +76,14 @@ strong,h3{font-weight:700}
 @media(max-width:1040px){.page-atmosphere,.background-switch{display:none}}
 .page-tools{position:relative;z-index:5;display:flex;justify-content:flex-end;align-items:center;gap:9px;padding:4px 5px 0}
 .page-tools .language-switch{margin:0}
+.name-font-switch{position:relative;font-size:12px;color:#775c40}
+.name-font-switch>summary{list-style:none;cursor:pointer;min-width:44px;min-height:40px;padding:9px 11px;border:1px solid #e9d8be;border-radius:6px;background:#fff;font:700 20px/20px NameClassic,'Times New Roman',serif;text-align:center}
+.name-font-switch>summary::-webkit-details-marker{display:none}
+.name-font-switch[open]>summary{background:#fff8ed}
+.name-font-options{width:210px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.name-font-preview{display:block;margin-bottom:4px;font-size:25px;line-height:1.2;color:#111;letter-spacing:0;text-shadow:none}
+.name-font-classic{font-family:NameClassic,'Times New Roman',serif;font-weight:700}
+.name-font-original{font-family:NameLatin,Georgia,serif;font-weight:500}
 .background-switch{position:relative;font-size:12px;color:#775c40}
 .background-switch>summary{list-style:none;cursor:pointer;min-height:40px;padding:10px 12px;border:1px solid #e9d8be;border-radius:6px;background:#fff;line-height:18px}
 .background-switch>summary::-webkit-details-marker{display:none}
@@ -273,6 +282,7 @@ strong,h3{font-weight:700}
 .about{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:0;align-items:center;padding-top:10px;margin-bottom:14px}
 .bio{padding:16px}
 h1{font-family:NameLatin,Georgia,serif;font-size:38px;font-weight:500;text-align:center;margin:10px 0 16px;line-height:1.25;letter-spacing:.2px}
+[data-name-font=classic] #name .name-latin{font-family:NameClassic,'Times New Roman',Times,serif;font-weight:700;letter-spacing:0}
 h1 [lang="zh-CN"]{font-family:NameChinese,'SimSun',serif;font-size:28px;font-weight:500;letter-spacing:1px}
 .bio>p{text-align:justify;margin:13px 0}
 .bio .contact-links{text-align:center;margin-top:17px;line-height:1.9}
@@ -512,6 +522,8 @@ main>section:not(.about){margin-top:29px}
 }
 @media(max-width:480px){
  body{margin:8px}
+ .name-font-switch{position:static}
+ .name-font-options{right:5px}
  .homepage{padding:10px 6px 0}
  .about{display:flex;flex-direction:column-reverse;gap:0;padding-top:18px;margin-bottom:8px}
  .portrait{margin:0 auto 6px;padding:0}
@@ -547,7 +559,7 @@ main>section:not(.about){margin-top:29px}
  .site-footer a{font-size:10px}
 }
 @media(pointer:coarse){
- .language-switch button{min-height:44px}
+ .language-switch button,.name-font-switch>summary,.name-font-options button{min-height:44px}
  .portrait-style-switch button{min-height:44px}
 }
 @media(prefers-reduced-motion:reduce){
@@ -561,7 +573,7 @@ main>section:not(.about){margin-top:29px}
 }
 @media print{
  .page-atmosphere{display:none!important}
- .background-switch{display:none!important}
+ .background-switch,.name-font-switch{display:none!important}
  .portrait-decoration,.portrait-style-switch{display:none!important}
  .visitor-statistics{display:none!important}
  .language-switch,.demo-toggle,.celebrate-button,.copy-citation,#effect-layer,.skip-link{display:none!important}
