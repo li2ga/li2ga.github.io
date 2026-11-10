@@ -141,7 +141,9 @@
     // 十二生肖：鼠、牛、虎、兔、龙、蛇、马、羊、猴、鸡、狗、猪。
     "🐀", "🐂", "🐅", "🐇", "🐉", "🐍", "🐎", "🐐", "🐒", "🐓", "🐕", "🐖",
     // 积极、开心与鼓励。
-    "😀", "😃", "😄", "😁", "😊", "🥰", "🤗", "😎", "💪", "👏", "🙌", "👍", "🍀", "🌻"
+    "😀", "😃", "😄", "😁", "😊", "🥰", "🤗", "😎", "💪", "👏", "🙌", "👍", "🍀", "🌻",
+    // 奶酪与参考主页标签图标中的星光圆月。
+    "🧀", { image: "assets/effects/sparkling-moon.png" }
   ];
   // 备选（尚未启用）：["✨", "🤖", "🦾", "🌱", "🪐", "🚀"]
   let emojiIndex = 0;
@@ -152,9 +154,11 @@
   document.addEventListener("pointerup", event => {
     if (event.button !== 0 || reducedMotion.matches || event.target.closest("[data-celebrate]") || window.getSelection().toString()) return;
     if (layer.childElementCount > 45) return;
-    const item = document.createElement("span");
+    const symbol = emoji[emojiIndex++ % emoji.length];
+    const item = document.createElement(typeof symbol === "string" ? "span" : "img");
     item.className = "click-emoji";
-    item.textContent = emoji[emojiIndex++ % emoji.length];
+    if (typeof symbol === "string") item.textContent = symbol;
+    else { item.src = symbol.image; item.alt = ""; item.width = 22; item.height = 22; }
     item.style.left = `${Math.max(12, Math.min(innerWidth - 25, event.clientX - 8))}px`;
     item.style.top = `${event.clientY - 16}px`;
     animateParticle(item, [{ transform: "translateY(0) scale(1.2)", opacity: 1 }, { transform: "translateY(-65px) scale(1.4)", opacity: 0 }], { duration: 1100, easing: "ease-out" });
