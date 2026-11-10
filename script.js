@@ -5,6 +5,35 @@
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const mediaControllers = [];
 
+  // A small response in the margins; no scroll listener or continuous animation loop.
+  const atmosphere = document.querySelector(".page-atmosphere");
+  const widePointer = window.matchMedia("(min-width: 1041px) and (pointer: fine)");
+  let atmosphereFrame = 0;
+  let pointerX = 0;
+  let pointerY = 0;
+  function resetAtmosphere() {
+    cancelAnimationFrame(atmosphereFrame);
+    atmosphereFrame = 0;
+    if (atmosphere) { atmosphere.style.removeProperty("--trace-x"); atmosphere.style.removeProperty("--trace-y"); }
+  }
+  if (atmosphere) {
+    document.addEventListener("pointermove", event => {
+      if (reducedMotion.matches || !widePointer.matches || event.pointerType === "touch") return;
+      pointerX = Math.max(-5, Math.min(5, (event.clientX / innerWidth - .5) * 10));
+      pointerY = Math.max(-5, Math.min(5, (event.clientY / innerHeight - .5) * 10));
+      if (atmosphereFrame) return;
+      atmosphereFrame = requestAnimationFrame(() => {
+        atmosphere.style.setProperty("--trace-x", `${pointerX.toFixed(2)}px`);
+        atmosphere.style.setProperty("--trace-y", `${pointerY.toFixed(2)}px`);
+        atmosphereFrame = 0;
+      });
+    }, { passive: true });
+    document.documentElement.addEventListener("pointerleave", resetAtmosphere);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) resetAtmosphere(); });
+    reducedMotion.addEventListener("change", resetAtmosphere);
+    widePointer.addEventListener("change", resetAtmosphere);
+  }
+
   function updateCopyLabels() {
     const labels = language === "zh"
       ? { ready: "复制引用", copied: "已复制", failed: "请选中上方文本复制" }

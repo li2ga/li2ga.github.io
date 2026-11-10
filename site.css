@@ -15,7 +15,18 @@ button{font:inherit;cursor:pointer}
 img{max-width:100%;display:block}
 p{margin:12px 0}
 strong,h3{font-weight:700}
-.homepage{width:100%;max-width:800px;margin:0 auto;position:relative;padding-top:4px}
+.homepage{width:100%;max-width:800px;margin:0 auto;position:relative;z-index:1;padding-top:4px;background:#fff}
+.page-atmosphere{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.trajectory-study{position:absolute;width:clamp(110px,calc((100vw - 880px)/2),260px);height:auto;overflow:visible;transform:translate3d(var(--trace-x,0px),var(--trace-y,0px),0)}
+.trajectory-left{left:max(8px,calc((100vw - 1400px)/2));top:55px}
+.trajectory-right{right:max(8px,calc((100vw - 1400px)/2));top:24vh;transform:translate3d(calc(var(--trace-x,0px)*-.7),calc(var(--trace-y,0px)*-.7),0)}
+.trajectory-lines{fill:none;stroke:#dce5ed;stroke-width:1;stroke-linecap:round;stroke-linejoin:round}
+.trajectory-lines path{vector-effect:non-scaling-stroke;stroke-dasharray:1;animation:trajectory-arrive 2.4s ease-out both}
+.trajectory-lines .trajectory-accent{stroke:#d9b887;opacity:.6;animation-delay:.2s}
+.trajectory-right .trajectory-lines path{animation-delay:.25s}
+.trajectory-joints{fill:#fff;stroke:#caa977;stroke-width:1;opacity:.7}
+@keyframes trajectory-arrive{from{stroke-dashoffset:1;opacity:0}to{stroke-dashoffset:0}}
+@media(max-width:1040px){.page-atmosphere{display:none}}
 .language-switch{display:flex;width:max-content;gap:2px;align-items:center;margin:4px 5px 0 auto;padding:3px;border:1px solid #e9d8be;border-radius:6px;background:#fff;font-size:12px}
 .language-switch button{background:transparent;border:0;border-radius:3px;color:#555;padding:5px 12px;min-height:32px;font-size:12px;line-height:1.4}
 .language-switch button:hover{background:#fff8ec;color:#ad4c00}
@@ -304,8 +315,11 @@ main>section:not(.about){margin-top:29px}
  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
  #effect-layer{display:none}
  .portrait-charm,.portrait-sparkle,.portrait-planet{animation:none}
+ .trajectory-study{transform:none}
+ .trajectory-lines path{animation:none;stroke-dasharray:none}
 }
 @media print{
+ .page-atmosphere{display:none!important}
  .portrait-decoration,.portrait-style-switch{display:none!important}
  .visitor-statistics{display:none!important}
  .language-switch,.demo-toggle,.celebrate-button,.copy-citation,#effect-layer,.skip-link{display:none!important}
