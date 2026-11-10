@@ -34,6 +34,106 @@
     widePointer.addEventListener("change", resetAtmosphere);
   }
 
+  const backgroundSwitch = document.querySelector(".background-switch");
+  const backgroundScenes = ["trajectory", "lotus", "ziwei", "ganzhi"];
+  const wideBackground = window.matchMedia("(min-width: 1041px)");
+  const autoBackgroundButton = document.querySelector('[data-background="auto"]');
+  let backgroundChoice = "trajectory";
+  let backgroundTimer = 0;
+  function updateBackgroundLabels() {
+    if (!autoBackgroundButton) return;
+    autoBackgroundButton.disabled = reducedMotion.matches;
+    autoBackgroundButton.title = reducedMotion.matches
+      ? (language === "zh" ? "系统已启用减少动态效果" : "Reduced motion is enabled") : "";
+  }
+  function showBackground(scene) {
+    if (!atmosphere) return;
+    atmosphere.dataset.backgroundCurrent = scene;
+    atmosphere.querySelectorAll("[data-background-scene]").forEach(layer => {
+      layer.toggleAttribute("data-active", layer.dataset.backgroundScene === scene);
+    });
+  }
+  function syncBackgroundMotion() {
+    clearTimeout(backgroundTimer);
+    backgroundTimer = 0;
+    if (!atmosphere) return;
+    const moving = !document.hidden && wideBackground.matches && !reducedMotion.matches;
+    atmosphere.classList.toggle("is-moving", moving);
+    updateBackgroundLabels();
+    if (moving && backgroundChoice === "auto") {
+      backgroundTimer = setTimeout(() => {
+        const next = (backgroundScenes.indexOf(atmosphere.dataset.backgroundCurrent) + 1) % backgroundScenes.length;
+        showBackground(backgroundScenes[next]);
+        syncBackgroundMotion();
+      }, 30000);
+    }
+  }
+  function saveBackgroundPreferences() {
+    if (!atmosphere) return;
+    try {
+      localStorage.setItem("jia-li-background", backgroundChoice);
+      localStorage.setItem("jia-li-background-layout", atmosphere.dataset.backgroundLayout);
+    } catch (_) { /* Keep the controls usable without storage. */ }
+    // A shared comparison URL should not override a later manual choice on reload.
+    try {
+      const url = new URL(location.href);
+      if (url.searchParams.has("background") || url.searchParams.has("placement")) {
+        url.searchParams.delete("background");
+        url.searchParams.delete("placement");
+        history.replaceState(null, "", url.href);
+      }
+    } catch (_) { /* Static-file previews also work without history access. */ }
+  }
+  function chooseBackground(choice, save = true) {
+    backgroundChoice = backgroundScenes.includes(choice) || choice === "auto" ? choice : "trajectory";
+    if (atmosphere) atmosphere.dataset.backgroundChoice = backgroundChoice;
+    showBackground(backgroundChoice === "auto" ? "lotus" : backgroundChoice);
+    document.querySelectorAll("[data-background]").forEach(button => {
+      button.setAttribute("aria-pressed", String(button.dataset.background === backgroundChoice));
+    });
+    syncBackgroundMotion();
+    if (save) saveBackgroundPreferences();
+  }
+  function chooseBackgroundLayout(layout, save = true) {
+    const placement = layout === "page" ? "page" : "fixed";
+    if (atmosphere) atmosphere.dataset.backgroundLayout = placement;
+    document.querySelectorAll("button[data-background-layout]").forEach(button => {
+      button.setAttribute("aria-pressed", String(button.dataset.backgroundLayout === placement));
+    });
+    resetAtmosphere();
+    if (save) saveBackgroundPreferences();
+  }
+  if (atmosphere && backgroundSwitch) {
+    let savedBackground = "trajectory";
+    let savedPlacement = "fixed";
+    try {
+      savedBackground = localStorage.getItem("jia-li-background") || savedBackground;
+      savedPlacement = localStorage.getItem("jia-li-background-layout") || savedPlacement;
+    } catch (_) { /* Use the original design by default. */ }
+    const comparison = new URLSearchParams(location.search);
+    chooseBackground(comparison.get("background") || savedBackground, false);
+    chooseBackgroundLayout(comparison.get("placement") || savedPlacement, false);
+    backgroundSwitch.hidden = false;
+    document.querySelectorAll("[data-background]").forEach(button => {
+      button.addEventListener("click", () => chooseBackground(button.dataset.background));
+    });
+    document.querySelectorAll("button[data-background-layout]").forEach(button => {
+      button.addEventListener("click", () => chooseBackgroundLayout(button.dataset.backgroundLayout));
+    });
+    document.addEventListener("visibilitychange", syncBackgroundMotion);
+    wideBackground.addEventListener("change", syncBackgroundMotion);
+    reducedMotion.addEventListener("change", syncBackgroundMotion);
+    document.addEventListener("click", event => {
+      if (!backgroundSwitch.contains(event.target)) backgroundSwitch.open = false;
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && backgroundSwitch.open) {
+        backgroundSwitch.open = false;
+        backgroundSwitch.querySelector("summary").focus({ preventScroll: true });
+      }
+    });
+  }
+
   function updateCopyLabels() {
     const labels = language === "zh"
       ? { ready: "复制引用", copied: "已复制", failed: "请选中上方文本复制" }
@@ -58,6 +158,7 @@
     });
     document.getElementById("celebration-status").textContent = "";
     updateCopyLabels();
+    updateBackgroundLabels();
     mediaControllers.forEach(controller => controller.updateLabel());
     try { localStorage.setItem("jia-li-language", language); } catch (_) { /* Keep static-file support. */ }
   }
