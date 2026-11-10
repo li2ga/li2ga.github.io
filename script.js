@@ -4,6 +4,24 @@
   let language = "en";
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const mediaControllers = [];
+  const portraitImage = document.querySelector('.portrait img');
+
+  // Load full-resolution figures close to the viewport, rather than screens ahead.
+  const deferredImages = document.querySelectorAll('img[data-src]');
+  function loadFigure(image) {
+    image.src = image.dataset.src;
+    delete image.dataset.src;
+  }
+  if ('IntersectionObserver' in window) {
+    const figureObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        loadFigure(entry.target);
+        figureObserver.unobserve(entry.target);
+      });
+    }, { rootMargin: '200px 0px' });
+    deferredImages.forEach(image => figureObserver.observe(image));
+  } else deferredImages.forEach(loadFigure);
 
   const entrance = document.querySelector('.site-entrance');
   if (entrance && document.documentElement.classList.contains('intro-pending')) {
@@ -65,15 +83,26 @@
   const lotusScene = atmosphere?.querySelector('[data-background-scene="lotus"]');
   const lotusOptions = document.querySelector('.lotus-options');
   const lotusToggle = document.querySelector('[data-lotus-toggle]');
+  const lotusButtons = [...document.querySelectorAll('button[data-lotus-stage]')];
+  const lotusStatus = document.querySelector('[data-lotus-status]');
+  const lotusRetry = document.querySelector('[data-lotus-retry]');
+  const lotusLoads = new Map();
+  const lotusImages = new Map();
   let lotusStage = 0;
+  let lotusDesiredStage = 0;
   let lotusPaused = false;
   let lotusTimer = 0;
-  let lotusRequested = false;
+  let lotusStarted = false;
+  let lotusUserInitiated = false;
+  let lotusPending = false;
+  let lotusError = false;
+  let lotusRequest = 0;
   try {
     lotusPaused = localStorage.getItem('jia-li-lotus-paused') === '1';
     const stage = Number(localStorage.getItem('jia-li-lotus-stage'));
     if (lotusPaused && Number.isInteger(stage) && stage >= 0 && stage < lotusStageCount) lotusStage = stage;
   } catch (_) { /* A first visit starts with the initial blue flame. */ }
+  lotusDesiredStage = lotusStage;
   function updateLotusLabels() {
     if (!lotusToggle) return;
     lotusToggle.disabled = reducedMotion.matches;
@@ -83,12 +112,65 @@
       : (lotusPaused || reducedMotion.matches ? 'Play evolution' : 'Pause evolution');
     lotusToggle.title = reducedMotion.matches
       ? (language === 'zh' ? '系统已启用减少动态效果，可手动选择形态' : 'Reduced motion is enabled; select a stage manually') : '';
+    if (lotusStatus) {
+      lotusStatus.hidden = !lotusPending && !lotusError && lotusStarted;
+      lotusStatus.textContent = lotusError
+        ? (language === 'zh' ? '此形态加载失败，请重试。' : 'This stage could not load. Try again.')
+        : (language === 'zh' ? '正在加载火莲…' : 'Loading lotus…');
+    }
+    if (lotusRetry) lotusRetry.hidden = !lotusError;
+    lotusButtons.forEach(button => button.setAttribute('aria-busy', String(lotusPending && Number(button.dataset.lotusStage) === lotusDesiredStage)));
   }
   function showLotusStage(stage) {
     lotusStage = stage;
     if (lotusScene) lotusScene.dataset.lotusStage = String(stage);
-    document.querySelectorAll('button[data-lotus-stage]').forEach(button => {
+    lotusButtons.forEach(button => {
       button.setAttribute('aria-pressed', String(Number(button.dataset.lotusStage) === stage));
+    });
+  }
+  function loadLotusStage(stage) {
+    if (lotusLoads.has(stage)) return lotusLoads.get(stage);
+    const source = lotusButtons[stage].dataset.lotusSrc;
+    const loading = new Promise((resolve, reject) => {
+      const image = new Image();
+      image.decoding = 'async';
+      image.fetchPriority = 'low';
+      const deadline = setTimeout(() => { image.onload = image.onerror = null; reject(new Error('Lotus load timed out')); }, 20000);
+      image.onerror = () => { clearTimeout(deadline); reject(new Error('Lotus image unavailable')); };
+      image.onload = async () => {
+        try {
+          await image.decode();
+          clearTimeout(deadline);
+          lotusImages.set(stage, image);
+          lotusScene.querySelectorAll(`[data-lotus-frame="${stage}"]`).forEach(frame => {
+            frame.style.backgroundImage = `url("${source}")`;
+          });
+          resolve();
+        } catch (error) { clearTimeout(deadline); reject(error); }
+      };
+      image.src = source;
+    }).catch(error => { lotusLoads.delete(stage); throw error; });
+    lotusLoads.set(stage, loading);
+    return loading;
+  }
+  function requestLotusStage(stage) {
+    lotusDesiredStage = stage;
+    lotusStarted = true;
+    lotusPending = true;
+    lotusError = false;
+    const request = ++lotusRequest;
+    syncLotusMotion();
+    loadLotusStage(stage).then(() => {
+      if (request !== lotusRequest) return;
+      lotusPending = false;
+      lotusScene.classList.add('lotus-ready');
+      showLotusStage(stage);
+      syncLotusMotion();
+    }).catch(() => {
+      if (request !== lotusRequest) return;
+      lotusPending = false;
+      lotusError = true;
+      syncLotusMotion();
     });
   }
   function syncLotusMotion() {
@@ -98,27 +180,19 @@
     const active = atmosphere.dataset.backgroundCurrent === 'lotus';
     if (lotusOptions) lotusOptions.hidden = !active;
     const visible = active && wideBackground.matches && !document.hidden;
-    if (visible && !lotusRequested) {
-      lotusRequested = true;
-      let loaded = 0;
-      for (const source of ['assets/backgrounds/fire-lotus-evolution-v1.png', 'assets/backgrounds/fire-lotus-cold-v1.png']) {
-        const image = new Image();
-        image.onload = () => {
-          if (++loaded !== 2) return;
-          lotusScene.classList.add('lotus-ready');
-          if (!lotusPaused) showLotusStage(0);
-          syncLotusMotion();
-        };
-        image.src = source;
-      }
+    if (visible && !lotusStarted && (lotusUserInitiated || !portraitImage || portraitImage.complete)) {
+      requestLotusStage(lotusDesiredStage);
+      return;
     }
-    const playing = visible && !lotusPaused && !reducedMotion.matches && lotusScene.classList.contains('lotus-ready');
+    const playing = visible && !lotusPaused && !reducedMotion.matches && !lotusPending && !lotusError && lotusImages.has(lotusStage);
     lotusScene.classList.toggle('lotus-is-playing', playing);
     updateLotusLabels();
-    if (playing) lotusTimer = setTimeout(() => {
-      showLotusStage((lotusStage + 1) % lotusStageCount);
-      syncLotusMotion();
-    }, 4000);
+    if (playing) {
+      const next = (lotusStage + 1) % lotusStageCount;
+      // Only warm one next stage after the portrait has finished, using the same cache URL.
+      if (!portraitImage || portraitImage.complete) loadLotusStage(next).catch(() => {});
+      lotusTimer = setTimeout(() => requestLotusStage(next), 4000);
+    }
   }
   function updateBackgroundLabels() {
     updateLotusLabels();
@@ -129,7 +203,6 @@
   }
   function showBackground(scene) {
     if (!atmosphere) return;
-    if (scene === 'lotus' && atmosphere.dataset.backgroundCurrent !== 'lotus' && !lotusPaused) showLotusStage(0);
     atmosphere.dataset.backgroundCurrent = scene;
     atmosphere.querySelectorAll("[data-background-scene]").forEach(layer => {
       layer.toggleAttribute("data-active", layer.dataset.backgroundScene === scene);
@@ -168,6 +241,7 @@
     } catch (_) { /* Static-file previews also work without history access. */ }
   }
   function chooseBackground(choice, save = true) {
+    if (save) lotusUserInitiated = true;
     backgroundChoice = availableBackgrounds.includes(choice) || choice === "auto" ? choice : "trajectory";
     if (atmosphere) atmosphere.dataset.backgroundChoice = backgroundChoice;
     showBackground(backgroundChoice === "auto" ? "lotus" : backgroundChoice);
@@ -204,19 +278,23 @@
     document.querySelectorAll("button[data-background-layout]").forEach(button => {
       button.addEventListener("click", () => chooseBackgroundLayout(button.dataset.backgroundLayout));
     });
-    document.querySelectorAll('button[data-lotus-stage]').forEach(button => {
+    lotusButtons.forEach(button => {
       button.addEventListener('click', () => {
         lotusPaused = true;
-        showLotusStage(Number(button.dataset.lotusStage));
-        try { localStorage.setItem('jia-li-lotus-paused', '1'); localStorage.setItem('jia-li-lotus-stage', String(lotusStage)); } catch (_) {}
-        syncLotusMotion();
+        const stage = Number(button.dataset.lotusStage);
+        try { localStorage.setItem('jia-li-lotus-paused', '1'); localStorage.setItem('jia-li-lotus-stage', String(stage)); } catch (_) {}
+        requestLotusStage(stage);
       });
     });
+    lotusRetry?.addEventListener('click', () => requestLotusStage(lotusDesiredStage));
     lotusToggle?.addEventListener('click', () => {
       lotusPaused = !lotusPaused;
       try { localStorage.setItem('jia-li-lotus-paused', lotusPaused ? '1' : '0'); localStorage.setItem('jia-li-lotus-stage', String(lotusStage)); } catch (_) {}
-      syncLotusMotion();
+      if (lotusError) requestLotusStage(lotusDesiredStage);
+      else syncLotusMotion();
     });
+    portraitImage?.addEventListener('load', syncLotusMotion);
+    portraitImage?.addEventListener('error', syncLotusMotion);
     document.addEventListener("visibilitychange", syncBackgroundMotion);
     wideBackground.addEventListener("change", syncBackgroundMotion);
     reducedMotion.addEventListener("change", syncBackgroundMotion);
