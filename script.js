@@ -107,11 +107,11 @@
   const autoBackgroundButton = document.querySelector('[data-background="auto"]');
   let backgroundChoice = "trajectory";
   let backgroundTimer = 0;
-  const lotusStageCount = 7;
   const lotusScene = atmosphere?.querySelector('[data-background-scene="lotus"]');
   const lotusOptions = document.querySelector('.lotus-options');
   const lotusToggle = document.querySelector('[data-lotus-toggle]');
   const lotusButtons = [...document.querySelectorAll('button[data-lotus-stage]')];
+  const lotusStageCount = lotusButtons.length;
   const lotusStatus = document.querySelector('[data-lotus-status]');
   const lotusRetry = document.querySelector('[data-lotus-retry]');
   const lotusLoads = new Map();
@@ -121,7 +121,7 @@
     fixed: { offsets: [0, 4, 2, 6], holds: [5600, 8300, 6500, 9700] },
     page: { offsets: [0, 1, 3, 5], holds: [4300, 6100, 7600, 5200] }
   };
-  const lotusStageHolds = [1, 1.18, .91, 1.11, 1.26, 1.14, .95];
+  const lotusStageHolds = [1, 1.18, .91, 1.11, 1.26, 1.14, .95, 1.22];
   const lotusItems = [...(lotusScene?.querySelectorAll('[data-lotus-instance]') || [])].map((element, index) => ({
     element, index, stage: null, desiredStage: null, pending: false, error: false,
     timer: 0, dueAt: 0, remaining: null, request: 0

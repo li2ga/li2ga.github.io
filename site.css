@@ -180,7 +180,8 @@ strong,h3{font-weight:700}
 .lotus-evolution[data-lotus-stage="3"]>.lotus-float>.lotus-hover>.lotus-frame[data-lotus-frame="3"],
 .lotus-evolution[data-lotus-stage="4"]>.lotus-float>.lotus-hover>.lotus-frame[data-lotus-frame="4"],
 .lotus-evolution[data-lotus-stage="5"]>.lotus-float>.lotus-hover>.lotus-frame[data-lotus-frame="5"],
-.lotus-evolution[data-lotus-stage="6"]>.lotus-float>.lotus-hover>.lotus-frame[data-lotus-frame="6"]{opacity:.77;transform:scale(1)}
+.lotus-evolution[data-lotus-stage="6"]>.lotus-float>.lotus-hover>.lotus-frame[data-lotus-frame="6"],
+.lotus-evolution[data-lotus-stage="7"]>.lotus-float>.lotus-hover>.lotus-frame[data-lotus-frame="7"]{opacity:.77;transform:scale(1)}
 .lotus-load-status{margin:7px 0 0;color:#755d49;font-size:11px;line-height:1.5}
 .lotus-stage-buttons button[aria-busy=true]{border-style:dashed;opacity:.65}
 .lotus-energy{position:absolute;inset:0;width:100%;height:100%;overflow:visible;opacity:.55}
@@ -227,13 +228,7 @@ strong,h3{font-weight:700}
 .page-atmosphere[data-background-layout=page] .lotus-companion-3{display:block;left:auto;right:max(12px,calc((100vw - 1500px)/2));top:87%;opacity:.42;scale:.9}
 .lotus-companion-2 .ambient-presence{animation-duration:31s;animation-delay:-17s}
 .lotus-companion-3 .ambient-presence{animation-duration:43s;animation-delay:-3s}
-@keyframes companion-breath{0%,100%{transform:translate3d(-3px,5px,0);opacity:.025;filter:saturate(.55) blur(1.5px)}35%,55%{opacity:.35;filter:saturate(.72) blur(.45px)}70%{transform:translate3d(5px,-8px,0)}85%{opacity:.07}}
-.ruler-fire{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;fill:none;stroke:#edaa5b;stroke-width:7;stroke-linecap:round;filter:blur(2.5px);opacity:.5}
-.ambient-raster:not([data-art-ready])+.ruler-fire{visibility:hidden}
-.ruler-fire path{stroke-dasharray:42 31 9 43;animation:ruler-fire-rise 7s linear infinite;animation-play-state:var(--scene-motion,paused)}
-.ruler-fire path:nth-child(2){stroke:#d98d5e;stroke-width:4;animation-duration:9s;animation-delay:-3s}
-.ruler-fire path:nth-child(3){stroke:#e6bf77;stroke-width:5;animation-duration:6s;animation-delay:-2s}
-@keyframes ruler-fire-rise{from{stroke-dashoffset:0}to{stroke-dashoffset:250}}
+@keyframes companion-breath{0%,100%{transform:translate3d(-3px,5px,0);opacity:.04;filter:saturate(.55) blur(1.5px)}35%,55%{opacity:.46;filter:saturate(.72) blur(.45px)}70%{transform:translate3d(5px,-8px,0)}85%{opacity:.09}}
 .line-procession{left:max(12px,calc((100vw - 1500px)/2));top:43vh;aspect-ratio:4/5;opacity:.62;--procession-time:40s;--procession-phase:-2s;--companion-depth:.65}
 .line-procession-right{left:auto;right:max(12px,calc((100vw - 1500px)/2));top:5vh;--procession-time:52s;--procession-phase:-18s;--companion-depth:.4}
 .line-procession-depth{position:absolute;inset:0}
@@ -247,7 +242,7 @@ strong,h3{font-weight:700}
 .line-scan{position:absolute;inset:6% 0;background:linear-gradient(90deg,transparent 48%,#c3a16f5c 50%,transparent 51%);opacity:0;animation:line-scan-pass calc(var(--procession-time)/4) ease-out infinite;animation-delay:var(--procession-phase);animation-play-state:var(--scene-motion,paused)}
 .page-atmosphere[data-background-layout=page] .line-procession{top:27%}
 .page-atmosphere[data-background-layout=page] .line-procession-right{top:66%}
-@keyframes line-visitor-pass{0%{opacity:0;transform:translateX(-44px)}3%{opacity:.025}7%,16%{opacity:.24}21%{opacity:.06}25%,100%{opacity:0;transform:translateX(38px)}}
+@keyframes line-visitor-pass{0%{opacity:0;transform:translateX(-44px)}3%{opacity:.035}7%,16%{opacity:.32}21%{opacity:.08}25%,100%{opacity:0;transform:translateX(38px)}}
 @keyframes line-visitor-outline{0%{clip-path:inset(0 100% 0 0)}8%,100%{clip-path:inset(0 -5% 0 -5%)}}
 @keyframes line-scan-pass{0%{opacity:0;transform:translateX(-45%)}10%{opacity:.15}25%{opacity:0;transform:translateX(45%)}100%{opacity:0;transform:translateX(45%)}}
 /* Fixed sky is independent of scene choice, page placement and pointer depth. */
@@ -261,7 +256,7 @@ strong,h3{font-weight:700}
 .sky-meteors.is-active .meteor-streak{animation-play-state:running}
 @keyframes meteor-crossing{0%{opacity:0;transform:translateX(-100px) scaleX(.6)}.5%{opacity:.68}3.5%{opacity:.5}5%{opacity:0;transform:translateX(var(--meteor-distance)) scaleX(1)}100%{opacity:0;transform:translateX(var(--meteor-distance)) scaleX(1)}}
 @media(max-width:1040px){.meteor-flight{width:110px;--meteor-distance:330px}.meteor-streak{height:1px}.meteor-flight-2,.meteor-flight-3{display:none}}
-@media(prefers-reduced-motion:reduce){.sky-meteors{display:none}.lotus-companion .ambient-presence,.line-visitor,.line-visitor .ambient-raster,.line-scan,.ruler-fire path{animation:none!important}.lotus-companion .ambient-presence{opacity:.22}.line-visitor-0{opacity:.16}}
+@media(prefers-reduced-motion:reduce){.sky-meteors{display:none}.lotus-companion .ambient-presence,.line-visitor,.line-visitor .ambient-raster,.line-scan{animation:none!important}.lotus-companion .ambient-presence{opacity:.29}.line-visitor-0{opacity:.21}}
 @media print{.sky-meteors{display:none!important}}
 .language-switch{display:flex;width:max-content;gap:2px;align-items:center;margin:4px 5px 0 auto;padding:3px;border:1px solid #e9d8be;border-radius:6px;background:#fff;font-size:12px}
 .language-switch button{background:transparent;border:0;border-radius:3px;color:#555;padding:5px 12px;min-height:32px;font-size:12px;line-height:1.4}
