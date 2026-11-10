@@ -40,15 +40,25 @@
     }
     vec4 livingFlame(vec2 at){
       vec4 original=texture2D(picture,at);
+      bool fineBranches=variant>11.5&&variant<12.5;
+      float rigidGold=0.;
+      if(fineBranches){
+        // Preserve the gold scaffold while its translucent fire keeps flowing.
+        rigidGold=smoothstep(.04,.17,original.r-original.b)*smoothstep(.01,.1,original.g-original.b)*smoothstep(.35,.7,original.a);
+        if(rigidGold>.7)return vec4(original.rgb*original.a,original.a);
+      }
       float t=flameClock;
+      if(fineBranches)t*=.72;
       float h=smoothstep(.40,.9,at.y);
       // Upward advection and curling eddies move fire material, not the metal body.
       vec3 domain=vec3(at.x*23.,at.y*19.-t*1.22,t*.19+variant*3.1);
       float n=fireFbm(domain),n2=fireFbm(domain+vec3(11.1,3.7,5.2));
       vec2 curl=vec2(n2-.5,n-.5);
       vec2 shift=vec2(curl.x*.040*h,curl.y*.025*h);
+      if(fineBranches)shift*=.58;
       vec4 moving=texture2D(picture,clamp(at-shift,0.,1.));
       float mask=max(fuel(at,original),fuel(at-shift,moving));
+      if(fineBranches)mask*=1.-rigidGold;
       vec4 body=mix(original,moving,clamp(mask*1.25,0.,1.));
       // Short, colored wisps detach from actual hot pixels and rise through
       // the transparent margin. Sampling the source retains each phase's palette.
@@ -62,6 +72,7 @@
         float d=f*smoothstep(.48+age*.08,.76,strand+.06*sin(age*19.-t))*(.18*(1.-age*.8));
         // Existing opaque material occludes trails; no halo over polished metal.
         d*=1.-original.a*.86;
+        if(fineBranches)d*=1.-rigidGold;
         emission+=sampleColor.rgb*d;opacity+=d;
       }
       float stream=pow(max(0.,1.-abs(n-.53)*6.),8.);
