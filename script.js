@@ -488,8 +488,9 @@
 
   const layer = document.getElementById("effect-layer");
   const emoji = [
-    // 新的火莲站标，作为第一枚点击粒子；原有图案顺序保留。
-    { image: "assets/favicon.svg" },
+    // 历代站标独立保存，避免换 favicon 时把点击图案一起替换。
+    { image: "assets/icons/lotus-pink-gold.svg" },
+    { image: "assets/icons/jl-square.svg" },
     // 原来的 15 个全部保留。
     "✨", "🤖", "🥳", "⚡", "🌾", "💧", "🔥", "🤩", "🌈", "🚀", "🥇", "🏆", "💎", "🌌", "🪐",
     // 星星、流星与闪光。
