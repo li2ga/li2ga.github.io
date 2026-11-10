@@ -84,6 +84,83 @@ strong,h3{font-weight:700}
 .background-options button:disabled{opacity:.4;cursor:default}
 .background-choices [data-background=auto]{grid-column:1 / -1}
 .background-placement{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:9px;padding-top:9px;border-top:1px solid #eee6dc}
+.background-archive{margin-top:9px;border-top:1px solid #eee6dc;padding-top:7px}
+.background-archive>summary{padding:6px 0;font-size:11px;color:#6c6258;cursor:pointer}
+.background-choices [data-background=auto]{grid-column:auto}
+
+/* One first-visit gesture, followed by the ordinary reading page. */
+.site-entrance{display:none;position:fixed;inset:0;z-index:80;overflow:hidden;background:#fff;pointer-events:none}
+.intro-pending .site-entrance{display:block;animation:entrance-clear 1.8s linear both}
+.site-entrance>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.entrance-traces{fill:none;stroke:#91a9bf;stroke-width:1.1;stroke-linecap:round;transform-box:view-box;transform-origin:50% 50%}
+.entrance-traces path{stroke-dasharray:1;animation:entrance-gather .78s cubic-bezier(.2,.55,.2,1) both;animation-delay:var(--trace-delay)}
+.entrance-traces path:nth-child(3n){stroke:#c7ac7d;stroke-width:1.4}
+.entrance-left{animation:entrance-scatter-left .72s 1.05s cubic-bezier(.3,0,.3,1) both}
+.entrance-right{animation:entrance-scatter-right .72s 1.05s cubic-bezier(.3,0,.3,1) both}
+.entrance-name{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:clamp(13px,2vw,29px);font-family:NameLatin,Lato,sans-serif;font-size:clamp(34px,5.3vw,69px);font-weight:500;color:#263a4a;animation:entrance-name 1.8s ease both}
+.entrance-name [lang=zh-CN]{font-family:NameChinese,'Microsoft YaHei',sans-serif;font-size:.88em}
+.entrance-name i{font-family:Lato;font-size:.45em;font-style:normal;font-weight:400;color:#9ba9b1}
+@keyframes entrance-gather{0%{stroke-dashoffset:1;opacity:0}28%{opacity:.4}100%{stroke-dashoffset:0;opacity:.7}}
+@keyframes entrance-scatter-left{0%{transform:translateX(0) scale(1);opacity:1}100%{transform:translateX(-40%) scale(.72);opacity:0}}
+@keyframes entrance-scatter-right{0%{transform:translateX(0) scale(1);opacity:1}100%{transform:translateX(40%) scale(.72);opacity:0}}
+@keyframes entrance-name{0%,26%{opacity:0;transform:translateY(5px);filter:blur(4px)}42%,68%{opacity:1;transform:translateY(0);filter:blur(0)}100%{opacity:0;transform:translateY(-3px)}}
+@keyframes entrance-clear{0%,64%{background:#fff}100%{background:#ffffff00;visibility:hidden}}
+.cinematic-scene .motif-top-left{top:13vh}
+.cinematic-scene .motif-top-right{top:52vh}
+.go-board{transform-origin:200px 190px;animation:go-board-drift 19s ease-in-out infinite alternate}
+.go-grid{fill:none;stroke:#859bad;stroke-width:.65;opacity:.44}
+.go-ribbons{fill:none;stroke:#a9becb;stroke-width:.8;opacity:.45}
+.go-ribbons path:last-child{stroke:#c7b792;opacity:.7}
+.go-floating-stone,.go-floating-white{animation:go-stone-float 9s ease-in-out infinite alternate}
+.go-floating-white{animation-duration:12s;animation-delay:-4s}
+.go-ripples{fill:none;stroke:#a9bdcb;stroke-width:.7;opacity:.5;transform-origin:298px 313px;animation:go-ripple 9s ease-in-out infinite alternate}
+.go-light{stroke:#e2d5b3;stroke-width:.7;opacity:.5}
+.demon-petal{stroke:#cf8cbe;stroke-width:.65;opacity:var(--petal-light,.8)}
+.demon-petal-vein{fill:none;stroke:#fff5ff;stroke-width:.7;opacity:.75}
+.demon-flower{transform-origin:200px 270px;animation:demon-bloom 13s ease-in-out infinite alternate;filter:drop-shadow(0 0 1.2px #ecaee333)}
+.demon-pressure{fill:none;stroke:#d5a7d3;stroke-width:.65;opacity:.62;transform-origin:200px 296px;animation:demon-pressure 11s ease-in-out infinite alternate}
+.demon-pressure ellipse:nth-child(2){stroke:#afcbd8;stroke-dasharray:23 8 7 18}
+.demon-wisps{fill:none;stroke:#dea0c6;stroke-width:1.1;opacity:.37}
+.demon-wisps path{animation:demon-wisp 8s ease-in-out infinite alternate;animation-delay:var(--wisp-delay)}
+.demon-heart{fill:#fff7fc;stroke:#e29cc6;stroke-width:.6;filter:drop-shadow(0 0 4px #e8b2da)}
+.demon-filament{fill:none;stroke:#fff6fb;stroke-width:1.1;opacity:.9}
+.demon-sparks{fill:#cc92bc}
+.demon-sparks circle{animation:demon-wisp 7s ease-in-out infinite alternate;animation-delay:var(--wisp-delay)}
+.page-atmosphere{--scene-motion:paused}
+.page-atmosphere.is-moving .atmosphere-theme[data-active]{--scene-motion:running}
+.demon-flower,.demon-pressure,.demon-wisps path,.demon-sparks circle,.celestial-palaces,.celestial-pole,.phase-flow,.phase-dust{animation-play-state:var(--scene-motion,paused)}
+.cinematic-scene .motif-top-right,.cinematic-scene .motif-lower-left{rotate:12deg}
+.celestial-silk{fill:none;stroke:#b1bcd1;stroke-width:.8;opacity:.55}
+.celestial-silk path:last-child{stroke:#c3b18d;opacity:.6}
+.celestial-palaces{fill:#e9e7f4;fill-opacity:.19;stroke:#a9aec6;stroke-width:.65;animation:celestial-drift 18s ease-in-out infinite alternate;transform-origin:200px 170px}
+.celestial-palace{text-anchor:middle;dominant-baseline:middle;font:8px 'SimSun','Songti SC',serif;fill:#9d96b7;fill-opacity:.9;stroke:none}
+.celestial-stars{fill:#c9badb;stroke:#baaed0;stroke-width:.8}
+.celestial-stars path{fill:none;opacity:.6}
+.celestial-pole{animation:celestial-light 9s ease-in-out infinite alternate;filter:drop-shadow(0 0 3px #dac9ea)}
+.celestial-pole>path:last-child{fill:none;stroke:#c7bdd9;stroke-width:.6}
+.celestial-title{text-anchor:middle;dominant-baseline:middle;font:20px 'SimSun','Songti SC',serif;fill:#a19ab5;letter-spacing:3px;stroke:none}
+.celestial-side{text-anchor:middle;dominant-baseline:middle;font:12px 'SimSun','Songti SC',serif;fill:#aaa2bb;letter-spacing:2px;stroke:none}
+.celestial-transforms{fill:none;stroke:#d2bea0;stroke-width:.65;opacity:.8}
+.celestial-transform{text-anchor:middle;dominant-baseline:middle;font:13px 'SimSun','Songti SC',serif;fill:#baa079;stroke:none}
+.phase-flow{fill:none;stroke:#c8c5b8;stroke-width:.8;opacity:.6;animation:celestial-drift 20s ease-in-out infinite alternate}
+.phase-flow path:nth-child(2){stroke:#c4b5c7}
+.phase-flow path:nth-child(3){stroke:#b4c8d5}
+.phase-label{text-anchor:middle;dominant-baseline:middle;font:15px 'SimSun','Songti SC',serif;stroke:none}
+.phase-title{text-anchor:middle;dominant-baseline:middle;font:22px 'SimSun','Songti SC',serif;fill:#aea083;stroke:none;letter-spacing:4px}
+.phase-subtitle{text-anchor:middle;dominant-baseline:middle;font:10px 'SimSun','Songti SC',serif;fill:#a99b85;stroke:none;letter-spacing:1px}
+.phase-stem{text-anchor:middle;dominant-baseline:middle;font:12px 'SimSun','Songti SC',serif;fill:#ac9e91;stroke:none}
+.phase-dust{fill:#c8b18b;animation:celestial-light 11s ease-in-out infinite alternate}
+@keyframes celestial-drift{from{transform:translateY(-3px) rotate(-1deg)}to{transform:translateY(3px) rotate(1deg)}}
+@keyframes celestial-light{from{opacity:.55}to{opacity:1}}
+.atmosphere-theme[data-background-scene=lotus] .motif-top-right{rotate:-9deg;scale:.88}
+@keyframes go-board-drift{from{transform:translateY(-3px) rotate(-2deg)}to{transform:translateY(3px) rotate(2deg)}}
+@keyframes go-stone-float{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+@keyframes go-ripple{from{opacity:.25;transform:scale(.92)}to{opacity:.6;transform:scale(1.06)}}
+@keyframes demon-bloom{from{transform:translateY(2px) scale(.975)}to{transform:translateY(-3px) scale(1.02)}}
+@keyframes demon-pressure{from{transform:scaleX(.97);opacity:.35}to{transform:scaleX(1.04);opacity:.65}}
+@keyframes demon-wisp{from{transform:translateY(4px);opacity:.35}to{transform:translateY(-7px);opacity:.8}}
+@media(prefers-reduced-motion:reduce){.site-entrance{display:none!important}.cinematic-scene svg *{animation:none!important}}
+@media print{.site-entrance{display:none!important}}
 .language-switch{display:flex;width:max-content;gap:2px;align-items:center;margin:4px 5px 0 auto;padding:3px;border:1px solid #e9d8be;border-radius:6px;background:#fff;font-size:12px}
 .language-switch button{background:transparent;border:0;border-radius:3px;color:#555;padding:5px 12px;min-height:32px;font-size:12px;line-height:1.4}
 .language-switch button:hover{background:#fff8ec;color:#ad4c00}

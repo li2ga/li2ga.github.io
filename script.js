@@ -5,6 +5,26 @@
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const mediaControllers = [];
 
+  const entrance = document.querySelector('.site-entrance');
+  if (entrance && document.documentElement.classList.contains('intro-pending')) {
+    let entranceTimer = 0;
+    function finishEntrance() {
+      clearTimeout(entranceTimer);
+      document.documentElement.classList.remove('intro-pending');
+      entrance.remove();
+      document.removeEventListener('visibilitychange', finishWhenHidden);
+      reducedMotion.removeEventListener('change', finishOnReducedMotion);
+    }
+    function finishWhenHidden() { if (document.hidden) finishEntrance(); }
+    function finishOnReducedMotion() { if (reducedMotion.matches) finishEntrance(); }
+    if (new URLSearchParams(location.search).get('intro') !== 'preview') {
+      try { localStorage.setItem('jia-li-intro-seen', '1'); } catch (_) { /* The page remains readable without storage. */ }
+    }
+    entranceTimer = setTimeout(finishEntrance, 1800);
+    document.addEventListener('visibilitychange', finishWhenHidden);
+    reducedMotion.addEventListener('change', finishOnReducedMotion);
+  } else if (entrance) entrance.remove();
+
   // A small response in the margins; no scroll listener or continuous animation loop.
   const atmosphere = document.querySelector(".page-atmosphere");
   const widePointer = window.matchMedia("(min-width: 1041px) and (pointer: fine)");
@@ -35,7 +55,8 @@
   }
 
   const backgroundSwitch = document.querySelector(".background-switch");
-  const backgroundScenes = ["trajectory", "lotus", "ziwei", "ganzhi"];
+  const backgroundScenes = ["trajectory", "ziwei-cinematic", "ganzhi-cinematic", "lotus"];
+  const availableBackgrounds = [...backgroundScenes, "lotus-classic", "ziwei", "ganzhi"];
   const wideBackground = window.matchMedia("(min-width: 1041px)");
   const autoBackgroundButton = document.querySelector('[data-background="auto"]');
   let backgroundChoice = "trajectory";
@@ -85,7 +106,7 @@
     } catch (_) { /* Static-file previews also work without history access. */ }
   }
   function chooseBackground(choice, save = true) {
-    backgroundChoice = backgroundScenes.includes(choice) || choice === "auto" ? choice : "trajectory";
+    backgroundChoice = availableBackgrounds.includes(choice) || choice === "auto" ? choice : "trajectory";
     if (atmosphere) atmosphere.dataset.backgroundChoice = backgroundChoice;
     showBackground(backgroundChoice === "auto" ? "lotus" : backgroundChoice);
     document.querySelectorAll("[data-background]").forEach(button => {
