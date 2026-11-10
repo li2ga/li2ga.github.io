@@ -130,6 +130,7 @@
   let lotusPaused = false;
   let lotusLayout = null;
   let backgroundUserInitiated = false;
+  let portraitHeadStartElapsed = false;
   try {
     lotusPaused = localStorage.getItem('jia-li-lotus-paused') === '1';
     const stage = Number(localStorage.getItem('jia-li-lotus-stage'));
@@ -182,7 +183,9 @@
     });
   }
   function pumpLotusQueue() {
-    while (lotusLoading + atmosphere.querySelectorAll('[data-art-loading]').length < 2 && lotusQueue.length) lotusQueue.shift().start();
+    // Keep one automatic decoration in flight while the original portrait loads.
+    const limit = portraitImage && !portraitImage.complete && !backgroundUserInitiated ? 1 : 2;
+    while (lotusLoading + atmosphere.querySelectorAll('[data-art-loading]').length < limit && lotusQueue.length) lotusQueue.shift().start();
   }
   function decodeLotusImage(source) {
     return new Promise((resolve, reject) => {
@@ -288,7 +291,7 @@
     if (lotusOptions) lotusOptions.hidden = !active;
     const visible = active && wideBackground.matches && !document.hidden;
     const items = visibleLotusItems();
-    const canLoad = visible && (backgroundUserInitiated || !portraitImage || portraitImage.complete);
+    const canLoad = visible && (backgroundUserInitiated || portraitHeadStartElapsed || !portraitImage || portraitImage.complete);
     const profile = lotusProfiles[lotusLayout || 'fixed'];
     lotusItems.forEach(item => {
       const inLayout = items.includes(item);
@@ -462,6 +465,7 @@
     });
     lotusButtons.forEach(button => {
       button.addEventListener('click', () => {
+        backgroundUserInitiated = true;
         lotusPaused = true;
         const stage = Number(button.dataset.lotusStage);
         lotusItems.forEach(item => {
@@ -479,6 +483,7 @@
       });
     });
     lotusRetry?.addEventListener('click', () => {
+      backgroundUserInitiated = true;
       visibleLotusItems().filter(item => item.error).forEach(item => requestLotusStage(item, item.desiredStage, true));
       syncLotusMotion();
     });
@@ -487,6 +492,7 @@
       syncImagery();
     });
     lotusToggle?.addEventListener('click', () => {
+      backgroundUserInitiated = true;
       lotusPaused = !lotusPaused;
       if (!lotusPaused) visibleLotusItems().filter(item => item.error).forEach(item => requestLotusStage(item, item.desiredStage, true));
       saveLotusPlayback();
@@ -494,6 +500,11 @@
     });
     portraitImage?.addEventListener('load', syncBackgroundMotion);
     portraitImage?.addEventListener('error', syncBackgroundMotion);
+    // Give the portrait a head start, without making a stalled photo block lotus.
+    setTimeout(() => {
+      portraitHeadStartElapsed = true;
+      syncLotusMotion();
+    }, 1200);
     document.addEventListener("visibilitychange", syncBackgroundMotion);
     wideBackground.addEventListener("change", syncBackgroundMotion);
     reducedMotion.addEventListener("change", syncBackgroundMotion);
