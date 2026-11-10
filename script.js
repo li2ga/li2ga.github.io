@@ -101,7 +101,7 @@
     if (visible && !lotusRequested) {
       lotusRequested = true;
       let loaded = 0;
-      for (const source of ['assets/backgrounds/fire-lotus-evolution-v1.png', 'assets/backgrounds/fire-lotus-cold-v1.png']) {
+      for (const source of ['assets/backgrounds/fire-lotus-evolution-v1.webp', 'assets/backgrounds/fire-lotus-cold-v1.webp']) {
         const image = new Image();
         image.onload = () => {
           if (++loaded !== 2) return;
