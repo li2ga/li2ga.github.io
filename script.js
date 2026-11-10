@@ -217,11 +217,11 @@
         start() {
           lotusLoading++;
           const source = lotusButtons[stage].dataset.lotusSrc;
-          decodeLotusImage(source).then(() => {
+          decodeLotusImage(source).then(image => {
             lotusScene.querySelectorAll(`[data-lotus-frame="${stage}"]`).forEach(frame => {
               frame.style.backgroundImage = `url("${source}")`;
             });
-            resolve();
+            resolve(image);
           }, reject).finally(() => { lotusLoading--; pumpLotusQueue(); syncImagery(); });
         }
       };
@@ -247,12 +247,13 @@
     item.element.dataset.lotusPending = 'true';
     delete item.element.dataset.lotusError;
     const request = ++item.request;
-    loadLotusStage(stage, priority).then(() => {
+    loadLotusStage(stage, priority).then(image => {
       if (request !== item.request) return;
       item.pending = false;
       item.stage = stage;
       item.element.dataset.lotusStage = String(stage);
       item.element.dataset.lotusReady = 'true';
+      window.JiaArtLoops?.lotus(item.element, stage, image);
       delete item.element.dataset.lotusPending;
       lotusScene.classList.add('lotus-ready');
       if (item.index === 0) showLotusStage(stage);
@@ -362,6 +363,7 @@
         image.onload = image.onerror = null;
         image.removeAttribute('data-art-loading');
         image.setAttribute(success ? 'data-art-ready' : 'data-art-error', '');
+        if (success) window.JiaArtLoops?.imagery(image);
         pumpLotusQueue();
         syncImagery();
       }
@@ -377,6 +379,8 @@
   function updateBackgroundLabels() {
     updateLotusLabels();
     updateImageryStatus();
+    const motionOptions = document.querySelector('[data-art-motion-options]');
+    if (motionOptions) motionOptions.hidden = !['lotus','ziwei-cinematic','ganzhi-cinematic'].includes(atmosphere?.dataset.backgroundCurrent);
     if (!autoBackgroundButton) return;
     autoBackgroundButton.disabled = reducedMotion.matches;
     autoBackgroundButton.title = reducedMotion.matches
@@ -456,17 +460,36 @@
     });
     if (save) saveBackgroundPreferences();
   }
+  function chooseArtMotion(value, save = true) {
+    const motion = value === 'still' ? 'still' : 'loop';
+    if (atmosphere) atmosphere.dataset.artMotion = motion;
+    document.querySelectorAll('button[data-art-motion]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.artMotion === motion));
+    });
+    if (save) {
+      try { localStorage.setItem('jia-li-art-motion',motion); } catch (_) { /* Switching remains available. */ }
+      const url = new URL(location.href);
+      if (url.searchParams.has('artmotion')) {
+        url.searchParams.delete('artmotion');
+        history.replaceState(null,'',url.pathname+url.search+url.hash);
+      }
+    }
+    window.JiaArtLoops?.wake();
+  }
   if (atmosphere && backgroundSwitch) {
     showLotusStage(lotusStage);
     let savedBackground = "trajectory";
     let savedPlacement = "fixed";
     let savedVisibility = "clear";
+    let savedArtMotion = "loop";
     try {
       savedBackground = localStorage.getItem("jia-li-background") || savedBackground;
       savedPlacement = localStorage.getItem("jia-li-background-layout") || savedPlacement;
       savedVisibility = localStorage.getItem("jia-li-background-visibility") || savedVisibility;
+      savedArtMotion = localStorage.getItem('jia-li-art-motion') || savedArtMotion;
     } catch (_) { /* Use the original design by default. */ }
     const comparison = new URLSearchParams(location.search);
+    chooseArtMotion(comparison.get('artmotion') || savedArtMotion, false);
     chooseBackgroundVisibility(comparison.get("visibility") || savedVisibility, false);
     chooseBackgroundLayout(comparison.get("placement") || savedPlacement, false);
     chooseBackground(comparison.get("background") || savedBackground, false);
@@ -479,6 +502,9 @@
     });
     document.querySelectorAll("button[data-background-visibility]").forEach(button => {
       button.addEventListener("click", () => chooseBackgroundVisibility(button.dataset.backgroundVisibility));
+    });
+    document.querySelectorAll('button[data-art-motion]').forEach(button => {
+      button.addEventListener('click',() => chooseArtMotion(button.dataset.artMotion));
     });
     lotusButtons.forEach(button => {
       button.addEventListener('click', () => {

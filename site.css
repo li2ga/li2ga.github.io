@@ -143,6 +143,11 @@ strong,h3{font-weight:700}
 .imagery-turn{width:100%;height:100%;transform:rotate(var(--tilt,0deg));animation:imagery-turn 18s ease-in-out infinite alternate;animation-delay:var(--phase);animation-play-state:var(--scene-motion,paused)}
 .imagery-object img{width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity 1.8s ease;filter:saturate(.67)}
 .imagery-object img[data-art-ready]{opacity:1}
+.imagery-turn{position:relative}
+.art-loop-canvas{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.imagery-object .art-loop-canvas{filter:saturate(.67)}
+.imagery-turn.has-art-loop>img{visibility:hidden}
+.lotus-frame.has-art-loop{background-size:0 0}
 .imagery-object-0{--image-size:clamp(230px,25vw,390px);--image-top:1vh;--presence:.68;--journey:66s;--phase:-18s;--travel-x:42px;--travel-y:-138px;--tilt:-7deg;--turn:5deg;--parallax:.8}
 .imagery-object-1{--image-size:clamp(140px,14vw,210px);--image-top:73vh;--presence:.38;--journey:52s;--phase:-31s;--travel-x:-56px;--travel-y:-168px;--tilt:8deg;--turn:-4deg;--parallax:.4}
 .imagery-object-2{--image-size:clamp(240px,26vw,410px);--image-top:0vh;--presence:.51;--journey:74s;--phase:-37s;--travel-x:-46px;--travel-y:126px;--tilt:3deg;--turn:-4deg;--parallax:.65}
@@ -208,6 +213,7 @@ strong,h3{font-weight:700}
 @keyframes lotus-ring-turn{from{transform:translateY(2px) rotate(-4deg) scaleX(.96)}to{transform:translateY(-2px) rotate(4deg) scaleX(1.04)}}
 @keyframes lotus-dust-rise{from{opacity:.25;transform:translateY(3px)}to{opacity:.8;transform:translateY(-8px)}}
 @media(prefers-reduced-motion:reduce){.lotus-frame,.lotus-evolution,.lotus-float,.lotus-hover,.lotus-evolving-rings,.lotus-evolving-sparks{animation:none!important;transition:none!important;transform:none!important}}
+@media(prefers-reduced-motion:reduce){.art-loop-canvas{display:none!important}.imagery-turn.has-art-loop>img{visibility:visible}.lotus-frame.has-art-loop{background-size:contain}}
 .atmosphere-theme[data-background-scene=lotus] .motif-top-right{rotate:-9deg;scale:.88}
 @keyframes demon-bloom{from{transform:translateY(2px) scale(.975)}to{transform:translateY(-3px) scale(1.02)}}
 @keyframes demon-pressure{from{transform:scaleX(.97);opacity:.35}to{transform:scaleX(1.04);opacity:.65}}
