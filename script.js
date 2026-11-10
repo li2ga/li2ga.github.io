@@ -56,12 +56,72 @@
 
   const backgroundSwitch = document.querySelector(".background-switch");
   const backgroundScenes = ["trajectory", "ziwei-cinematic", "ganzhi-cinematic", "lotus"];
-  const availableBackgrounds = [...backgroundScenes, "lotus-classic", "ziwei", "ganzhi"];
+  const availableBackgrounds = [...backgroundScenes, "lotus-still", "lotus-classic", "ziwei", "ganzhi"];
   const wideBackground = window.matchMedia("(min-width: 1041px)");
   const autoBackgroundButton = document.querySelector('[data-background="auto"]');
   let backgroundChoice = "trajectory";
   let backgroundTimer = 0;
+  const lotusStageCount = 7;
+  const lotusScene = atmosphere?.querySelector('[data-background-scene="lotus"]');
+  const lotusOptions = document.querySelector('.lotus-options');
+  const lotusToggle = document.querySelector('[data-lotus-toggle]');
+  let lotusStage = 0;
+  let lotusPaused = false;
+  let lotusTimer = 0;
+  let lotusRequested = false;
+  try {
+    lotusPaused = localStorage.getItem('jia-li-lotus-paused') === '1';
+    const stage = Number(localStorage.getItem('jia-li-lotus-stage'));
+    if (lotusPaused && Number.isInteger(stage) && stage >= 0 && stage < lotusStageCount) lotusStage = stage;
+  } catch (_) { /* A first visit starts with the initial blue flame. */ }
+  function updateLotusLabels() {
+    if (!lotusToggle) return;
+    lotusToggle.disabled = reducedMotion.matches;
+    lotusToggle.setAttribute('aria-pressed', String(lotusPaused || reducedMotion.matches));
+    lotusToggle.textContent = language === 'zh'
+      ? (lotusPaused || reducedMotion.matches ? '播放演变' : '暂停演变')
+      : (lotusPaused || reducedMotion.matches ? 'Play evolution' : 'Pause evolution');
+    lotusToggle.title = reducedMotion.matches
+      ? (language === 'zh' ? '系统已启用减少动态效果，可手动选择形态' : 'Reduced motion is enabled; select a stage manually') : '';
+  }
+  function showLotusStage(stage) {
+    lotusStage = stage;
+    if (lotusScene) lotusScene.dataset.lotusStage = String(stage);
+    document.querySelectorAll('button[data-lotus-stage]').forEach(button => {
+      button.setAttribute('aria-pressed', String(Number(button.dataset.lotusStage) === stage));
+    });
+  }
+  function syncLotusMotion() {
+    clearTimeout(lotusTimer);
+    lotusTimer = 0;
+    if (!lotusScene || !atmosphere) return;
+    const active = atmosphere.dataset.backgroundCurrent === 'lotus';
+    if (lotusOptions) lotusOptions.hidden = !active;
+    const visible = active && wideBackground.matches && !document.hidden;
+    if (visible && !lotusRequested) {
+      lotusRequested = true;
+      let loaded = 0;
+      for (const source of ['assets/backgrounds/fire-lotus-evolution-v1.png', 'assets/backgrounds/fire-lotus-cold-v1.png']) {
+        const image = new Image();
+        image.onload = () => {
+          if (++loaded !== 2) return;
+          lotusScene.classList.add('lotus-ready');
+          if (!lotusPaused) showLotusStage(0);
+          syncLotusMotion();
+        };
+        image.src = source;
+      }
+    }
+    const playing = visible && !lotusPaused && !reducedMotion.matches && lotusScene.classList.contains('lotus-ready');
+    lotusScene.classList.toggle('lotus-is-playing', playing);
+    updateLotusLabels();
+    if (playing) lotusTimer = setTimeout(() => {
+      showLotusStage((lotusStage + 1) % lotusStageCount);
+      syncLotusMotion();
+    }, 4000);
+  }
   function updateBackgroundLabels() {
+    updateLotusLabels();
     if (!autoBackgroundButton) return;
     autoBackgroundButton.disabled = reducedMotion.matches;
     autoBackgroundButton.title = reducedMotion.matches
@@ -69,6 +129,7 @@
   }
   function showBackground(scene) {
     if (!atmosphere) return;
+    if (scene === 'lotus' && atmosphere.dataset.backgroundCurrent !== 'lotus' && !lotusPaused) showLotusStage(0);
     atmosphere.dataset.backgroundCurrent = scene;
     atmosphere.querySelectorAll("[data-background-scene]").forEach(layer => {
       layer.toggleAttribute("data-active", layer.dataset.backgroundScene === scene);
@@ -81,6 +142,7 @@
     const moving = !document.hidden && wideBackground.matches && !reducedMotion.matches;
     atmosphere.classList.toggle("is-moving", moving);
     updateBackgroundLabels();
+    syncLotusMotion();
     if (moving && backgroundChoice === "auto") {
       backgroundTimer = setTimeout(() => {
         const next = (backgroundScenes.indexOf(atmosphere.dataset.backgroundCurrent) + 1) % backgroundScenes.length;
@@ -125,6 +187,7 @@
     if (save) saveBackgroundPreferences();
   }
   if (atmosphere && backgroundSwitch) {
+    showLotusStage(lotusStage);
     let savedBackground = "trajectory";
     let savedPlacement = "fixed";
     try {
@@ -140,6 +203,19 @@
     });
     document.querySelectorAll("button[data-background-layout]").forEach(button => {
       button.addEventListener("click", () => chooseBackgroundLayout(button.dataset.backgroundLayout));
+    });
+    document.querySelectorAll('button[data-lotus-stage]').forEach(button => {
+      button.addEventListener('click', () => {
+        lotusPaused = true;
+        showLotusStage(Number(button.dataset.lotusStage));
+        try { localStorage.setItem('jia-li-lotus-paused', '1'); localStorage.setItem('jia-li-lotus-stage', String(lotusStage)); } catch (_) {}
+        syncLotusMotion();
+      });
+    });
+    lotusToggle?.addEventListener('click', () => {
+      lotusPaused = !lotusPaused;
+      try { localStorage.setItem('jia-li-lotus-paused', lotusPaused ? '1' : '0'); localStorage.setItem('jia-li-lotus-stage', String(lotusStage)); } catch (_) {}
+      syncLotusMotion();
     });
     document.addEventListener("visibilitychange", syncBackgroundMotion);
     wideBackground.addEventListener("change", syncBackgroundMotion);

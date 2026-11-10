@@ -86,7 +86,7 @@ strong,h3{font-weight:700}
 .background-placement{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:9px;padding-top:9px;border-top:1px solid #eee6dc}
 .background-archive{margin-top:9px;border-top:1px solid #eee6dc;padding-top:7px}
 .background-archive>summary{padding:6px 0;font-size:11px;color:#6c6258;cursor:pointer}
-.background-choices [data-background=auto]{grid-column:auto}
+.background-choices [data-background=auto]{grid-column:1 / -1}
 
 /* One first-visit gesture, followed by the ordinary reading page. */
 .site-entrance{display:none;position:fixed;inset:0;z-index:80;overflow:hidden;background:#fff;pointer-events:none}
@@ -152,6 +152,33 @@ strong,h3{font-weight:700}
 .phase-dust{fill:#c8b18b;animation:celestial-light 11s ease-in-out infinite alternate}
 @keyframes celestial-drift{from{transform:translateY(-3px) rotate(-1deg)}to{transform:translateY(3px) rotate(1deg)}}
 @keyframes celestial-light{from{opacity:.55}to{opacity:1}}
+.lotus-options{border-top:1px solid #eee6dc;margin-top:9px;padding-top:9px}
+.lotus-stage-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.lotus-options .lotus-stage-buttons button{font-size:11px;min-height:32px;padding:5px 3px}
+.lotus-options .lotus-play-toggle{width:100%;margin-top:6px;background:#fff1e3;border-color:#ead4b8}
+.lotus-evolution{aspect-ratio:1;height:auto;--scene-motion:var(--lotus-motion,paused)}
+.lotus-frame{position:absolute;inset:0;display:block;background-repeat:no-repeat;background-size:300% 200%;background-position:var(--lotus-x) var(--lotus-y);opacity:0;transform:scale(.96);transition:opacity .9s ease,transform 1.3s cubic-bezier(.2,.6,.2,1)}
+.lotus-ready .lotus-frame{background-image:url('assets/backgrounds/fire-lotus-evolution-v1.png')}
+[data-lotus-stage="0"] .lotus-frame[data-lotus-frame="0"],
+[data-lotus-stage="1"] .lotus-frame[data-lotus-frame="1"],
+[data-lotus-stage="2"] .lotus-frame[data-lotus-frame="2"],
+[data-lotus-stage="3"] .lotus-frame[data-lotus-frame="3"],
+[data-lotus-stage="4"] .lotus-frame[data-lotus-frame="4"],
+[data-lotus-stage="5"] .lotus-frame[data-lotus-frame="5"],
+[data-lotus-stage="6"] .lotus-frame[data-lotus-frame="6"]{opacity:.77;transform:scale(1)}
+.lotus-ready .lotus-frame.lotus-cold{background-image:url('assets/backgrounds/fire-lotus-cold-v1.png');background-size:contain;background-position:center}
+.lotus-fallback{position:absolute;inset:0;width:100%;height:100%}
+.lotus-ready .lotus-fallback{display:none}
+.lotus-energy{position:absolute;inset:0;width:100%;height:100%;overflow:visible;opacity:.55}
+.lotus-evolving-rings{fill:none;stroke:#c5c8da;stroke-width:.65;opacity:.2;transform-origin:200px 255px;animation:lotus-ring-turn 16s ease-in-out infinite alternate;animation-play-state:var(--lotus-motion,paused)}
+.lotus-evolving-rings ellipse:last-child{stroke:#d9b574;stroke-width:1.1;stroke-dasharray:60 12 4 16}
+.lotus-evolving-sparks{fill:#ddba95;animation:lotus-dust-rise 8s ease-in-out infinite alternate;animation-play-state:var(--lotus-motion,paused)}
+.lotus-is-playing{--lotus-motion:running}
+.page-atmosphere.is-moving .atmosphere-theme[data-active] .lotus-evolution{animation-play-state:var(--lotus-motion,paused)}
+[data-lotus-stage="5"] .lotus-evolving-rings,[data-lotus-stage="6"] .lotus-evolving-rings{opacity:.8}
+@keyframes lotus-ring-turn{from{transform:translateY(2px) rotate(-4deg) scaleX(.96)}to{transform:translateY(-2px) rotate(4deg) scaleX(1.04)}}
+@keyframes lotus-dust-rise{from{opacity:.25;transform:translateY(3px)}to{opacity:.8;transform:translateY(-8px)}}
+@media(prefers-reduced-motion:reduce){.lotus-frame,.lotus-evolution,.lotus-evolving-rings,.lotus-evolving-sparks{animation:none!important;transition:none!important;transform:none!important}}
 .atmosphere-theme[data-background-scene=lotus] .motif-top-right{rotate:-9deg;scale:.88}
 @keyframes go-board-drift{from{transform:translateY(-3px) rotate(-2deg)}to{transform:translateY(3px) rotate(2deg)}}
 @keyframes go-stone-float{from{transform:translateY(0)}to{transform:translateY(-10px)}}
