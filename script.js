@@ -43,28 +43,49 @@
     reducedMotion.addEventListener('change', finishOnReducedMotion);
   } else if (entrance) entrance.remove();
 
-  // A small response in the margins; no scroll listener or continuous animation loop.
+  // Ease pointer depth separately from CSS floating; stop requesting frames once settled.
   const atmosphere = document.querySelector(".page-atmosphere");
   const widePointer = window.matchMedia("(min-width: 1041px) and (pointer: fine)");
   let atmosphereFrame = 0;
   let pointerX = 0;
   let pointerY = 0;
+  let pointerTargetX = 0;
+  let pointerTargetY = 0;
+  let pointerTime = 0;
+  function followPointer(time) {
+    const elapsed = pointerTime ? Math.min(64, time - pointerTime) : 16;
+    pointerTime = time;
+    const easing = 1 - Math.exp(-elapsed / 95);
+    pointerX += (pointerTargetX - pointerX) * easing;
+    pointerY += (pointerTargetY - pointerY) * easing;
+    const settled = Math.abs(pointerTargetX - pointerX) < .02 && Math.abs(pointerTargetY - pointerY) < .02;
+    if (settled) { pointerX = pointerTargetX; pointerY = pointerTargetY; }
+    atmosphere.style.setProperty('--trace-x', `${pointerX.toFixed(2)}px`);
+    atmosphere.style.setProperty('--trace-y', `${pointerY.toFixed(2)}px`);
+    atmosphereFrame = settled ? 0 : requestAnimationFrame(followPointer);
+  }
+  function easeAtmosphere() {
+    if (atmosphereFrame || !atmosphere) return;
+    pointerTime = 0;
+    atmosphereFrame = requestAnimationFrame(followPointer);
+  }
   function resetAtmosphere() {
-    cancelAnimationFrame(atmosphereFrame);
-    atmosphereFrame = 0;
-    if (atmosphere) { atmosphere.style.removeProperty("--trace-x"); atmosphere.style.removeProperty("--trace-y"); }
+    pointerTargetX = pointerTargetY = 0;
+    if (!atmosphere) return;
+    if (document.hidden || reducedMotion.matches || !widePointer.matches) {
+      cancelAnimationFrame(atmosphereFrame);
+      atmosphereFrame = 0;
+      pointerX = pointerY = 0;
+      atmosphere.style.removeProperty('--trace-x');
+      atmosphere.style.removeProperty('--trace-y');
+    } else easeAtmosphere();
   }
   if (atmosphere) {
     document.addEventListener("pointermove", event => {
       if (reducedMotion.matches || !widePointer.matches || event.pointerType === "touch") return;
-      pointerX = Math.max(-5, Math.min(5, (event.clientX / innerWidth - .5) * 10));
-      pointerY = Math.max(-5, Math.min(5, (event.clientY / innerHeight - .5) * 10));
-      if (atmosphereFrame) return;
-      atmosphereFrame = requestAnimationFrame(() => {
-        atmosphere.style.setProperty("--trace-x", `${pointerX.toFixed(2)}px`);
-        atmosphere.style.setProperty("--trace-y", `${pointerY.toFixed(2)}px`);
-        atmosphereFrame = 0;
-      });
+      pointerTargetX = Math.max(-12, Math.min(12, (event.clientX / innerWidth - .5) * 24));
+      pointerTargetY = Math.max(-9, Math.min(9, (event.clientY / innerHeight - .5) * 18));
+      easeAtmosphere();
     }, { passive: true });
     document.documentElement.addEventListener("pointerleave", resetAtmosphere);
     document.addEventListener("visibilitychange", () => { if (document.hidden) resetAtmosphere(); });
@@ -602,7 +623,7 @@
   const layer = document.getElementById("effect-layer");
   const emoji = [
     // 历代站标独立保存，避免换 favicon 时把点击图案一起替换。
-    { image: "assets/icons/lotus-pink-gold.svg" },
+    { image: "assets/icons/lotus-pink-gold-transparent.svg" },
     { image: "assets/icons/jl-square.svg" },
     // 原来的 15 个全部保留。
     "✨", "🤖", "🥳", "⚡", "🌾", "💧", "🔥", "🤩", "🌈", "🚀", "🥇", "🏆", "💎", "🌌", "🪐",
@@ -617,7 +638,7 @@
     // 学业。
     "🎓",
     // 十二生肖：鼠、牛、虎、兔、龙、蛇、马、羊、猴、鸡、狗、猪。
-    "🐀", "🐂", "🐅", "🐇", "🐉", "🐍", "🐎", "🐐", "🐒", "🐓", "🐕", "🐖",
+    // "🐀", "🐂", "🐅", "🐇", "🐉", "🐍", "🐎", "🐐", "🐒", "🐓", "🐕", "🐖",
     // 积极、开心与鼓励。
     "😀", "😃", "😄", "😁", "😊", "🥰", "🤗", "😎", "💪", "👏", "🙌", "👍", "🍀", "🌻",
     // 奶酪与参考主页标签图标中的星光圆月。
