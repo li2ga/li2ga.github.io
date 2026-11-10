@@ -182,7 +182,7 @@
     });
   }
   function pumpLotusQueue() {
-    while (lotusLoading < 2 && lotusQueue.length) lotusQueue.shift().start();
+    while (lotusLoading + atmosphere.querySelectorAll('[data-art-loading]').length < 2 && lotusQueue.length) lotusQueue.shift().start();
   }
   function decodeLotusImage(source) {
     return new Promise((resolve, reject) => {
@@ -218,7 +218,7 @@
               frame.style.backgroundImage = `url("${source}")`;
             });
             resolve();
-          }, reject).finally(() => { lotusLoading--; pumpLotusQueue(); });
+          }, reject).finally(() => { lotusLoading--; pumpLotusQueue(); syncImagery(); });
         }
       };
       if (priority) lotusQueue.unshift(job);
@@ -322,7 +322,7 @@
   }
   function updateImageryStatus() {
     const options = document.querySelector('[data-imagery-options]');
-    const scene = atmosphere?.querySelector('.imagery-scene[data-active]');
+    const scene = atmosphere?.querySelector('.imagery-scene[data-active], .has-raster-art[data-active]');
     if (options) options.hidden = !scene;
     if (!scene) return;
     const images = [...scene.querySelectorAll('img[data-imagery-src]')];
@@ -340,10 +340,10 @@
   }
   function syncImagery() {
     updateImageryStatus();
-    const scene = atmosphere?.querySelector('.imagery-scene[data-active]');
+    const scene = atmosphere?.querySelector('.imagery-scene[data-active], .has-raster-art[data-active]');
     if (!scene || document.hidden || !wideBackground.matches) return;
     if (!backgroundUserInitiated && portraitImage && !portraitImage.complete) return;
-    let running = scene.querySelectorAll('[data-art-loading]').length;
+    let running = lotusLoading + atmosphere.querySelectorAll('[data-art-loading]').length;
     for (const image of scene.querySelectorAll('img[data-imagery-src]')) {
       if (running >= 2) break;
       if (image.hasAttribute('data-art-ready') || image.hasAttribute('data-art-loading') || image.hasAttribute('data-art-error')) continue;
@@ -358,6 +358,7 @@
         image.onload = image.onerror = null;
         image.removeAttribute('data-art-loading');
         image.setAttribute(success ? 'data-art-ready' : 'data-art-error', '');
+        pumpLotusQueue();
         syncImagery();
       }
       image.onload = async () => {
@@ -482,7 +483,7 @@
       syncLotusMotion();
     });
     document.querySelector('[data-imagery-retry]')?.addEventListener('click', () => {
-      atmosphere.querySelectorAll('.imagery-scene[data-active] [data-art-error]').forEach(image => image.removeAttribute('data-art-error'));
+      atmosphere.querySelectorAll('.atmosphere-theme[data-active] [data-art-error]').forEach(image => image.removeAttribute('data-art-error'));
       syncImagery();
     });
     lotusToggle?.addEventListener('click', () => {
@@ -641,7 +642,8 @@
     // 雪花、水晶球与思考。
     "❄️", "🔮", "🤔",
     // 月亮、月相与月亮表情。
-    "🌙", "🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘", "🌚", "🌝", "🌛", "🌜",
+    "🌙", "🌕",
+    // 暂停使用的黑色、部分暗面及表情月亮：["🌑", "🌒", "🌓", "🌔", "🌖", "🌗", "🌘", "🌚", "🌝", "🌛", "🌜"]。
     // 学业。
     "🎓",
     // 十二生肖：鼠、牛、虎、兔、龙、蛇、马、羊、猴、鸡、狗、猪。
