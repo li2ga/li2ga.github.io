@@ -108,14 +108,6 @@ strong,h3{font-weight:700}
 @keyframes entrance-clear{0%,64%{background:#fff}100%{background:#ffffff00;visibility:hidden}}
 .cinematic-scene .motif-top-left{top:13vh}
 .cinematic-scene .motif-top-right{top:52vh}
-.go-board{transform-origin:200px 190px;animation:go-board-drift 19s ease-in-out infinite alternate}
-.go-grid{fill:none;stroke:#859bad;stroke-width:.65;opacity:.44}
-.go-ribbons{fill:none;stroke:#a9becb;stroke-width:.8;opacity:.45}
-.go-ribbons path:last-child{stroke:#c7b792;opacity:.7}
-.go-floating-stone,.go-floating-white{animation:go-stone-float 9s ease-in-out infinite alternate}
-.go-floating-white{animation-duration:12s;animation-delay:-4s}
-.go-ripples{fill:none;stroke:#a9bdcb;stroke-width:.7;opacity:.5;transform-origin:298px 313px;animation:go-ripple 9s ease-in-out infinite alternate}
-.go-light{stroke:#e2d5b3;stroke-width:.7;opacity:.5}
 .demon-petal{stroke:#cf8cbe;stroke-width:.65;opacity:var(--petal-light,.8)}
 .demon-petal-vein{fill:none;stroke:#fff5ff;stroke-width:.7;opacity:.75}
 .demon-flower{transform-origin:200px 270px;animation:demon-bloom 13s ease-in-out infinite alternate;filter:drop-shadow(0 0 1.2px #ecaee333)}
@@ -129,30 +121,43 @@ strong,h3{font-weight:700}
 .demon-sparks circle{animation:demon-wisp 7s ease-in-out infinite alternate;animation-delay:var(--wisp-delay)}
 .page-atmosphere{--scene-motion:paused}
 .page-atmosphere.is-moving .atmosphere-theme[data-active]{--scene-motion:running}
-.demon-flower,.demon-pressure,.demon-wisps path,.demon-sparks circle,.celestial-palaces,.celestial-pole,.phase-flow,.phase-dust{animation-play-state:var(--scene-motion,paused)}
+.demon-flower,.demon-pressure,.demon-wisps path,.demon-sparks circle{animation-play-state:var(--scene-motion,paused)}
 .cinematic-scene .motif-top-right,.cinematic-scene .motif-lower-left{rotate:12deg}
-.celestial-silk{fill:none;stroke:#b1bcd1;stroke-width:.8;opacity:.55}
-.celestial-silk path:last-child{stroke:#c3b18d;opacity:.6}
-.celestial-palaces{fill:#e9e7f4;fill-opacity:.19;stroke:#a9aec6;stroke-width:.65;animation:celestial-drift 18s ease-in-out infinite alternate;transform-origin:200px 170px}
-.celestial-palace{text-anchor:middle;dominant-baseline:middle;font:8px 'SimSun','Songti SC',serif;fill:#9d96b7;fill-opacity:.9;stroke:none}
-.celestial-stars{fill:#c9badb;stroke:#baaed0;stroke-width:.8}
-.celestial-stars path{fill:none;opacity:.6}
-.celestial-pole{animation:celestial-light 9s ease-in-out infinite alternate;filter:drop-shadow(0 0 3px #dac9ea)}
-.celestial-pole>path:last-child{fill:none;stroke:#c7bdd9;stroke-width:.6}
-.celestial-title{text-anchor:middle;dominant-baseline:middle;font:20px 'SimSun','Songti SC',serif;fill:#a19ab5;letter-spacing:3px;stroke:none}
-.celestial-side{text-anchor:middle;dominant-baseline:middle;font:12px 'SimSun','Songti SC',serif;fill:#aaa2bb;letter-spacing:2px;stroke:none}
-.celestial-transforms{fill:none;stroke:#d2bea0;stroke-width:.65;opacity:.8}
-.celestial-transform{text-anchor:middle;dominant-baseline:middle;font:13px 'SimSun','Songti SC',serif;fill:#baa079;stroke:none}
-.phase-flow{fill:none;stroke:#c8c5b8;stroke-width:.8;opacity:.6;animation:celestial-drift 20s ease-in-out infinite alternate}
-.phase-flow path:nth-child(2){stroke:#c4b5c7}
-.phase-flow path:nth-child(3){stroke:#b4c8d5}
-.phase-label{text-anchor:middle;dominant-baseline:middle;font:15px 'SimSun','Songti SC',serif;stroke:none}
-.phase-title{text-anchor:middle;dominant-baseline:middle;font:22px 'SimSun','Songti SC',serif;fill:#aea083;stroke:none;letter-spacing:4px}
-.phase-subtitle{text-anchor:middle;dominant-baseline:middle;font:10px 'SimSun','Songti SC',serif;fill:#a99b85;stroke:none;letter-spacing:1px}
-.phase-stem{text-anchor:middle;dominant-baseline:middle;font:12px 'SimSun','Songti SC',serif;fill:#ac9e91;stroke:none}
-.phase-dust{fill:#c8b18b;animation:celestial-light 11s ease-in-out infinite alternate}
-@keyframes celestial-drift{from{transform:translateY(-3px) rotate(-1deg)}to{transform:translateY(3px) rotate(1deg)}}
-@keyframes celestial-light{from{opacity:.55}to{opacity:1}}
+.imagery-scene{--side-space:calc((100vw - 800px)/2);--current-ink:#acc3d0;--current-light:#d6b677}
+.imagery-scene[data-background-scene=ganzhi-cinematic]{--current-ink:#a6bbb0;--current-light:#cb9577}
+.imagery-object{position:absolute;width:var(--image-size);height:var(--image-size);left:calc(var(--side-space)/2 - var(--image-size)/2);top:var(--image-top);transform:translate3d(calc(var(--trace-x,0px)*var(--parallax,.5)),calc(var(--trace-y,0px)*var(--parallax,.5)),0)}
+.imagery-object-1,.imagery-object-2,.imagery-object-5{left:auto;right:calc(var(--side-space)/2 - var(--image-size)/2)}
+.imagery-flight{width:100%;height:100%;opacity:var(--presence);animation:imagery-procession var(--journey) linear infinite;animation-delay:var(--phase);animation-play-state:var(--scene-motion,paused)}
+.imagery-turn{width:100%;height:100%;transform:rotate(var(--tilt,0deg));animation:imagery-turn 18s ease-in-out infinite alternate;animation-delay:var(--phase);animation-play-state:var(--scene-motion,paused)}
+.imagery-object img{width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity 1.8s ease;filter:saturate(.67)}
+.imagery-object img[data-art-ready]{opacity:1}
+.imagery-object-0{--image-size:clamp(230px,25vw,390px);--image-top:1vh;--presence:.68;--journey:66s;--phase:-18s;--travel-x:42px;--travel-y:-138px;--tilt:-7deg;--turn:5deg;--parallax:.8}
+.imagery-object-1{--image-size:clamp(140px,14vw,210px);--image-top:73vh;--presence:.38;--journey:52s;--phase:-31s;--travel-x:-56px;--travel-y:-168px;--tilt:8deg;--turn:-4deg;--parallax:.4}
+.imagery-object-2{--image-size:clamp(240px,26vw,410px);--image-top:0vh;--presence:.51;--journey:74s;--phase:-37s;--travel-x:-46px;--travel-y:126px;--tilt:3deg;--turn:-4deg;--parallax:.65}
+.imagery-object-3{--image-size:clamp(170px,18vw,260px);--image-top:72vh;--presence:.44;--journey:61s;--phase:-24s;--travel-x:35px;--travel-y:-142px;--tilt:-12deg;--turn:7deg;--parallax:.7}
+.imagery-object-4{--image-size:clamp(120px,13vw,190px);--image-top:39vh;--presence:.18;--journey:89s;--phase:-53s;--travel-x:-25px;--travel-y:-114px;--tilt:18deg;--turn:-8deg;--parallax:.2;left:calc(var(--side-space)*.58 - var(--image-size)/2)}
+.imagery-object-5{--image-size:clamp(210px,22vw,330px);--image-top:42vh;--presence:.52;--journey:43s;--phase:-19s;--travel-x:-94px;--travel-y:-96px;--tilt:-9deg;--turn:6deg;--parallax:1}
+.imagery-scene[data-background-scene=ganzhi-cinematic] .imagery-object-0{--presence:.59;--tilt:0deg;--turn:3deg}
+.imagery-scene[data-background-scene=ganzhi-cinematic] .imagery-object-2{--image-size:clamp(270px,27vw,440px);--presence:.57;--image-top:-3vh;--travel-y:-119px;--tilt:-8deg;--turn:8deg}
+.imagery-scene[data-background-scene=ganzhi-cinematic] .imagery-object-5{--image-top:58vh;--presence:.42;--journey:83s;--travel-x:36px;--travel-y:-118px;--tilt:0deg;--turn:2deg}
+.imagery-weather{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.imagery-currents{fill:none;stroke:var(--current-ink);stroke-width:.65;opacity:.19;animation:imagery-weather 24s ease-in-out infinite alternate;animation-play-state:var(--scene-motion,paused)}
+.imagery-currents path:nth-child(n+3){stroke-width:9;opacity:.24;filter:blur(7px)}
+.imagery-glints{fill:none;stroke:var(--current-light);stroke-width:1.2;stroke-dasharray:.018 .982;stroke-linecap:round;opacity:.52}
+.imagery-glints path{animation:imagery-light 18s linear infinite;animation-play-state:var(--scene-motion,paused)}
+.imagery-glints path:nth-child(2){animation-delay:-9s;animation-direction:reverse}
+.imagery-dust{fill:#bbac8e;opacity:.44;animation:imagery-weather 16s ease-in-out infinite alternate-reverse;animation-play-state:var(--scene-motion,paused)}
+.page-atmosphere[data-background-layout=page] .imagery-object-0{--image-top:3%}
+.page-atmosphere[data-background-layout=page] .imagery-object-1{--image-top:22%}
+.page-atmosphere[data-background-layout=page] .imagery-object-2{--image-top:40%}
+.page-atmosphere[data-background-layout=page] .imagery-object-3{--image-top:57%}
+.page-atmosphere[data-background-layout=page] .imagery-object-4{--image-top:73%}
+.page-atmosphere[data-background-layout=page] .imagery-object-5{--image-top:87%}
+@keyframes imagery-procession{0%{opacity:0;transform:translate3d(calc(var(--travel-x)*-.5),calc(var(--travel-y)*-.5),0) scale(.86)}12%,78%{opacity:var(--presence)}50%{transform:translate3d(0,0,0) scale(1)}100%{opacity:0;transform:translate3d(calc(var(--travel-x)*.5),calc(var(--travel-y)*.5),0) scale(1.09)}}
+@keyframes imagery-turn{from{transform:rotate(var(--tilt))}to{transform:rotate(var(--turn))}}
+@keyframes imagery-weather{from{transform:translate3d(-9px,12px,0);opacity:.19}to{transform:translate3d(13px,-17px,0);opacity:.38}}
+@keyframes imagery-light{from{stroke-dashoffset:1}to{stroke-dashoffset:-1}}
+@media(prefers-reduced-motion:reduce){.imagery-flight,.imagery-turn,.imagery-weather *{animation:none!important;transform:none!important}.imagery-object img{transition:none!important}}
 .lotus-options{border-top:1px solid #eee6dc;margin-top:9px;padding-top:9px}
 .lotus-stage-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
 .lotus-options .lotus-stage-buttons button{font-size:11px;min-height:32px;padding:5px 3px}
@@ -179,9 +184,6 @@ strong,h3{font-weight:700}
 @keyframes lotus-dust-rise{from{opacity:.25;transform:translateY(3px)}to{opacity:.8;transform:translateY(-8px)}}
 @media(prefers-reduced-motion:reduce){.lotus-frame,.lotus-evolution,.lotus-evolving-rings,.lotus-evolving-sparks{animation:none!important;transition:none!important;transform:none!important}}
 .atmosphere-theme[data-background-scene=lotus] .motif-top-right{rotate:-9deg;scale:.88}
-@keyframes go-board-drift{from{transform:translateY(-3px) rotate(-2deg)}to{transform:translateY(3px) rotate(2deg)}}
-@keyframes go-stone-float{from{transform:translateY(0)}to{transform:translateY(-10px)}}
-@keyframes go-ripple{from{opacity:.25;transform:scale(.92)}to{opacity:.6;transform:scale(1.06)}}
 @keyframes demon-bloom{from{transform:translateY(2px) scale(.975)}to{transform:translateY(-3px) scale(1.02)}}
 @keyframes demon-pressure{from{transform:scaleX(.97);opacity:.35}to{transform:scaleX(1.04);opacity:.65}}
 @keyframes demon-wisp{from{transform:translateY(4px);opacity:.35}to{transform:translateY(-7px);opacity:.8}}

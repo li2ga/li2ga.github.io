@@ -74,7 +74,7 @@
 
   const backgroundSwitch = document.querySelector(".background-switch");
   const backgroundScenes = ["trajectory", "ziwei-cinematic", "ganzhi-cinematic", "lotus"];
-  const availableBackgrounds = [...backgroundScenes, "lotus-still", "lotus-classic", "ziwei", "ganzhi"];
+  const availableBackgrounds = [...backgroundScenes, "lotus-still", "lotus-classic"];
   const wideBackground = window.matchMedia("(min-width: 1041px)");
   const autoBackgroundButton = document.querySelector('[data-background="auto"]');
   let backgroundChoice = "trajectory";
@@ -93,7 +93,7 @@
   let lotusPaused = false;
   let lotusTimer = 0;
   let lotusStarted = false;
-  let lotusUserInitiated = false;
+  let backgroundUserInitiated = false;
   let lotusPending = false;
   let lotusError = false;
   let lotusRequest = 0;
@@ -180,7 +180,7 @@
     const active = atmosphere.dataset.backgroundCurrent === 'lotus';
     if (lotusOptions) lotusOptions.hidden = !active;
     const visible = active && wideBackground.matches && !document.hidden;
-    if (visible && !lotusStarted && (lotusUserInitiated || !portraitImage || portraitImage.complete)) {
+    if (visible && !lotusStarted && (backgroundUserInitiated || !portraitImage || portraitImage.complete)) {
       requestLotusStage(lotusDesiredStage);
       return;
     }
@@ -194,8 +194,58 @@
       lotusTimer = setTimeout(() => requestLotusStage(next), 4000);
     }
   }
+  function updateImageryStatus() {
+    const options = document.querySelector('[data-imagery-options]');
+    const scene = atmosphere?.querySelector('.imagery-scene[data-active]');
+    if (options) options.hidden = !scene;
+    if (!scene) return;
+    const images = [...scene.querySelectorAll('img[data-imagery-src]')];
+    const failed = images.some(image => image.hasAttribute('data-art-error'));
+    const pending = images.some(image => !image.hasAttribute('data-art-ready') && !image.hasAttribute('data-art-error'));
+    const status = document.querySelector('[data-imagery-status]');
+    if (status) {
+      status.hidden = !failed && !pending;
+      status.textContent = failed
+        ? (language === 'zh' ? '部分形象尚未加载，可重试。' : 'Some artwork could not load. You can retry.')
+        : (language === 'zh' ? '正在加载形象…' : 'Loading artwork…');
+    }
+    const retry = document.querySelector('[data-imagery-retry]');
+    if (retry) retry.hidden = !failed;
+  }
+  function syncImagery() {
+    updateImageryStatus();
+    const scene = atmosphere?.querySelector('.imagery-scene[data-active]');
+    if (!scene || document.hidden || !wideBackground.matches) return;
+    if (!backgroundUserInitiated && portraitImage && !portraitImage.complete) return;
+    let running = scene.querySelectorAll('[data-art-loading]').length;
+    for (const image of scene.querySelectorAll('img[data-imagery-src]')) {
+      if (running >= 2) break;
+      if (image.hasAttribute('data-art-ready') || image.hasAttribute('data-art-loading') || image.hasAttribute('data-art-error')) continue;
+      running++;
+      image.setAttribute('data-art-loading', '');
+      let settled = false;
+      let deadline = 0;
+      function finish(success) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(deadline);
+        image.onload = image.onerror = null;
+        image.removeAttribute('data-art-loading');
+        image.setAttribute(success ? 'data-art-ready' : 'data-art-error', '');
+        syncImagery();
+      }
+      image.onload = async () => {
+        try { await image.decode(); finish(true); }
+        catch (_) { finish(false); }
+      };
+      image.onerror = () => finish(false);
+      deadline = setTimeout(() => finish(false), 45000);
+      image.src = image.dataset.imagerySrc;
+    }
+  }
   function updateBackgroundLabels() {
     updateLotusLabels();
+    updateImageryStatus();
     if (!autoBackgroundButton) return;
     autoBackgroundButton.disabled = reducedMotion.matches;
     autoBackgroundButton.title = reducedMotion.matches
@@ -216,6 +266,7 @@
     atmosphere.classList.toggle("is-moving", moving);
     updateBackgroundLabels();
     syncLotusMotion();
+    syncImagery();
     if (moving && backgroundChoice === "auto") {
       backgroundTimer = setTimeout(() => {
         const next = (backgroundScenes.indexOf(atmosphere.dataset.backgroundCurrent) + 1) % backgroundScenes.length;
@@ -241,7 +292,9 @@
     } catch (_) { /* Static-file previews also work without history access. */ }
   }
   function chooseBackground(choice, save = true) {
-    if (save) lotusUserInitiated = true;
+    if (save) backgroundUserInitiated = true;
+    if (choice === 'ziwei') choice = 'ziwei-cinematic';
+    if (choice === 'ganzhi') choice = 'ganzhi-cinematic';
     backgroundChoice = availableBackgrounds.includes(choice) || choice === "auto" ? choice : "trajectory";
     if (atmosphere) atmosphere.dataset.backgroundChoice = backgroundChoice;
     showBackground(backgroundChoice === "auto" ? "lotus" : backgroundChoice);
@@ -287,14 +340,18 @@
       });
     });
     lotusRetry?.addEventListener('click', () => requestLotusStage(lotusDesiredStage));
+    document.querySelector('[data-imagery-retry]')?.addEventListener('click', () => {
+      atmosphere.querySelectorAll('.imagery-scene[data-active] [data-art-error]').forEach(image => image.removeAttribute('data-art-error'));
+      syncImagery();
+    });
     lotusToggle?.addEventListener('click', () => {
       lotusPaused = !lotusPaused;
       try { localStorage.setItem('jia-li-lotus-paused', lotusPaused ? '1' : '0'); localStorage.setItem('jia-li-lotus-stage', String(lotusStage)); } catch (_) {}
       if (lotusError) requestLotusStage(lotusDesiredStage);
       else syncLotusMotion();
     });
-    portraitImage?.addEventListener('load', syncLotusMotion);
-    portraitImage?.addEventListener('error', syncLotusMotion);
+    portraitImage?.addEventListener('load', syncBackgroundMotion);
+    portraitImage?.addEventListener('error', syncBackgroundMotion);
     document.addEventListener("visibilitychange", syncBackgroundMotion);
     wideBackground.addEventListener("change", syncBackgroundMotion);
     reducedMotion.addEventListener("change", syncBackgroundMotion);
