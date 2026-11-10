@@ -87,22 +87,43 @@
   const lotusStatus = document.querySelector('[data-lotus-status]');
   const lotusRetry = document.querySelector('[data-lotus-retry]');
   const lotusLoads = new Map();
-  const lotusImages = new Map();
+  const lotusQueue = [];
+  let lotusLoading = 0;
+  const lotusProfiles = {
+    fixed: { offsets: [0, 4, 2, 6], holds: [5600, 8300, 6500, 9700] },
+    page: { offsets: [0, 1, 3, 5], holds: [4300, 6100, 7600, 5200] }
+  };
+  const lotusStageHolds = [1, 1.18, .91, 1.11, 1.26, 1.14, .95];
+  const lotusItems = [...(lotusScene?.querySelectorAll('[data-lotus-instance]') || [])].map((element, index) => ({
+    element, index, stage: null, desiredStage: null, pending: false, error: false,
+    timer: 0, dueAt: 0, remaining: null, request: 0
+  }));
   let lotusStage = 0;
-  let lotusDesiredStage = 0;
   let lotusPaused = false;
-  let lotusTimer = 0;
-  let lotusStarted = false;
+  let lotusLayout = null;
   let backgroundUserInitiated = false;
-  let lotusPending = false;
-  let lotusError = false;
-  let lotusRequest = 0;
   try {
     lotusPaused = localStorage.getItem('jia-li-lotus-paused') === '1';
     const stage = Number(localStorage.getItem('jia-li-lotus-stage'));
     if (lotusPaused && Number.isInteger(stage) && stage >= 0 && stage < lotusStageCount) lotusStage = stage;
+    if (lotusPaused) {
+      const stages = JSON.parse(localStorage.getItem('jia-li-lotus-stages') || 'null');
+      const valid = Array.isArray(stages) && stages.length === lotusItems.length
+        && stages.every(value => Number.isInteger(value) && value >= 0 && value < lotusStageCount);
+      lotusItems.forEach(item => { item.desiredStage = valid ? stages[item.index] : lotusStage; });
+    }
   } catch (_) { /* A first visit starts with the initial blue flame. */ }
-  lotusDesiredStage = lotusStage;
+  if (lotusPaused) lotusItems.forEach(item => { item.desiredStage ??= lotusStage; });
+  function visibleLotusItems() {
+    return lotusItems.filter(item => lotusLayout === 'page' || item.index < 2);
+  }
+  function saveLotusPlayback(stage = null) {
+    try {
+      localStorage.setItem('jia-li-lotus-paused', lotusPaused ? '1' : '0');
+      localStorage.setItem('jia-li-lotus-stage', String(stage ?? lotusStage));
+      localStorage.setItem('jia-li-lotus-stages', JSON.stringify(lotusItems.map(item => stage ?? item.stage ?? item.desiredStage)));
+    } catch (_) { /* Motion and manual selection remain usable without storage. */ }
+  }
   function updateLotusLabels() {
     if (!lotusToggle) return;
     lotusToggle.disabled = reducedMotion.matches;
@@ -112,14 +133,18 @@
       : (lotusPaused || reducedMotion.matches ? 'Play evolution' : 'Pause evolution');
     lotusToggle.title = reducedMotion.matches
       ? (language === 'zh' ? '系统已启用减少动态效果，可手动选择形态' : 'Reduced motion is enabled; select a stage manually') : '';
+    const items = visibleLotusItems();
+    const pending = items.some(item => item.pending);
+    const failed = items.some(item => item.error);
+    const started = items.some(item => item.stage !== null);
     if (lotusStatus) {
-      lotusStatus.hidden = !lotusPending && !lotusError && lotusStarted;
-      lotusStatus.textContent = lotusError
-        ? (language === 'zh' ? '此形态加载失败，请重试。' : 'This stage could not load. Try again.')
+      lotusStatus.hidden = !pending && !failed && started;
+      lotusStatus.textContent = failed
+        ? (language === 'zh' ? '部分火莲加载失败，可重试。' : 'Some lotuses could not load. Try again.')
         : (language === 'zh' ? '正在加载火莲…' : 'Loading lotus…');
     }
-    if (lotusRetry) lotusRetry.hidden = !lotusError;
-    lotusButtons.forEach(button => button.setAttribute('aria-busy', String(lotusPending && Number(button.dataset.lotusStage) === lotusDesiredStage)));
+    if (lotusRetry) lotusRetry.hidden = !failed;
+    lotusButtons.forEach(button => button.setAttribute('aria-busy', String(items.some(item => item.pending && Number(button.dataset.lotusStage) === item.desiredStage))));
   }
   function showLotusStage(stage) {
     lotusStage = stage;
@@ -128,10 +153,11 @@
       button.setAttribute('aria-pressed', String(Number(button.dataset.lotusStage) === stage));
     });
   }
-  function loadLotusStage(stage) {
-    if (lotusLoads.has(stage)) return lotusLoads.get(stage);
-    const source = lotusButtons[stage].dataset.lotusSrc;
-    const loading = new Promise((resolve, reject) => {
+  function pumpLotusQueue() {
+    while (lotusLoading < 2 && lotusQueue.length) lotusQueue.shift().start();
+  }
+  function decodeLotusImage(source) {
+    return new Promise((resolve, reject) => {
       const image = new Image();
       image.decoding = 'async';
       image.fetchPriority = 'low';
@@ -141,57 +167,129 @@
         try {
           await image.decode();
           clearTimeout(deadline);
-          lotusImages.set(stage, image);
-          lotusScene.querySelectorAll(`[data-lotus-frame="${stage}"]`).forEach(frame => {
-            frame.style.backgroundImage = `url("${source}")`;
-          });
-          resolve();
+          resolve(image);
         } catch (error) { clearTimeout(deadline); reject(error); }
       };
       image.src = source;
+    });
+  }
+  function loadLotusStage(stage, priority = false) {
+    if (lotusLoads.has(stage)) {
+      const queued = lotusQueue.findIndex(job => job.stage === stage);
+      if (priority && queued > 0) lotusQueue.unshift(lotusQueue.splice(queued, 1)[0]);
+      return lotusLoads.get(stage);
+    }
+    const loading = new Promise((resolve, reject) => {
+      const job = {
+        stage,
+        start() {
+          lotusLoading++;
+          const source = lotusButtons[stage].dataset.lotusSrc;
+          decodeLotusImage(source).then(() => {
+            lotusScene.querySelectorAll(`[data-lotus-frame="${stage}"]`).forEach(frame => {
+              frame.style.backgroundImage = `url("${source}")`;
+            });
+            resolve();
+          }, reject).finally(() => { lotusLoading--; pumpLotusQueue(); });
+        }
+      };
+      if (priority) lotusQueue.unshift(job);
+      else lotusQueue.push(job);
     }).catch(error => { lotusLoads.delete(stage); throw error; });
     lotusLoads.set(stage, loading);
+    pumpLotusQueue();
     return loading;
   }
-  function requestLotusStage(stage) {
-    lotusDesiredStage = stage;
-    lotusStarted = true;
-    lotusPending = true;
-    lotusError = false;
-    const request = ++lotusRequest;
-    syncLotusMotion();
-    loadLotusStage(stage).then(() => {
-      if (request !== lotusRequest) return;
-      lotusPending = false;
+  function pauseLotusTimer(item) {
+    if (!item.timer) return;
+    clearTimeout(item.timer);
+    item.timer = 0;
+    item.remaining = Math.max(0, item.dueAt - performance.now());
+  }
+  function requestLotusStage(item, stage, priority = false) {
+    pauseLotusTimer(item);
+    item.remaining = null;
+    item.desiredStage = stage;
+    item.pending = true;
+    item.error = false;
+    item.element.dataset.lotusPending = 'true';
+    delete item.element.dataset.lotusError;
+    const request = ++item.request;
+    loadLotusStage(stage, priority).then(() => {
+      if (request !== item.request) return;
+      item.pending = false;
+      item.stage = stage;
+      item.element.dataset.lotusStage = String(stage);
+      item.element.dataset.lotusReady = 'true';
+      delete item.element.dataset.lotusPending;
       lotusScene.classList.add('lotus-ready');
-      showLotusStage(stage);
+      if (item.index === 0) showLotusStage(stage);
       syncLotusMotion();
     }).catch(() => {
-      if (request !== lotusRequest) return;
-      lotusPending = false;
-      lotusError = true;
+      if (request !== item.request) return;
+      item.pending = false;
+      item.error = true;
+      delete item.element.dataset.lotusPending;
+      item.element.dataset.lotusError = 'true';
       syncLotusMotion();
     });
   }
+  function configureLotusLayout(layout) {
+    if (lotusLayout === layout) return;
+    lotusLayout = layout;
+    const profile = lotusProfiles[layout];
+    lotusItems.forEach(item => {
+      pauseLotusTimer(item);
+      item.remaining = null;
+      if (item.stage === null && !lotusPaused) {
+        const target = (lotusStage + profile.offsets[item.index]) % lotusStageCount;
+        if (item.desiredStage !== target) {
+          item.request++;
+          item.pending = false;
+          item.error = false;
+          delete item.element.dataset.lotusPending;
+          delete item.element.dataset.lotusError;
+        }
+        item.desiredStage = target;
+      }
+    });
+  }
   function syncLotusMotion() {
-    clearTimeout(lotusTimer);
-    lotusTimer = 0;
     if (!lotusScene || !atmosphere) return;
     const active = atmosphere.dataset.backgroundCurrent === 'lotus';
     if (lotusOptions) lotusOptions.hidden = !active;
     const visible = active && wideBackground.matches && !document.hidden;
-    if (visible && !lotusStarted && (backgroundUserInitiated || !portraitImage || portraitImage.complete)) {
-      requestLotusStage(lotusDesiredStage);
-      return;
-    }
-    const playing = visible && !lotusPaused && !reducedMotion.matches && !lotusPending && !lotusError && lotusImages.has(lotusStage);
-    lotusScene.classList.toggle('lotus-is-playing', playing);
+    const items = visibleLotusItems();
+    const canLoad = visible && (backgroundUserInitiated || !portraitImage || portraitImage.complete);
+    const profile = lotusProfiles[lotusLayout || 'fixed'];
+    lotusItems.forEach(item => {
+      const inLayout = items.includes(item);
+      if (canLoad && inLayout && !item.pending && !item.error && item.stage !== item.desiredStage) {
+        requestLotusStage(item, item.desiredStage, true);
+      }
+      const playing = visible && inLayout && !lotusPaused && !reducedMotion.matches && !item.pending && !item.error && item.stage !== null;
+      item.element.classList.toggle('lotus-is-playing', playing);
+      if (!playing) pauseLotusTimer(item);
+      else if (!item.timer) {
+        const interval = Math.round(profile.holds[item.index] * lotusStageHolds[item.stage]);
+        const delay = item.remaining ?? interval;
+        item.element.dataset.lotusInterval = String(interval);
+        item.dueAt = performance.now() + delay;
+        item.timer = setTimeout(() => {
+          item.timer = 0;
+          item.remaining = null;
+          requestLotusStage(item, (item.stage + 1) % lotusStageCount);
+          syncLotusMotion();
+        }, delay);
+      }
+    });
+    const playingItems = items.filter(item => item.timer);
+    lotusScene.classList.toggle('lotus-is-playing', playingItems.length > 0);
     updateLotusLabels();
-    if (playing) {
-      const next = (lotusStage + 1) % lotusStageCount;
-      // Only warm one next stage after the portrait has finished, using the same cache URL.
-      if (!portraitImage || portraitImage.complete) loadLotusStage(next).catch(() => {});
-      lotusTimer = setTimeout(() => requestLotusStage(next), 4000);
+    if (playingItems.length && !items.some(item => item.pending) && (!portraitImage || portraitImage.complete)) {
+      // Warm only the next imminent change, using the shared two-download queue.
+      const soonest = playingItems.reduce((first, item) => item.dueAt < first.dueAt ? item : first);
+      loadLotusStage((soonest.stage + 1) % lotusStageCount).catch(() => {});
     }
   }
   function updateImageryStatus() {
@@ -307,10 +405,12 @@
   function chooseBackgroundLayout(layout, save = true) {
     const placement = layout === "page" ? "page" : "fixed";
     if (atmosphere) atmosphere.dataset.backgroundLayout = placement;
+    configureLotusLayout(placement);
     document.querySelectorAll("button[data-background-layout]").forEach(button => {
       button.setAttribute("aria-pressed", String(button.dataset.backgroundLayout === placement));
     });
     resetAtmosphere();
+    syncLotusMotion();
     if (save) saveBackgroundPreferences();
   }
   if (atmosphere && backgroundSwitch) {
@@ -322,8 +422,8 @@
       savedPlacement = localStorage.getItem("jia-li-background-layout") || savedPlacement;
     } catch (_) { /* Use the original design by default. */ }
     const comparison = new URLSearchParams(location.search);
-    chooseBackground(comparison.get("background") || savedBackground, false);
     chooseBackgroundLayout(comparison.get("placement") || savedPlacement, false);
+    chooseBackground(comparison.get("background") || savedBackground, false);
     backgroundSwitch.hidden = false;
     document.querySelectorAll("[data-background]").forEach(button => {
       button.addEventListener("click", () => chooseBackground(button.dataset.background));
@@ -335,20 +435,33 @@
       button.addEventListener('click', () => {
         lotusPaused = true;
         const stage = Number(button.dataset.lotusStage);
-        try { localStorage.setItem('jia-li-lotus-paused', '1'); localStorage.setItem('jia-li-lotus-stage', String(stage)); } catch (_) {}
-        requestLotusStage(stage);
+        lotusItems.forEach(item => {
+          pauseLotusTimer(item);
+          item.request++;
+          item.pending = false;
+          item.error = false;
+          item.remaining = null;
+          item.desiredStage = stage;
+          delete item.element.dataset.lotusPending;
+          delete item.element.dataset.lotusError;
+        });
+        saveLotusPlayback(stage);
+        syncLotusMotion();
       });
     });
-    lotusRetry?.addEventListener('click', () => requestLotusStage(lotusDesiredStage));
+    lotusRetry?.addEventListener('click', () => {
+      visibleLotusItems().filter(item => item.error).forEach(item => requestLotusStage(item, item.desiredStage, true));
+      syncLotusMotion();
+    });
     document.querySelector('[data-imagery-retry]')?.addEventListener('click', () => {
       atmosphere.querySelectorAll('.imagery-scene[data-active] [data-art-error]').forEach(image => image.removeAttribute('data-art-error'));
       syncImagery();
     });
     lotusToggle?.addEventListener('click', () => {
       lotusPaused = !lotusPaused;
-      try { localStorage.setItem('jia-li-lotus-paused', lotusPaused ? '1' : '0'); localStorage.setItem('jia-li-lotus-stage', String(lotusStage)); } catch (_) {}
-      if (lotusError) requestLotusStage(lotusDesiredStage);
-      else syncLotusMotion();
+      if (!lotusPaused) visibleLotusItems().filter(item => item.error).forEach(item => requestLotusStage(item, item.desiredStage, true));
+      saveLotusPlayback();
+      syncLotusMotion();
     });
     portraitImage?.addEventListener('load', syncBackgroundMotion);
     portraitImage?.addEventListener('error', syncBackgroundMotion);
