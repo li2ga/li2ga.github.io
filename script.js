@@ -113,7 +113,7 @@
   const wideBackground = window.matchMedia("(min-width: 1041px)");
   const autoBackgroundButton = document.querySelector('[data-background="auto"]');
   let backgroundChoice = "auto";
-  let backgroundVisibility = "subtle";
+  let backgroundVisibility = "clear";
   let backgroundTimer = 0;
   const lotusScene = atmosphere?.querySelector('[data-background-scene="lotus"]');
   const lotusOptions = document.querySelector('.lotus-options');
@@ -492,7 +492,7 @@
     showLotusStage(lotusStage);
     let savedBackground = "auto";
     let savedPlacement = "fixed";
-    let savedVisibility = "subtle";
+    let savedVisibility = "clear";
     let savedArtMotion = "loop";
     try {
       savedBackground = localStorage.getItem("jia-li-background") || savedBackground;
