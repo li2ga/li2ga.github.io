@@ -275,10 +275,10 @@ strong,h3{font-weight:700}
 @keyframes line-scan-pass{0%{opacity:0;transform:translateX(-45%)}10%{opacity:.15}25%{opacity:0;transform:translateX(45%)}100%{opacity:0;transform:translateX(45%)}}
 /* Fixed sky is independent of scene choice, page placement and pointer depth. */
 .sky-meteors{position:fixed;inset:0;z-index:2;overflow:hidden;pointer-events:none;contain:strict}
-.meteor-flight{position:absolute;left:8%;top:11%;width:clamp(140px,16vw,235px);height:3px;transform:rotate(31deg);--meteor-time:29s;--meteor-phase:2.8s;--meteor-distance:550px}
-.meteor-flight-1{left:68%;top:16%;transform:rotate(144deg);--meteor-time:41s;--meteor-phase:9s;--meteor-distance:430px}
-.meteor-flight-2{left:29%;top:43%;transform:rotate(27deg);--meteor-time:53s;--meteor-phase:18s;--meteor-distance:490px}
-.meteor-flight-3{left:89%;top:63%;transform:rotate(150deg);--meteor-time:67s;--meteor-phase:30.5s;--meteor-distance:620px}
+.meteor-flight{position:absolute;left:8%;top:11%;width:clamp(140px,16vw,235px);height:3px;transform:rotate(31deg);--meteor-time:17s;--meteor-phase:2.8s;--meteor-distance:550px}
+.meteor-flight-1{left:68%;top:16%;transform:rotate(144deg);--meteor-time:23s;--meteor-phase:6.5s;--meteor-distance:430px}
+.meteor-flight-2{left:29%;top:43%;transform:rotate(27deg);--meteor-time:31s;--meteor-phase:10.4s;--meteor-distance:490px}
+.meteor-flight-3{left:89%;top:63%;transform:rotate(150deg);--meteor-time:37s;--meteor-phase:14.2s;--meteor-distance:620px}
 .meteor-streak{position:absolute;inset:0;opacity:0;border-radius:100%;background:linear-gradient(90deg,transparent,#9dcbd447 18%,#578cacb8 62%,#83bacfe6 88%,#ce9b4e);box-shadow:0 0 7px #88b5d044;animation:meteor-crossing var(--meteor-time) linear var(--meteor-phase) infinite;animation-play-state:paused}
 .meteor-streak::after{content:"";position:absolute;right:0;top:-1px;width:5px;height:5px;border-radius:50%;background:#e4b360;box-shadow:0 0 3px #d5a565,0 0 11px #8bbdd7}
 .sky-meteors.is-active .meteor-streak{animation-play-state:running}
@@ -606,3 +606,18 @@ main>section:not(.about){margin-top:29px}
  .paper,.experience-row,.engineering-row{break-inside:avoid}
  a{color:#000;text-shadow:none}
 }
+
+.music-tools{display:inline-flex;gap:3px;align-items:center;color:#775c40}
+.music-tools button,.music-panel button{border:1px solid #e9d8be;border-radius:6px;background:#fff;color:inherit;cursor:pointer;font:inherit}
+.music-tools button{min-width:32px;min-height:39px;padding:4px 7px;font-size:14px}
+.music-tools [aria-pressed=true],.music-panel [aria-pressed=true]{background:#fbefd9;color:#744516}
+.music-panel{width:min(390px,calc(100% - 30px));max-height:90dvh;border:1px solid #e8dac5;border-radius:14px;padding:22px;background:#fffdf8;color:#392f26;box-shadow:0 16px 54px #22190f28}
+.music-panel::backdrop{background:#211b1755}
+.music-panel header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.music-panel h2{font:600 20px/1.2 Georgia,serif;margin:0;border:0}
+.music-panel button{padding:6px 10px}
+.music-panel p{font-size:13px;line-height:1.45}
+.music-panel label{display:grid;gap:4px;margin:12px 0;font-size:14px}
+.music-panel select{max-width:100%;padding:6px;font:inherit}
+.music-panel input[type=file]{max-width:100%}
+@media print{.music-tools,.music-panel{display:none!important}}
