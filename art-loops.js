@@ -95,7 +95,13 @@
       vec2 p=uv;
       float t=phase;
       float light=0.;
-      if(mode<.5){
+      if(mode>5.5&&mode<6.5){
+        // The lamp has its own wick: keep its metal body fixed, move only fire.
+        float flame=smoothstep(.515,.555,uv.y)*smoothstep(.63,.74,uv.x);
+        p.x+=flame*(.008*sin(uv.y*29.-flameClock*3.1)+.003*sin(uv.y*57.+flameClock*2.3));
+        p.y+=flame*.004*sin(uv.x*31.-flameClock*2.7);
+        light=flame*.045*sin(uv.y*35.-flameClock*4.1);
+      }else if(mode<.5){
         // Branches and feathers flex locally, rather than moving a rigid card.
         float edge=smoothstep(.1,.9,uv.y);
         p.x+=.006*edge*sin(uv.y*19.+t)*sin(uv.x*8.-t);
@@ -445,7 +451,7 @@
   }
 
   const subjects = { moon:4, sun:0, palace:3, scroll:5, 'star-sword':3, crane:0,
-                     pine:0, blade:3, 'water-dragon':2, lamp:1, vine:5, mountain:2 };
+                     pine:0, blade:3, 'water-dragon':2, lamp:6, vine:5, mountain:2 };
   window.JiaArtLoops = {
     flame(host,image,rank) {
       const cell=(rank-1)%6,col=cell%3,row=Math.floor(cell/3);
