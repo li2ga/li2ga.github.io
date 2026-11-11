@@ -197,8 +197,8 @@
     return new Promise((resolve, reject) => {
       const image = new Image();
       image.decoding = 'async';
-      image.fetchPriority = 'low';
-      const deadline = setTimeout(() => { image.onload = image.onerror = null; reject(new Error('Lotus load timed out')); }, 20000);
+      image.fetchPriority = backgroundUserInitiated ? 'high' : 'low';
+      const deadline = setTimeout(() => { image.onload = image.onerror = null; reject(new Error('Lotus load timed out')); }, 90000);
       image.onerror = () => { clearTimeout(deadline); reject(new Error('Lotus image unavailable')); };
       image.onload = async () => {
         try {
