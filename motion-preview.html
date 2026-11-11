@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Fire lotus · Motion comparison | Jia Li</title>
-  <meta name="description" content="Compare the untouched source artwork with its burning flame layer: original flame material rises, changes shape and extinguishes.">
+  <meta name="description" content="Compare the unchanged source artwork with the restored original-detail realtime animation.">
   <meta name="robots" content="noindex,follow">
   <link rel="icon" href="assets/favicon.png?v=9a62d3d6c360" type="image/png">
   <style>
@@ -19,7 +19,7 @@
 <main>
   <nav><a href="index.html">← Jia Li · Homepage</a><button type="button" id="tone" aria-pressed="false">Dark background</button></nav>
   <h1>Fire lotus / Motion study</h1>
-  <p class="intro">左侧保留原图，右侧让原有火舌生长、上升并消散。可熄灭再点燃，观察原图火舌所在的位置。</p>
+  <p class="intro">左侧是未改动的原图，右侧恢复前一版的细纹与火舌流动。两侧可切换全部十三种火莲。</p>
   <div class="grid">
     <section class="card" aria-labelledby="gif-title">
       <h2 id="gif-title">原始图像 / Original</h2>
@@ -28,22 +28,21 @@
       <div class="controls"><button type="button" id="gif-toggle" aria-pressed="false">查看早期 GIF 样片</button><a href="assets/previews/blue-flame-loop.gif" download>保留的早期 GIF</a></div>
     </section>
     <section class="card" aria-labelledby="live-title">
-      <h2 id="live-title">原图火舌燃烧 / Burning</h2>
-      <p class="meta">莲体与骨架保留，火舌从根部持续生成</p>
+      <h2 id="live-title">原图实时动态 / Original-detail motion</h2>
+      <p class="meta">保留原图轮廓、细纹与骨架，火焰材质实时流动</p>
       <div class="page-atmosphere" data-art-motion="loop" data-art-scope="gallery" data-background-current="lotus">
         <div data-background-scene="lotus" data-active>
           <div class="stage" data-lotus-instance="0" data-lotus-stage="0"><span class="lotus-frame" data-lotus-frame="0"></span></div>
         </div>
       </div>
       <div class="controls"><label for="variant">Artwork</label><select id="variant"><option value="blue">Blue flame</option><option value="cold">Blue &amp; white</option><option value="jade">Jade glass</option><option value="fusion">Fusion</option><option value="pearl">Pearl flame</option><option value="rings">Bound in rings</option><option value="gold">Golden bloom</option><option value="emperor">Emperor flame</option><option value="destruction">Destruction lotus</option><option value="radial">Metal structure</option><option value="formation">Formation</option><option value="refined">Reforged flame</option><option value="branches">Golden branches</option></select><button type="button" id="live-toggle" aria-pressed="true">Motion on</button></div>
-      <div class="controls"><button type="button" id="burn-toggle" aria-pressed="true">熄灭 / Extinguish</button></div>
       <p class="meta" id="live-status" role="status">Loading artwork…</p>
     </section>
   </div>
   <div class="note">这里去掉了整体漂浮与鼠标跟随，便于观察火舌本身。原始文件保留；减少动态或 WebGL 不可用时展示原图。</div>
   <footer>Both panels reuse the existing website assets. <a href="index.html?background=lotus&amp;lotus=blue&amp;artmotion=loop" id="full">Open the full background scene ↗</a></footer>
 </main>
-<script src="art-loops.js?v=49d7ae347d98"></script>
+<script src="art-loops.js?v=4b421389b5bf"></script>
 <script>
 (() => {
   const root=document.querySelector('.page-atmosphere'),item=root.querySelector('[data-lotus-instance]'),host=root.querySelector('.lotus-frame');
@@ -51,18 +50,16 @@
   const gif=document.getElementById('gif'),gifToggle=document.getElementById('gif-toggle');
   const reduced=matchMedia('(prefers-reduced-motion: reduce)'),wide=matchMedia('(min-width: 1041px)');
   const choices={"blue": {"stage": 0, "src": "assets/backgrounds/fire-lotus-blue-v1.png?v=fcdb882fd67d"}, "cold": {"stage": 1, "src": "assets/backgrounds/fire-lotus-cold-v1.png?v=08a1c9576dc6"}, "jade": {"stage": 2, "src": "assets/backgrounds/fire-lotus-jade-v1.png?v=0a01273b7903"}, "fusion": {"stage": 3, "src": "assets/backgrounds/fire-lotus-fusion-v1.png?v=d01be05876a6"}, "pearl": {"stage": 4, "src": "assets/backgrounds/fire-lotus-pearl-v1.png?v=ed662fa59cd6"}, "rings": {"stage": 5, "src": "assets/backgrounds/fire-lotus-rings-v1.png?v=d96596d32338"}, "gold": {"stage": 6, "src": "assets/backgrounds/fire-lotus-gold-v1.png?v=e516dfbe78d9"}, "emperor": {"stage": 7, "src": "assets/backgrounds/fire-lotus-emperor-v1.svg?v=cc400e4b0ae1"}, "destruction": {"stage": 8, "src": "assets/backgrounds/fire-lotus-destruction-v1.png?v=718706a97c64"}, "radial": {"stage": 9, "src": "assets/backgrounds/fire-lotus-radial-v1.png?v=8e4ee4e534c3"}, "formation": {"stage": 10, "src": "assets/backgrounds/fire-lotus-formation-v1.png?v=14a4f88bc3b8"}, "refined": {"stage": 11, "src": "assets/backgrounds/fire-lotus-refined-v1.png?v=757d28355f6c"}, "branches": {"stage": 12, "src": "assets/backgrounds/fire-lotus-branches-v1.png?v=dac835cfcaeb"}};
-  const burnToggle=document.getElementById('burn-toggle');
-  let gifPlaying=false,currentImage=null,generation=0,burning=true;
+  let gifPlaying=false,currentImage=null,generation=0;
   function gifPlayback(play){gifPlaying=play;gif.src=play?'assets/previews/blue-flame-loop.gif':(choices[variant.value]?.src||'assets/backgrounds/fire-lotus-blue-v1.png');gifToggle.textContent=play?'返回所选原图':'查看早期 GIF 样片';gifToggle.setAttribute('aria-pressed',String(play));}
   gifToggle.addEventListener('click',()=>gifPlayback(!gifPlaying));
   document.getElementById('tone').addEventListener('click',event=>{const dark=document.body.dataset.tone!=='dark';document.body.dataset.tone=dark?'dark':'light';event.currentTarget.textContent=dark?'Light background':'Dark background';event.currentTarget.setAttribute('aria-pressed',String(dark));});
-  function updateStatus(){const moving=root.dataset.artMotion==='loop'&&!reduced.matches&&root.dataset.artRenderer==='webgl';burnToggle.disabled=!moving;status.textContent=moving?(burning?'火舌正在从根部生成、上升并消散。':'已停止补焰，残留火舌会继续上升直至消失。'):'Still artwork: '+(reduced.matches?'reduced motion is enabled.':root.dataset.artMotion==='still'?'motion is paused.':'waiting for the renderer.');}
+  function updateStatus(){const moving=root.dataset.artMotion==='loop'&&!reduced.matches&&root.dataset.artRenderer==='webgl';status.textContent=moving?'原图细纹与火舌实时流动。':'Still artwork: '+(reduced.matches?'reduced motion is enabled.':root.dataset.artMotion==='still'?'motion is paused.':'waiting for the renderer.');}
   new MutationObserver(updateStatus).observe(root,{attributes:true,attributeFilter:['data-art-renderer','data-art-motion']});
-  async function choose(){const request=++generation,choice=choices[variant.value];variant.disabled=true;status.textContent='Loading artwork…';status.classList.remove('status-error');try{const image=new Image();image.src=choice.src;await image.decode();if(request!==generation)return;currentImage=image;item.dataset.lotusStage=String(choice.stage);host.dataset.lotusFrame=String(choice.stage);host.style.backgroundImage=`url("${choice.src}")`;window.JiaArtLoops?.lotus(item,choice.stage,image);burning=true;window.JiaArtLoops?.setFuel(true);burnToggle.textContent='熄灭 / Extinguish';burnToggle.setAttribute('aria-pressed','true');gifPlayback(false);document.getElementById('source-meta').textContent=image.naturalWidth+' × '+image.naturalHeight+' · 原始文件未改动';document.getElementById('full').href='index.html?background=lotus&lotus='+variant.value+'&artmotion=loop';setTimeout(updateStatus,250);}catch(_){status.textContent='Artwork could not load. Select another variant to retry.';status.classList.add('status-error');}finally{if(request===generation)variant.disabled=false;}}
+  async function choose(){const request=++generation,choice=choices[variant.value];variant.disabled=true;status.textContent='Loading artwork…';status.classList.remove('status-error');try{const image=new Image();image.src=choice.src;await image.decode();if(request!==generation)return;currentImage=image;item.dataset.lotusStage=String(choice.stage);host.dataset.lotusFrame=String(choice.stage);host.style.backgroundImage=`url("${choice.src}")`;window.JiaArtLoops?.lotus(item,choice.stage,image);window.JiaArtLoops?.setFuel(true);gifPlayback(false);document.getElementById('source-meta').textContent=image.naturalWidth+' × '+image.naturalHeight+' · 原始文件未改动';document.getElementById('full').href='index.html?background=lotus&lotus='+variant.value+'&artmotion=loop';setTimeout(updateStatus,250);}catch(_){status.textContent='Artwork could not load. Select another variant to retry.';status.classList.add('status-error');}finally{if(request===generation)variant.disabled=false;}}
   variant.addEventListener('change',choose);
   liveToggle.addEventListener('click',()=>{const moving=root.dataset.artMotion!=='loop';root.dataset.artMotion=moving?'loop':'still';liveToggle.setAttribute('aria-pressed',String(moving));liveToggle.textContent=moving?'Motion on':'Motion off';window.JiaArtLoops?.wake();setTimeout(updateStatus,100);});
   wide.addEventListener('change',()=>setTimeout(updateStatus,100));reduced.addEventListener('change',()=>{if(reduced.matches)gifPlayback(false);setTimeout(updateStatus,100);});
-  burnToggle.addEventListener('click',()=>{burning=!burning;window.JiaArtLoops.setFuel(burning);burnToggle.textContent=burning?'熄灭 / Extinguish':'点燃 / Reignite';burnToggle.setAttribute('aria-pressed',String(burning));updateStatus();});
   const requested=new URLSearchParams(location.search).get('lotus');if(requested&&choices[requested])variant.value=requested;
   choose();
 })();
