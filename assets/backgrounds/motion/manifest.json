@@ -1,0 +1,124 @@
+{
+  "revision": "video-20261111-v1",
+  "count": 13,
+  "videos": [
+    {
+      "stage": 0,
+      "slug": "blue",
+      "src": "assets/backgrounds/motion/blue-1770cad0c239.webm",
+      "scale": 0.8888888888888888,
+      "model": "LTX-2.3",
+      "sha256": "1770cad0c2390741c6e94a2b6f3f6752c003c10506f2b6c3f17a6c19fdf7269c",
+      "bytes": 6019686
+    },
+    {
+      "stage": 1,
+      "slug": "cold",
+      "src": "assets/backgrounds/motion/cold-fe0ba49df755.webm",
+      "scale": 0.9796875,
+      "model": "Wan2.2 \u00b7 \u706b\u820c\u56de\u843d\u5019\u9009",
+      "sha256": "fe0ba49df7552670c4d5950836ea2e70ac5f80189f51357cbf601b807203185b",
+      "bytes": 17771492
+    },
+    {
+      "stage": 2,
+      "slug": "jade",
+      "src": "assets/backgrounds/motion/jade-b4f2f2b63407.webm",
+      "scale": 0.8888888888888888,
+      "model": "LTX-2.3",
+      "sha256": "b4f2f2b63407c346907b39f8ae89bc998c53c676e7b3b25461368c2c975ecf67",
+      "bytes": 6581979
+    },
+    {
+      "stage": 3,
+      "slug": "fusion",
+      "src": "assets/backgrounds/motion/fusion-02d5e933efe2.webm",
+      "scale": 0.8888888888888888,
+      "model": "LTX-2.3",
+      "sha256": "02d5e933efe29f3e0262147ddd5b48888b34a98b422e1a3c4a9e6dd953d77d3e",
+      "bytes": 6632168
+    },
+    {
+      "stage": 4,
+      "slug": "pearl",
+      "src": "assets/backgrounds/motion/pearl-3aa85548270a.webm",
+      "scale": 0.8888888888888888,
+      "model": "LTX-2.3",
+      "sha256": "3aa85548270a7d66f0e6ebb6bccd835e17ae2c5a1a3042ec280c52e592180dc8",
+      "bytes": 5912492
+    },
+    {
+      "stage": 5,
+      "slug": "rings",
+      "src": "assets/backgrounds/motion/rings-3c1ec2afa67b.webm",
+      "scale": 0.8888888888888888,
+      "model": "LTX-2.3",
+      "sha256": "3c1ec2afa67b3b7affacb8fe35746dbea2da6170ea36f1cea87ac5b6a45811c3",
+      "bytes": 7045520
+    },
+    {
+      "stage": 6,
+      "slug": "gold",
+      "src": "assets/backgrounds/motion/gold-f0c338f2c3f8.webm",
+      "scale": 0.8888888888888888,
+      "model": "LTX-2.3",
+      "sha256": "f0c338f2c3f81796cd03e7991468b8ce5239a473866c1ea64f81b494bec41b66",
+      "bytes": 7772912
+    },
+    {
+      "stage": 7,
+      "slug": "emperor",
+      "src": "assets/backgrounds/motion/emperor-499a902b6cf7.webm",
+      "scale": 1,
+      "model": "LTX-2.3",
+      "sha256": "499a902b6cf74123793b1026113b882813913a82fba6a6a30e605f3dd47adfcd",
+      "bytes": 5274708
+    },
+    {
+      "stage": 8,
+      "slug": "destruction",
+      "src": "assets/backgrounds/motion/destruction-d80f2e1323d8.webm",
+      "scale": 1,
+      "model": "LTX-2.3",
+      "sha256": "d80f2e1323d8f5d6a158c1280b26e6cb77812eb8f3e684cd14ffa5a5528267d0",
+      "bytes": 18342256
+    },
+    {
+      "stage": 9,
+      "slug": "radial",
+      "src": "assets/backgrounds/motion/radial-f504575b8e72.webm",
+      "scale": 1,
+      "model": "LTX-2.3",
+      "sha256": "f504575b8e722f3fcc43c4e23452d3370d72ddc7563f4d8d6bc64d6b92540941",
+      "bytes": 20827224
+    },
+    {
+      "stage": 10,
+      "slug": "formation",
+      "src": "assets/backgrounds/motion/formation-6abd4a2c8ea4.webm",
+      "scale": 1,
+      "model": "Wan2.2 \u00b7 H200 \u5019\u9009",
+      "sha256": "6abd4a2c8ea499c7866ac740b75a1f9e4cc7ed7e9ded5d0edbb209b2e57faf58",
+      "bytes": 24732634
+    },
+    {
+      "stage": 11,
+      "slug": "refined",
+      "src": "assets/backgrounds/motion/refined-2e752203be61.webm",
+      "scale": 1,
+      "model": "Wan2.2 \u00b7 H200 \u5019\u9009",
+      "sha256": "2e752203be61aadd60352120aa5cc4a7f2ee19355ee1babd307bf53024a5e327",
+      "bytes": 23358120
+    },
+    {
+      "stage": 12,
+      "slug": "branches",
+      "src": "assets/backgrounds/motion/branches-1325dca05d39.webm",
+      "scale": 1,
+      "model": "LTX-2.3",
+      "sha256": "1325dca05d39046502fee78f244b95680baaf91fea8f13fa04b6c7a26f245cb0",
+      "bytes": 13659200
+    }
+  ],
+  "note": "Model-generated video; lossless export retains decoded model frames. Original artwork files are separate and unchanged."
+}

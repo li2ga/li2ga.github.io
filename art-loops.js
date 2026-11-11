@@ -401,6 +401,7 @@
   }
 
   function wake() {
+    window.JiaLotusVideos?.wake();
     clearTimeout(visibilityWake);
     if (!enabled()) {
       cancelAnimationFrame(frame);
@@ -451,6 +452,7 @@
       install(host,host,image,1,100+rank,[col/3,(1-row)/2,1/3,1/2]);
     },
     lotus(element,stage,image) {
+      if (window.JiaLotusVideos) { window.JiaLotusVideos.lotus(element,stage,image); return; }
       const host=element.querySelector(`[data-lotus-frame="${stage}"]`);
       if (host && image) install(element,host,image,1,stage);
     },
@@ -460,7 +462,7 @@
     },
     wake,
     inspect() {
-      return {renderer:root.dataset.artRenderer||'not-needed',enabled:enabled(),periodMs:period,flameClock:'continuous',flameModel:'source flame layer replaced by transported burning material',fieldSize,fuelEnabled,flameFrameLimit:60,running:!!frame,ticks:stats.ticks,
+      return {lotusVideo:window.JiaLotusVideos?.inspect(),renderer:root.dataset.artRenderer||'not-needed',enabled:enabled(),periodMs:period,flameClock:'continuous',flameModel:'source flame layer replaced by transported burning material',fieldSize,fuelEnabled,flameFrameLimit:60,running:!!frame,ticks:stats.ticks,
               textureCount:textures.size,paints:stats.paints,meanTickMs:stats.ticks?stats.totalMs/stats.ticks:0,maxTickMs:stats.maxMs,
               entries:[...entries.values()].map(entry=>({type:entry.key.matches('[data-lotus-instance]')?'lotus':'imagery',subject:entry.key.closest('.imagery-object')?.dataset.imageryObject,
                 stage:entry.variant,source:entry.image.currentSrc||entry.image.src,sourceWidth:entry.image.naturalWidth,sourceHeight:entry.image.naturalHeight,flowSteps:entry.flow?.steps||0,paints:entry.paints,visible:visible(entry),failed:!!entry.failed,width:entry.canvas.width,height:entry.canvas.height}))};

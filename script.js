@@ -169,8 +169,8 @@
     lotusToggle.title = reducedMotion.matches
       ? (language === 'zh' ? '系统已启用减少动态效果，可手动选择形态' : 'Reduced motion is enabled; select a stage manually') : '';
     const items = visibleLotusItems();
-    const pending = items.some(item => item.pending);
-    const failed = items.some(item => item.error);
+    const pending = items.some(item => item.pending || item.element.dataset.lotusVideoState === 'loading');
+    const failed = items.some(item => item.error || item.element.dataset.lotusVideoState === 'fallback');
     const started = items.some(item => item.stage !== null);
     if (lotusStatus) {
       lotusStatus.hidden = !pending && !failed && started;
@@ -272,6 +272,8 @@
       syncLotusMotion();
     });
   }
+  atmosphere?.addEventListener('lotusvideostate', syncLotusMotion);
+  lotusRetry?.addEventListener('click', () => window.JiaLotusVideos?.retry());
   function configureLotusLayout(layout) {
     if (lotusLayout === layout) return;
     lotusLayout = layout;
@@ -305,7 +307,8 @@
       if (canLoad && inLayout && !item.pending && !item.error && item.stage !== item.desiredStage) {
         requestLotusStage(item, item.desiredStage, true);
       }
-      const playing = visible && inLayout && !lotusPaused && !reducedMotion.matches && !item.pending && !item.error && item.stage !== null;
+      const waitingForVideo = atmosphere.dataset.artMotion !== 'still' && item.element.dataset.lotusVideoState === 'loading';
+      const playing = visible && inLayout && !lotusPaused && !reducedMotion.matches && !item.pending && !item.error && !waitingForVideo && item.stage !== null;
       item.element.classList.toggle('lotus-is-playing', playing);
       if (!playing) pauseLotusTimer(item);
       else if (!item.timer) {
