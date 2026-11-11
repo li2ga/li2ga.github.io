@@ -18,6 +18,16 @@
       root:hash(k*13),height:.12+.20*hash(k*17),curl:.013+.035*hash(k*19),
       light:hash(k*23),size:.68+hash(k*27)*1.7,drift:(hash(k*31)-.5)*.16};
   });
+  const coreSparks=Array.from({length:25},(_,i)=>{
+    const k=i+521;
+    return {phase:hash(k*7),rate:.50+.62*hash(k*13),seed:tau*hash(k*23),
+      root:(hash(k*9)-.5)*.081,spread:(hash(k*15)-.5)*.24,
+      lift:.11+.23*hash(k*21),light:.64+.35*hash(k*17),size:1+1.45*hash(k*5)};
+  });
+  function corePoint(u,p,t){
+    return [.5+p.root+p.spread*u*u+.024*Math.sin(u*7.3+p.seed-t*1.7)*u,
+      .456-p.lift*(.72*u+.28*u*u)+.012*Math.sin(u*5+p.seed)*u];
+  }
   function rgb(p, lilac, dark) {
     if (lilac) return dark ? [207,165,255] : [133,76,212];
     return dark ? (p.light>.62?[198,251,255]:[62,226,255]) : (p.light>.62?[67,164,223]:[20,146,191]);
@@ -62,14 +72,14 @@
     return [rootX+u*p.drift+p.curl*u*Math.sin(u*9.8+p.angle-t*1.28)+.013*u*Math.sin(t*2.3+s),
       .438-.098*Math.abs(p.root-.5)*2-u*p.height+.017*u*Math.sin(u*6+p.angle+t*.95)];
   }
-  window.drawLotusLight = (c, ms, front, dark) => {
+  window.drawLotusLight = (c, ms, front, dark, cold=false) => {
     const t=ms/1000;
     c.save();c.scale(1280,1280);c.lineCap='round';
     for(const p of orbit){
       const u=fract(p.phase+t*p.rate),pos=orbitPoint(u,p,t),x=Math.abs(pos[0]-.5);
       if(front ? (pos[1]<.55 || x<.285 || p.light<.52) : false)continue;
       const a=ease(0,.14,u)*(1-ease(.53,1,u))*(.36+.48*p.light)*(front?.49:1);
-      trail(c,orbitPoint,u,p,t,a,.035+.075*p.light,dark,p.light>.92);
+      trail(c,orbitPoint,u,p,t,a,.035+.075*p.light,dark,!cold&&p.light>.92);
     }
     if(front)for(const p of edge){
       const u=fract(p.phase+t*p.rate),a=ease(.02,.18,u)*(1-ease(.53,.93,u))*(dark?.83:.73);
@@ -78,7 +88,11 @@
     if(!front)for(const p of rise){
       const u=fract(p.phase+t*p.rate);
       const a=ease(0,.15,u)*(1-ease(.54,1,u))*(.24+.66*p.light);
-      trail(c,risePoint,u,p,t,a,.023+.045*p.light,dark,p.light>.74&&u>.38);
+      trail(c,risePoint,u,p,t,a,.023+.045*p.light,dark,!cold&&p.light>.74&&u>.38);
+    }
+    if(cold&&!front)for(const p of coreSparks){
+      const u=fract(p.phase+t*p.rate),a=ease(.05,.19,u)*(1-ease(.56,1,u))*(dark?.94:.77);
+      trail(c,corePoint,u,p,t,a,.046+.037*p.light,dark,false);
     }
     c.restore();
   };
