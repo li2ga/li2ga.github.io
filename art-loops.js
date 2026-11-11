@@ -12,7 +12,7 @@
   const period = 8000;
   let gl, program, locations, transportProgram, transportLocations, quad, attempted = false;
   let fuelEnabled = true;
-  const fieldSize = 192;
+  const fieldSize = 768;
   let frame = 0, elapsed = 0, last = 0, lastPaint = 0, serial = 0;
   const stats = { paints: 0, ticks: 0, totalMs: 0, maxMs: 0 };
   const crossings = 'IntersectionObserver' in window
@@ -21,99 +21,74 @@
 
   const vertex = `attribute vec2 position; varying vec2 uv;
     void main(){uv=position*.5+.5;gl_Position=vec4(position,0.,1.);}`;
+  const flameLayers = `
+    bool hasFramework(){return (variant>4.5&&variant<5.5)||(variant>8.5&&variant<13.);}
+    float goldMaterial(vec4 c){return smoothstep(.04,.17,c.r-c.b)*smoothstep(.01,.1,c.g-c.b);}
+    vec4 artwork(vec2 p){
+      if(p.x<0.||p.x>1.||p.y<0.||p.y>1.)return vec4(0.);
+      return texture2D(picture,imageRect.xy+clamp(p,.0005,.9995)*imageRect.zw);
+    }
+    float burnerRoot(float x){
+      if(variant>100.){
+        // Lotus forms retain their lower petals. Other flames are gas all the
+        // way down and have no persistent upper silhouette.
+        if(abs(variant-103.)<.1||abs(variant-108.)<.1||abs(variant-119.)<.1)return .40;
+        return .12;
+      }
+      if(variant>11.5&&variant<12.5)return .29+.24*pow(max(0.,1.-abs(x-.5)*2.),1.15);
+      if(hasFramework())return .36+.15*exp(-pow((x-.5)*2.8,2.));
+      if(variant<.5)return .70;
+      if(variant>5.5&&variant<6.5)return .73-.11*exp(-pow((x-.5)*6.,2.));
+      return .46+.08*exp(-pow((x-.5)*2.8,2.));
+    }
+    float flameRegion(vec2 p){
+      float root=burnerRoot(p.x);
+      float region=smoothstep(root-.025,root+.045,p.y);
+      if(variant<.5){
+        // This blue artwork has glass-like petals around a central flame.
+        float width=.055+max(0.,p.y-.70)*.32;
+        float central=1.-smoothstep(width,width+.025,abs(p.x-.515));
+        region*=mix(central,1.,smoothstep(.78,.86,p.y));
+      }
+      return region;
+    }
+    float rigidMaterial(vec4 c){
+      if(!hasFramework())return 0.;
+      return goldMaterial(c)*smoothstep(.35,.7,c.a);
+    }
+    float movingMaterial(vec2 p,vec4 c){
+      return flameRegion(p)*(1.-rigidMaterial(c));
+    }
+  `;
   const fragment = `precision highp float;
     uniform sampler2D picture, noiseField, heatField;
     uniform vec4 imageRect;
     uniform float phase, mode, variant, flameClock;
     varying vec2 uv;
+    ${flameLayers}
     float fireNoise(vec3 p){
       vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
       vec2 q=i.xy+f.xy+.5+i.z*vec2(37.,17.);
       return mix(texture2D(noiseField,q/128.).r,texture2D(noiseField,(q+vec2(37.,17.))/128.).r,f.z);
     }
     float fireFbm(vec3 p){return fireNoise(p)*.57+fireNoise(p*2.03+7.1)*.29+fireNoise(p*4.17-3.8)*.14;}
-    vec4 artwork(vec2 p){
-      if(p.x<0.||p.x>1.||p.y<0.||p.y>1.)return vec4(0.);
-      return texture2D(picture,imageRect.xy+clamp(p,.001,.999)*imageRect.zw);
-    }
-    bool hasFramework(){return (variant>4.5&&variant<5.5)||(variant>8.5&&variant<13.);}
-    float goldMaterial(vec4 color){
-      return smoothstep(.04,.17,color.r-color.b)*smoothstep(.01,.1,color.g-color.b);
-    }
-    float fuel(vec2 at,vec4 color){
-      // Warm fire is still fuel. Only artworks with a metal framework need
-      // a material exclusion; applying it to gold/green flames freezes them.
-      float height=smoothstep(.17,.60,at.y);
-      float hot=smoothstep(.36,.82,max(max(color.r,color.g),color.b));
-      float metal=hasFramework()?goldMaterial(color):0.;
-      if(variant>4.5&&variant<5.5){
-        float pale=1.-smoothstep(.03,.14,max(max(color.r,color.g),color.b)-min(min(color.r,color.g),color.b));
-        metal=max(metal,pale*.72);
-      }
-      return height*hot*(1.-metal)*color.a;
-    }
     vec4 livingFlame(vec2 at){
       vec4 original=artwork(at);
-      bool fineBranches=variant>11.5&&variant<12.5;
-      float rigidGold=0.;
-      if(hasFramework()){
-        // Classify the unshifted scaffold before a neighboring flame can move
-        // into it. This protection never applies to the golden-fire artwork.
-        rigidGold=goldMaterial(original)*smoothstep(.35,.7,original.a);
-        if(rigidGold>.7)return vec4(original.rgb*original.a,original.a);
-      }
-      float t=flameClock;
-      if(fineBranches)t*=.72;
-      float h=smoothstep(.17,.90,at.y);
-      // Upward advection and curling eddies move fire material, not the metal body.
-      vec3 domain=vec3(at.x*23.,at.y*19.-t*1.22,t*.19+variant*3.1);
-      float n=fireFbm(domain),n2=fireFbm(domain+vec3(11.1,3.7,5.2));
-      vec2 curl=vec2(n2-.5,n-.5);
-      float strength=1.;
-      if(variant>1.5&&variant<3.5)strength=1.55;
-      if(variant>5.5&&variant<6.5)strength=1.9;
-      vec2 shift=vec2(curl.x*.040*h,curl.y*.025*h)*strength;
-      // A slower coherent bend carries a whole tongue, while smaller eddies
-      // travel inside it. Low and lateral tongues also receive some motion.
-      shift.x+=sin(at.y*11.-t*1.4+variant)*.008*h*strength;
-      if(fineBranches)shift*=.58;
-      vec4 moving=artwork(at-shift);
-      float mask=max(fuel(at,original),fuel(at-shift,moving));
-      mask*=1.-rigidGold;
-      vec4 body=mix(original,moving,clamp(mask*1.25,0.,1.));
-      // Short, colored wisps detach from actual hot pixels and rise through
-      // the transparent margin. Sampling the source retains each phase's palette.
-      vec3 emission=vec3(0.);float opacity=0.;
-      float strand=fireFbm(vec3(at.x*81.+n2*2.,at.y*38.-t*3.4,variant*4.2));
-      for(int i=1;i<=6;i++){
-        float age=float(i)/6.;
-        vec2 source=at-vec2((curl.x*.055+sin(at.y*31.-t*1.8)*.006)*age,.065*age);
-        vec4 sampleColor=artwork(source);
-        float f=fuel(source,sampleColor);
-        float d=f*smoothstep(.48+age*.08,.76,strand+.06*sin(age*19.-t))*(.18*(1.-age*.8));
-        // Existing opaque material occludes trails; no halo over polished metal.
-        d*=1.-original.a*.86;
-        d*=1.-rigidGold;
-        emission+=sampleColor.rgb*d;opacity+=d;
-      }
-      float stream=pow(max(0.,1.-abs(n-.53)*6.),8.);
-      vec3 light=mix(body.rgb,vec3(1.),.22);
-      body.rgb=clamp(body.rgb+light*(stream*.22-.032)*mask,0.,1.);
-      // Transported fuel is persistent across frames. Old tips extinguish;
-      // fresh, source-colored flame rises beyond the original silhouette.
-      vec4 heat=texture2D(heatField,at);
-      float crest=smoothstep(.38,.82,at.y)*mask;
-      float alive=smoothstep(.025,.35,heat.a);
-      body.a*=mix(1.,.24+.76*alive,crest*.88);
-      vec3 rgb=body.rgb*body.a+emission*(1.-body.a*.5);
-      float alpha=clamp(body.a+opacity*(1.-body.a),0.,1.);
-      float plume=smoothstep(.028,.29,heat.a)*.62*(1.-rigidGold);
-      plume*=smoothstep(0.,.04,at.x)*(1.-smoothstep(.96,1.,at.x))*(1.-smoothstep(.92,1.,at.y));
-      plume*=mix(.26,1.,1.-body.a);
-      vec3 fireColor=heat.rgb/max(heat.a,.004);
-      rgb=rgb*(1.-plume)+fireColor*plume;
-      alpha=alpha+plume*(1.-alpha);
-      return vec4(min(rgb,vec3(alpha)),alpha);
+      float rigid=rigidMaterial(original);
+      if(rigid>.7)return vec4(original.rgb*original.a,original.a);
+      // Remove the original flame pixels from the fixed image. This is a
+      // replacement layer, not an extra plume over permanently visible tips.
+      float burning=movingMaterial(at,original);
+      vec4 stable=vec4(original.rgb*original.a,original.a)*(1.-burning);
+      vec4 fire=texture2D(heatField,at);
+      float density=fire.a;
+      float alpha=smoothstep(.045,.63,density);
+      alpha*=smoothstep(0.,.025,at.x)*(1.-smoothstep(.975,1.,at.x))*(1.-smoothstep(.87,.995,at.y));
+      vec3 color=fire.rgb/max(density,.003);
+      color*=mix(.94,1.1,smoothstep(.05,.65,density));
+      fire=vec4(clamp(color,0.,1.)*alpha,alpha);
+      vec4 result=stable+fire*(1.-stable.a);
+      return vec4(min(result.rgb,vec3(result.a)),result.a);
     }
     void main(){
       if(mode>.5&&mode<1.5){gl_FragColor=livingFlame(uv);return;}
@@ -153,43 +128,53 @@
       gl_FragColor=vec4(c.rgb*c.a,c.a);
     }`;
 
-  // Semi-Lagrangian transport of emitted RGB density, with buoyant upward
-  // velocity, time-varying curl and cooling. This is a 2D approximation, not
-  // a pressure-projected 3D combustion simulation. Neither image UVs nor a
-  // looping sine are the lifetime state: that state lives in ping-pong FBOs.
+  // The state is the actual source-colored flame layer. The original upper
+  // flame is excised from the stable layer before this material is composited.
   const transport = `precision highp float;
     uniform sampler2D previous, picture, noiseField;
     uniform vec4 imageRect;
-    uniform float dt, clock, variant, inject;
+    uniform vec2 texel;
+    uniform float dt, clock, variant, inject, initialize;
     varying vec2 uv;
+    ${flameLayers}
     float n(vec2 p){return texture2D(noiseField,p/128.).r;}
-    float psi(vec2 p){return n(p*13.+vec2(clock*2.9,clock*1.7)+variant*9.7)*.7+n(p*31.-vec2(clock*3.1,clock*.8))*.3;}
+    float psi(vec2 p){
+      return n(p*19.+vec2(clock*3.7,clock*2.1)+variant*9.7)*.65
+        +n(p*47.-vec2(clock*4.1,clock*1.3))*.25
+        +n(p*93.+vec2(clock*5.,-clock*2.))*.1;
+    }
     vec2 velocity(vec2 p){
-      float e=.015;
+      float e=.009;
       vec2 curl=vec2(psi(p+vec2(0.,e))-psi(p-vec2(0.,e)),psi(p-vec2(e,0.))-psi(p+vec2(e,0.)))/(2.*e);
-      float buoyancy=texture2D(previous,clamp(p,0.,1.)).a;
-      return vec2(0.,.13+buoyancy*.075)+curl*.035;
+      float heat=texture2D(previous,clamp(p,0.,1.)).a;
+      return vec2(-.06*(p.x-.5),.20+heat*.11)+curl*.025;
     }
     void main(){
+      vec4 art=artwork(uv);
+      float material=movingMaterial(uv,art);
+      if(initialize>.5){gl_FragColor=vec4(art.rgb*art.a,art.a)*material;return;}
       vec2 v=velocity(uv);
       vec2 source=uv-dt*velocity(uv-v*dt*.5);
       vec4 old=texture2D(previous,clamp(source,0.,1.));
+      // A bounded edge-restoration term keeps native painted flame filaments
+      // from dissolving into a low-resolution, single-color smoke overlay.
+      vec4 local=(texture2D(previous,clamp(source+vec2(texel.x,0.),0.,1.))
+                 +texture2D(previous,clamp(source-vec2(texel.x,0.),0.,1.))
+                 +texture2D(previous,clamp(source+vec2(0.,texel.y),0.,1.))
+                 +texture2D(previous,clamp(source-vec2(0.,texel.y),0.,1.)))*.25;
+      old=clamp(old+(old-local)*.12,0.,1.);
+      old.rgb=min(old.rgb,vec3(old.a));
       if(source.y<0.||source.y>1.||source.x<0.||source.x>1.)old=vec4(0.);
-      // Temporal dithering prevents low-density 8-bit texels becoming immortal.
-      float cooled=max(0.,old.a*exp(-dt*.75)-dt*.05);
+      float loss=variant>100.?.85:1.75;
+      float consumption=variant>100.?.08:.16;
+      float cooled=max(0.,old.a*exp(-dt*loss)-dt*consumption);
       float density=floor(cooled*255.+n(uv*127.+vec2(clock*19.,-clock*23.)))/255.;
-      vec3 carried=old.rgb*(density/max(old.a,.004));
-      vec4 art=texture2D(picture,imageRect.xy+uv*imageRect.zw);
-      float peak=max(max(art.r,art.g),art.b);
-      float metal=0.;
-      if((variant>4.5&&variant<5.5)||(variant>8.5&&variant<13.)){
-        metal=smoothstep(.04,.17,art.r-art.b)*smoothstep(.01,.1,art.g-art.b);
-        if(variant<5.5){float pale=1.-smoothstep(.03,.14,peak-min(min(art.r,art.g),art.b));metal=max(metal,pale*.72);}
-      }
-      float lower=smoothstep(.06,.19,uv.y)*(1.-smoothstep(.48,.66,uv.y));
-      float gust=smoothstep(.16,.74,n(uv*59.+vec2(clock*8.3,-clock*5.4)+variant*3.));
-      float amount=inject*dt*3.7*lower*art.a*smoothstep(.22,.78,peak)*(1.-metal)*(.28+gust*.72);
-      float a=clamp(amount,0.,1.);
+      vec3 carried=old.rgb*(density/max(old.a,.003));
+      float root=burnerRoot(uv.x);
+      float zone=material*(1.-smoothstep(root+.035,root+.105,uv.y));
+      float fine=n(uv*91.+vec2(clock*8.3,-clock*14.4)+variant*3.);
+      float pulse=.16+.84*pow(smoothstep(.24,.77,fine),2.5);
+      float a=clamp(inject*dt*30.*zone*art.a*pulse,0.,1.);
       gl_FragColor=vec4(carried*(1.-a)+art.rgb*a,density*(1.-a)+a);
     }`;
 
@@ -226,7 +211,7 @@
       gl.attachShader(transportProgram,compile(gl.FRAGMENT_SHADER,transport));
       gl.linkProgram(transportProgram);
       if(!gl.getProgramParameter(transportProgram,gl.LINK_STATUS))throw new Error('Flame transport unavailable');
-      transportLocations=Object.fromEntries(['previous','picture','noiseField','imageRect','dt','clock','variant','inject'].map(name=>[name,gl.getUniformLocation(transportProgram,name)]));
+      transportLocations=Object.fromEntries(['previous','picture','noiseField','imageRect','dt','clock','variant','inject','initialize','texel'].map(name=>[name,gl.getUniformLocation(transportProgram,name)]));
       gl.useProgram(transportProgram);
       gl.uniform1i(transportLocations.picture,0);gl.uniform1i(transportLocations.noiseField,1);gl.uniform1i(transportLocations.previous,2);
       gl.useProgram(program);
@@ -290,34 +275,38 @@
 
   function advanceFlow(entry,time,nativeProof) {
     if(!entry.flow){
+      const width=Math.min(fieldSize,Math.max(192,entry.canvas.width));
+      const height=Math.min(fieldSize,Math.max(192,entry.canvas.height));
       const pairs=Array.from({length:2},()=>{
         const t=gl.createTexture();gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,t);
         gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-        gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,fieldSize,fieldSize,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
+        gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,width,height,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
         const f=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,f);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,t,0);
         if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw new Error('Flame field unavailable');
         gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);
         return {texture:t,framebuffer:f};
       });
-      entry.flow={pairs,index:0,time:time-800,steps:0};
+      entry.flow={pairs,index:0,time,steps:0,width,height};
     }
     const f=entry.flow;
     if(time<f.time){releaseFlow(entry);return advanceFlow(entry,time,nativeProof);}
     const span=Math.min(nativeProof?10000:140,time-f.time);
-    const count=Math.max(0,Math.ceil(span/(1000/30)));
+    const count=Math.max(f.steps===0?1:0,Math.ceil(span/(1000/30)));
     const dt=count?span/count/1000:0;
     bindQuad(transportProgram);
-    gl.viewport(0,0,fieldSize,fieldSize);
+    gl.viewport(0,0,f.width,f.height);
     gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture(entry.image));
     gl.uniform4fv(transportLocations.imageRect,entry.rect);
     gl.uniform1f(transportLocations.variant,entry.variant);
     gl.uniform1f(transportLocations.inject,fuelEnabled?1:0);
+    gl.uniform2f(transportLocations.texel,1/f.width,1/f.height);
     for(let i=0;i<count;i++){
       const next=1-f.index;
       gl.bindFramebuffer(gl.FRAMEBUFFER,f.pairs[next].framebuffer);
       gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,f.pairs[f.index].texture);
       gl.uniform1f(transportLocations.dt,dt);
+      gl.uniform1f(transportLocations.initialize,f.steps===0?1:0);
       gl.uniform1f(transportLocations.clock,(f.time+(i+1)*dt*1000)/1000+entry.seed*13.7);
       gl.drawArrays(gl.TRIANGLE_STRIP,0,4);f.index=next;f.steps++;
     }
@@ -471,7 +460,7 @@
     },
     wake,
     inspect() {
-      return {renderer:root.dataset.artRenderer||'not-needed',enabled:enabled(),periodMs:period,flameClock:'continuous',flameModel:'2D transported fuel with cooling',fieldSize,fuelEnabled,flameFrameLimit:60,running:!!frame,ticks:stats.ticks,
+      return {renderer:root.dataset.artRenderer||'not-needed',enabled:enabled(),periodMs:period,flameClock:'continuous',flameModel:'source flame layer replaced by transported burning material',fieldSize,fuelEnabled,flameFrameLimit:60,running:!!frame,ticks:stats.ticks,
               textureCount:textures.size,paints:stats.paints,meanTickMs:stats.ticks?stats.totalMs/stats.ticks:0,maxTickMs:stats.maxMs,
               entries:[...entries.values()].map(entry=>({type:entry.key.matches('[data-lotus-instance]')?'lotus':'imagery',subject:entry.key.closest('.imagery-object')?.dataset.imageryObject,
                 stage:entry.variant,source:entry.image.currentSrc||entry.image.src,sourceWidth:entry.image.naturalWidth,sourceHeight:entry.image.naturalHeight,flowSteps:entry.flow?.steps||0,paints:entry.paints,visible:visible(entry),failed:!!entry.failed,width:entry.canvas.width,height:entry.canvas.height}))};
@@ -481,9 +470,10 @@
       if(!gl)return [];
       return [...entries.values()].filter(e=>e.flow).map(e=>{
         gl.bindFramebuffer(gl.FRAMEBUFFER,e.flow.pairs[e.flow.index].framebuffer);
-        const pixels=new Uint8Array(fieldSize*fieldSize*4);gl.readPixels(0,0,fieldSize,fieldSize,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+        const width=e.flow.width,height=e.flow.height;
+        const pixels=new Uint8Array(width*height*4);gl.readPixels(0,0,width,height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
         let mass=0,weightedY=0,upper=0,lower=0;
-        for(let i=3;i<pixels.length;i+=4){const y=Math.floor(i/4/fieldSize)/fieldSize,a=pixels[i];mass+=a;weightedY+=a*y;if(y>.68)upper+=a;if(y<.4)lower+=a;}
+        for(let i=3;i<pixels.length;i+=4){const y=Math.floor(i/4/width)/height,a=pixels[i];mass+=a;weightedY+=a*y;if(y>.68)upper+=a;if(y<.4)lower+=a;}
         gl.bindFramebuffer(gl.FRAMEBUFFER,null);
         return {stage:e.variant,steps:e.flow.steps,mass,centerY:weightedY/Math.max(mass,1),upper,lower};
       });
