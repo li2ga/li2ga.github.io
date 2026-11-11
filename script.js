@@ -45,6 +45,13 @@
 
   // Ease pointer depth separately from CSS floating; stop requesting frames once settled.
   const atmosphere = document.querySelector(".page-atmosphere");
+  // Fade the artwork separately from scene transitions and pointer transforms.
+  atmosphere?.querySelectorAll('[data-background-scene]').forEach(scene => {
+    const presence = document.createElement('div');
+    presence.className = 'background-presence';
+    presence.append(...scene.childNodes);
+    scene.append(presence);
+  });
   const meteorSky = document.querySelector('.sky-meteors');
   function syncMeteorSky() {
     meteorSky?.classList.toggle('is-active', !document.hidden && !reducedMotion.matches);
@@ -105,8 +112,8 @@
   const availableBackgrounds = [...backgroundScenes, "lotus-still", "lotus-classic"];
   const wideBackground = window.matchMedia("(min-width: 1041px)");
   const autoBackgroundButton = document.querySelector('[data-background="auto"]');
-  let backgroundChoice = "trajectory";
-  let backgroundVisibility = "clear";
+  let backgroundChoice = "auto";
+  let backgroundVisibility = "subtle";
   let backgroundTimer = 0;
   const lotusScene = atmosphere?.querySelector('[data-background-scene="lotus"]');
   const lotusOptions = document.querySelector('.lotus-options');
@@ -483,16 +490,16 @@
   }
   if (atmosphere && backgroundSwitch) {
     showLotusStage(lotusStage);
-    let savedBackground = "trajectory";
+    let savedBackground = "auto";
     let savedPlacement = "fixed";
-    let savedVisibility = "clear";
+    let savedVisibility = "subtle";
     let savedArtMotion = "loop";
     try {
       savedBackground = localStorage.getItem("jia-li-background") || savedBackground;
       savedPlacement = localStorage.getItem("jia-li-background-layout") || savedPlacement;
       savedVisibility = localStorage.getItem("jia-li-background-visibility") || savedVisibility;
       savedArtMotion = localStorage.getItem('jia-li-art-motion') || savedArtMotion;
-    } catch (_) { /* Use the original design by default. */ }
+    } catch (_) { /* Default rotation and fading also work without storage. */ }
     const comparison = new URLSearchParams(location.search);
     const requestedLotus = lotusButtons.find(button => button.dataset.lotusName === comparison.get('lotus'));
     if (requestedLotus) {
@@ -610,7 +617,7 @@
 
   const nameFontSwitch = document.querySelector('.name-font-switch');
   function setNameFont(value, save = true) {
-    const font = value === 'original' ? 'original' : 'classic';
+    const font = ['original', 'termes'].includes(value) ? value : 'classic';
     document.documentElement.dataset.nameFont = font;
     document.querySelectorAll('button[data-name-font]').forEach(button => {
       button.setAttribute('aria-pressed', String(button.dataset.nameFont === font));
