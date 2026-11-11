@@ -22,7 +22,7 @@ strong,h3{font-weight:700}
 .page-atmosphere[data-background-visibility]{--lotus-frame-peak:1;--lotus-fade-peak:1;--lotus-fade-mid:.92;--lotus-fade-high:.97;--lotus-fade-late:.8}
 .page-atmosphere[data-background-visibility] .ambient-raster{filter:none}
 .background-presence{position:absolute;inset:0;opacity:1}
-.page-atmosphere[data-background-visibility=subtle] .atmosphere-theme[data-active]>.background-presence{animation:background-presence 30s ease-in-out infinite;animation-play-state:var(--scene-motion,paused)}
+.page-atmosphere[data-background-visibility=subtle] .atmosphere-theme[data-active] .background-presence{animation:background-presence 30s ease-in-out infinite;animation-play-state:var(--scene-motion,paused)}
 @keyframes background-presence{0%,100%{opacity:0}12%,58%{opacity:1}90%{opacity:0}}
 @media(prefers-reduced-motion:reduce){.background-presence{animation:none!important;opacity:1!important}}
 .atmosphere-definitions{position:absolute;width:0;height:0;overflow:hidden}
@@ -217,13 +217,14 @@ strong,h3{font-weight:700}
 .lotus-evolution.lotus-is-playing{--lotus-motion:running}
 .page-atmosphere.is-moving .atmosphere-theme[data-active] .lotus-float{animation-play-state:var(--lotus-motion,paused)}
 .lotus-evolution[data-lotus-stage="5"] .lotus-evolving-rings,.lotus-evolution[data-lotus-stage="6"] .lotus-evolving-rings{opacity:.8}
-@keyframes lotus-wander{0%{opacity:.12;transform:translate3d(0,var(--lotus-y-a),0) rotate(calc(var(--lotus-turn)*-1))}16%{opacity:var(--lotus-fade-peak,.93)}36%{opacity:var(--lotus-fade-mid,.83);transform:translate3d(var(--lotus-sway),var(--lotus-y-b),0) rotate(var(--lotus-turn))}66%{opacity:var(--lotus-fade-high,.9);transform:translate3d(calc(var(--lotus-sway)*-.6),var(--lotus-y-c),0) rotate(calc(var(--lotus-turn)*-.4))}85%{opacity:var(--lotus-fade-late,.7)}100%{opacity:.12;transform:translate3d(0,var(--lotus-y-d),0) rotate(calc(var(--lotus-turn)*-1))}}
-@keyframes lotus-hover{from{transform:translate3d(-2px,-6px,0) rotate(-1.2deg)}to{transform:translate3d(2px,6px,0) rotate(1.2deg)}}
+@keyframes lotus-wander{0%{opacity:.12;transform:translate3d(0,var(--lotus-y-a),0)}16%{opacity:var(--lotus-fade-peak,.93)}36%{opacity:var(--lotus-fade-mid,.83);transform:translate3d(var(--lotus-sway),var(--lotus-y-b),0)}66%{opacity:var(--lotus-fade-high,.9);transform:translate3d(calc(var(--lotus-sway)*-.6),var(--lotus-y-c),0)}85%{opacity:var(--lotus-fade-late,.7)}100%{opacity:.12;transform:translate3d(0,var(--lotus-y-d),0)}}
+@keyframes lotus-hover{from{transform:translate3d(-2px,-6px,0)}to{transform:translate3d(2px,6px,0)}}
 @keyframes lotus-ring-turn{from{transform:translateY(2px) rotate(-4deg) scaleX(.96)}to{transform:translateY(-2px) rotate(4deg) scaleX(1.04)}}
 @keyframes lotus-dust-rise{from{opacity:.25;transform:translateY(3px)}to{opacity:.8;transform:translateY(-8px)}}
 @media(prefers-reduced-motion:reduce){.lotus-frame,.lotus-evolution,.lotus-float,.lotus-hover,.lotus-evolving-rings,.lotus-evolving-sparks{animation:none!important;transition:none!important;transform:none!important}}
 @media(prefers-reduced-motion:reduce){.art-loop-canvas{display:none!important}.imagery-turn.has-art-loop>img{visibility:visible}.lotus-frame.has-art-loop{background-size:contain}}
-.atmosphere-theme[data-background-scene=lotus] .motif-top-right{rotate:-9deg;scale:.88}
+.atmosphere-theme[data-background-scene=lotus] .lotus-evolution{rotate:none}
+.atmosphere-theme[data-background-scene=lotus] .motif-top-right{scale:.88}
 @keyframes demon-bloom{from{transform:translateY(2px) scale(.975)}to{transform:translateY(-3px) scale(1.02)}}
 @keyframes demon-pressure{from{transform:scaleX(.97);opacity:.35}to{transform:scaleX(1.04);opacity:.65}}
 @keyframes demon-wisp{from{transform:translateY(4px);opacity:.35}to{transform:translateY(-7px);opacity:.8}}

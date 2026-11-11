@@ -45,8 +45,8 @@
 
   // Ease pointer depth separately from CSS floating; stop requesting frames once settled.
   const atmosphere = document.querySelector(".page-atmosphere");
-  // Fade the artwork separately from scene transitions and pointer transforms.
-  atmosphere?.querySelectorAll('[data-background-scene]').forEach(scene => {
+  // Fade only the later-added companion figures, independently of scene changes.
+  atmosphere?.querySelectorAll('.lotus-companion, .line-procession').forEach(scene => {
     const presence = document.createElement('div');
     presence.className = 'background-presence';
     presence.append(...scene.childNodes);
