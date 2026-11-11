@@ -275,15 +275,15 @@ strong,h3{font-weight:700}
 @keyframes line-scan-pass{0%{opacity:0;transform:translateX(-45%)}10%{opacity:.15}25%{opacity:0;transform:translateX(45%)}100%{opacity:0;transform:translateX(45%)}}
 /* Fixed sky is independent of scene choice, page placement and pointer depth. */
 .sky-meteors{position:fixed;inset:0;z-index:2;overflow:hidden;pointer-events:none;contain:strict}
-.meteor-flight{position:absolute;left:8%;top:5%;width:clamp(110px,14vw,215px);height:2px;transform:rotate(31deg);--meteor-time:31s;--meteor-phase:3s;--meteor-distance:550px}
-.meteor-flight-1{left:68%;top:13%;transform:rotate(144deg);--meteor-time:43s;--meteor-phase:12s;--meteor-distance:430px}
-.meteor-flight-2{left:29%;top:43%;transform:rotate(27deg);--meteor-time:53s;--meteor-phase:24s;--meteor-distance:490px}
-.meteor-flight-3{left:89%;top:63%;transform:rotate(150deg);--meteor-time:67s;--meteor-phase:38s;--meteor-distance:620px}
-.meteor-streak{position:absolute;inset:0;opacity:0;border-radius:100%;background:linear-gradient(90deg,transparent,#b8d9e68c 30%,#a3becfc9 78%,#d7ae72);animation:meteor-crossing var(--meteor-time) linear var(--meteor-phase) infinite;animation-play-state:paused}
-.meteor-streak::after{content:"";position:absolute;right:0;top:-1px;width:4px;height:4px;border-radius:50%;background:#e1bd7c;box-shadow:0 0 6px #dfc696}
+.meteor-flight{position:absolute;left:8%;top:11%;width:clamp(140px,16vw,235px);height:3px;transform:rotate(31deg);--meteor-time:29s;--meteor-phase:2.8s;--meteor-distance:550px}
+.meteor-flight-1{left:68%;top:16%;transform:rotate(144deg);--meteor-time:41s;--meteor-phase:9s;--meteor-distance:430px}
+.meteor-flight-2{left:29%;top:43%;transform:rotate(27deg);--meteor-time:53s;--meteor-phase:18s;--meteor-distance:490px}
+.meteor-flight-3{left:89%;top:63%;transform:rotate(150deg);--meteor-time:67s;--meteor-phase:30.5s;--meteor-distance:620px}
+.meteor-streak{position:absolute;inset:0;opacity:0;border-radius:100%;background:linear-gradient(90deg,transparent,#9dcbd447 18%,#578cacb8 62%,#83bacfe6 88%,#ce9b4e);box-shadow:0 0 7px #88b5d044;animation:meteor-crossing var(--meteor-time) linear var(--meteor-phase) infinite;animation-play-state:paused}
+.meteor-streak::after{content:"";position:absolute;right:0;top:-1px;width:5px;height:5px;border-radius:50%;background:#e4b360;box-shadow:0 0 3px #d5a565,0 0 11px #8bbdd7}
 .sky-meteors.is-active .meteor-streak{animation-play-state:running}
-@keyframes meteor-crossing{0%{opacity:0;transform:translateX(-100px) scaleX(.6)}.5%{opacity:.68}3.5%{opacity:.5}5%{opacity:0;transform:translateX(var(--meteor-distance)) scaleX(1)}100%{opacity:0;transform:translateX(var(--meteor-distance)) scaleX(1)}}
-@media(max-width:1040px){.meteor-flight{width:110px;--meteor-distance:330px}.meteor-streak{height:1px}.meteor-flight-2,.meteor-flight-3{display:none}}
+@keyframes meteor-crossing{0%{opacity:0;transform:translateX(-90px) scaleX(.65)}.8%{opacity:.95}5%{opacity:.76}7%{opacity:0;transform:translateX(var(--meteor-distance)) scaleX(1)}100%{opacity:0;transform:translateX(var(--meteor-distance)) scaleX(1)}}
+@media(max-width:1040px){.meteor-flight{width:120px;height:2px;--meteor-distance:330px}.meteor-flight-2,.meteor-flight-3{display:none}}
 @media(prefers-reduced-motion:reduce){.sky-meteors{display:none}.lotus-companion .ambient-presence,.line-visitor,.line-visitor .ambient-raster,.line-scan{animation:none!important}.lotus-companion .ambient-presence{opacity:var(--presence-static,1)}.line-visitor-0{opacity:var(--line-static,1)}}
 @media print{.sky-meteors{display:none!important}}
 .language-switch{display:flex;width:max-content;gap:2px;align-items:center;margin:4px 5px 0 auto;padding:3px;border:1px solid #e9d8be;border-radius:6px;background:#fff;font-size:12px}
