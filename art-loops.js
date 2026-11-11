@@ -29,36 +29,50 @@
       return mix(texture2D(noiseField,q/128.).r,texture2D(noiseField,(q+vec2(37.,17.))/128.).r,f.z);
     }
     float fireFbm(vec3 p){return fireNoise(p)*.57+fireNoise(p*2.03+7.1)*.29+fireNoise(p*4.17-3.8)*.14;}
+    bool hasFramework(){return (variant>4.5&&variant<5.5)||variant>8.5;}
+    float goldMaterial(vec4 color){
+      return smoothstep(.04,.17,color.r-color.b)*smoothstep(.01,.1,color.g-color.b);
+    }
     float fuel(vec2 at,vec4 color){
-      float top=smoothstep(.43,.65,at.y);
-      if(variant>8.5)top=smoothstep(.4,.62,at.y);
-      float hot=smoothstep(.48,.88,max(max(color.r,color.g),color.b));
-      float gold=smoothstep(.04,.17,color.r-color.b)*smoothstep(.01,.1,color.g-color.b);
-      float paleMetal=(1.-smoothstep(.03,.14,max(max(color.r,color.g),color.b)-min(min(color.r,color.g),color.b)));
-      if(variant>4.5&&variant<6.5)top*=1.-.72*paleMetal;
-      return top*hot*(1.-gold)*color.a;
+      // Warm fire is still fuel. Only artworks with a metal framework need
+      // a material exclusion; applying it to gold/green flames freezes them.
+      float height=smoothstep(.17,.60,at.y);
+      float hot=smoothstep(.36,.82,max(max(color.r,color.g),color.b));
+      float metal=hasFramework()?goldMaterial(color):0.;
+      if(variant>4.5&&variant<5.5){
+        float pale=1.-smoothstep(.03,.14,max(max(color.r,color.g),color.b)-min(min(color.r,color.g),color.b));
+        metal=max(metal,pale*.72);
+      }
+      return height*hot*(1.-metal)*color.a;
     }
     vec4 livingFlame(vec2 at){
       vec4 original=texture2D(picture,at);
       bool fineBranches=variant>11.5&&variant<12.5;
       float rigidGold=0.;
-      if(fineBranches){
-        // Preserve the gold scaffold while its translucent fire keeps flowing.
-        rigidGold=smoothstep(.04,.17,original.r-original.b)*smoothstep(.01,.1,original.g-original.b)*smoothstep(.35,.7,original.a);
+      if(hasFramework()){
+        // Classify the unshifted scaffold before a neighboring flame can move
+        // into it. This protection never applies to the golden-fire artwork.
+        rigidGold=goldMaterial(original)*smoothstep(.35,.7,original.a);
         if(rigidGold>.7)return vec4(original.rgb*original.a,original.a);
       }
       float t=flameClock;
       if(fineBranches)t*=.72;
-      float h=smoothstep(.40,.9,at.y);
+      float h=smoothstep(.17,.90,at.y);
       // Upward advection and curling eddies move fire material, not the metal body.
       vec3 domain=vec3(at.x*23.,at.y*19.-t*1.22,t*.19+variant*3.1);
       float n=fireFbm(domain),n2=fireFbm(domain+vec3(11.1,3.7,5.2));
       vec2 curl=vec2(n2-.5,n-.5);
-      vec2 shift=vec2(curl.x*.040*h,curl.y*.025*h);
+      float strength=1.;
+      if(variant>1.5&&variant<3.5)strength=1.55;
+      if(variant>5.5&&variant<6.5)strength=1.9;
+      vec2 shift=vec2(curl.x*.040*h,curl.y*.025*h)*strength;
+      // A slower coherent bend carries a whole tongue, while smaller eddies
+      // travel inside it. Low and lateral tongues also receive some motion.
+      shift.x+=sin(at.y*11.-t*1.4+variant)*.008*h*strength;
       if(fineBranches)shift*=.58;
       vec4 moving=texture2D(picture,clamp(at-shift,0.,1.));
       float mask=max(fuel(at,original),fuel(at-shift,moving));
-      if(fineBranches)mask*=1.-rigidGold;
+      mask*=1.-rigidGold;
       vec4 body=mix(original,moving,clamp(mask*1.25,0.,1.));
       // Short, colored wisps detach from actual hot pixels and rise through
       // the transparent margin. Sampling the source retains each phase's palette.
@@ -72,7 +86,7 @@
         float d=f*smoothstep(.48+age*.08,.76,strand+.06*sin(age*19.-t))*(.18*(1.-age*.8));
         // Existing opaque material occludes trails; no halo over polished metal.
         d*=1.-original.a*.86;
-        if(fineBranches)d*=1.-rigidGold;
+        d*=1.-rigidGold;
         emission+=sampleColor.rgb*d;opacity+=d;
       }
       float stream=pow(max(0.,1.-abs(n-.53)*6.),8.);

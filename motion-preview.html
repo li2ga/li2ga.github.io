@@ -36,21 +36,21 @@
           <div class="stage" data-lotus-instance="0" data-lotus-stage="0"><span class="lotus-frame" data-lotus-frame="0"></span></div>
         </div>
       </div>
-      <div class="controls"><label for="variant">Artwork</label><select id="variant"><option value="blue">Blue flame</option><option value="cold">Blue &amp; white</option><option value="branches">Golden branches</option></select><button type="button" id="live-toggle" aria-pressed="true">Motion on</button></div>
+      <div class="controls"><label for="variant">Artwork</label><select id="variant"><option value="blue">Blue flame</option><option value="cold">Blue &amp; white</option><option value="jade">Jade glass</option><option value="fusion">Fusion</option><option value="pearl">Pearl flame</option><option value="rings">Bound in rings</option><option value="gold">Golden bloom</option><option value="emperor">Emperor flame</option><option value="destruction">Destruction lotus</option><option value="radial">Metal structure</option><option value="formation">Formation</option><option value="refined">Reforged flame</option><option value="branches">Golden branches</option></select><button type="button" id="live-toggle" aria-pressed="true">Motion on</button></div>
       <p class="meta" id="live-status" role="status">Loading artwork…</p>
     </section>
   </div>
   <div class="note">The live panel animates the source image's flame details. It retains the original image file; the rendered pixels change. The main homepage also adds floating, pointer depth and independent evolution. On narrow screens, with reduced motion enabled, or when WebGL is unavailable, the live panel keeps the still artwork.</div>
   <footer>Both panels reuse the existing website assets. <a href="index.html?background=lotus&amp;lotus=blue&amp;artmotion=loop" id="full">Open the full background scene ↗</a></footer>
 </main>
-<script src="art-loops.js?v=ac2785519cc6"></script>
+<script src="art-loops.js?v=9a80a5cf2ba8"></script>
 <script>
 (() => {
   const root=document.querySelector('.page-atmosphere'),item=root.querySelector('[data-lotus-instance]'),host=root.querySelector('.lotus-frame');
   const status=document.getElementById('live-status'),variant=document.getElementById('variant'),liveToggle=document.getElementById('live-toggle');
   const gif=document.getElementById('gif'),gifToggle=document.getElementById('gif-toggle');
   const reduced=matchMedia('(prefers-reduced-motion: reduce)'),wide=matchMedia('(min-width: 1041px)');
-  const choices={"blue": {"stage": 0, "src": "assets/backgrounds/fire-lotus-blue-v1.png?v=fcdb882fd67d"}, "cold": {"stage": 1, "src": "assets/backgrounds/fire-lotus-cold-v1.png?v=08a1c9576dc6"}, "branches": {"stage": 12, "src": "assets/backgrounds/fire-lotus-branches-v1.png?v=dac835cfcaeb"}};
+  const choices={"blue": {"stage": 0, "src": "assets/backgrounds/fire-lotus-blue-v1.png?v=fcdb882fd67d"}, "cold": {"stage": 1, "src": "assets/backgrounds/fire-lotus-cold-v1.png?v=08a1c9576dc6"}, "jade": {"stage": 2, "src": "assets/backgrounds/fire-lotus-jade-v1.png?v=0a01273b7903"}, "fusion": {"stage": 3, "src": "assets/backgrounds/fire-lotus-fusion-v1.png?v=d01be05876a6"}, "pearl": {"stage": 4, "src": "assets/backgrounds/fire-lotus-pearl-v1.png?v=ed662fa59cd6"}, "rings": {"stage": 5, "src": "assets/backgrounds/fire-lotus-rings-v1.png?v=d96596d32338"}, "gold": {"stage": 6, "src": "assets/backgrounds/fire-lotus-gold-v1.png?v=e516dfbe78d9"}, "emperor": {"stage": 7, "src": "assets/backgrounds/fire-lotus-emperor-v1.svg?v=cc400e4b0ae1"}, "destruction": {"stage": 8, "src": "assets/backgrounds/fire-lotus-destruction-v1.png?v=718706a97c64"}, "radial": {"stage": 9, "src": "assets/backgrounds/fire-lotus-radial-v1.png?v=8e4ee4e534c3"}, "formation": {"stage": 10, "src": "assets/backgrounds/fire-lotus-formation-v1.png?v=14a4f88bc3b8"}, "refined": {"stage": 11, "src": "assets/backgrounds/fire-lotus-refined-v1.png?v=757d28355f6c"}, "branches": {"stage": 12, "src": "assets/backgrounds/fire-lotus-branches-v1.png?v=dac835cfcaeb"}};
   let gifPlaying=false,currentImage=null,generation=0;
   function gifPlayback(play){gifPlaying=play;gif.src=play?'assets/previews/blue-flame-loop.gif':'assets/backgrounds/fire-lotus-blue-v1.png';gifToggle.textContent=play?'Show still':'Play GIF';gifToggle.setAttribute('aria-pressed',String(play));}
   gifToggle.addEventListener('click',()=>gifPlayback(!gifPlaying));
