@@ -193,13 +193,14 @@ strong,h3{font-weight:700}
 [data-term-procession=ziwei-cinematic]{--term-ink:#60618b;--term-accent:#92794c}
 .term-side{position:absolute;inset:0 auto 0 0;width:max(0px,calc((100vw - 820px)/2));overflow:hidden;mask-image:linear-gradient(transparent,#000 12%,#000 86%,transparent);-webkit-mask-image:linear-gradient(transparent,#000 12%,#000 86%,transparent)}
 .term-side-1{left:auto;right:0}
-.term-word{position:absolute;top:0;left:var(--term-x);width:max-content;max-width:100%;white-space:pre;color:var(--term-ink);font-family:'STKaiti','KaiTi','Kaiti SC','Songti SC','Noto Serif CJK SC',serif;font-weight:400;line-height:1.6;letter-spacing:.15em;opacity:0;transform:translate3d(-50%,calc(100vh + 90px),0);animation:term-ascent var(--term-period) linear infinite;animation-delay:var(--term-phase);animation-play-state:var(--scene-motion,paused)}
-.term-depth-0{--term-size:15px;font-size:var(--term-size);--term-opacity:.27;filter:blur(.2px);letter-spacing:.25em}
-.term-depth-1{--term-size:23px;font-size:var(--term-size);--term-opacity:.43}
-.term-depth-2{--term-size:34px;font-size:var(--term-size);--term-opacity:.34;color:var(--term-accent);letter-spacing:.09em}
+.term-word{--term-render-size:min(calc(var(--term-size)*var(--term-scale,1)),calc((100vw - 820px)/16));position:absolute;top:0;left:clamp(3.9em,var(--term-x),calc(100% - 3.9em));width:max-content;max-width:100%;white-space:pre;color:var(--term-ink);font-family:'STKaiti','KaiTi','Kaiti SC','Songti SC','Noto Serif CJK SC',serif;font-size:var(--term-render-size);font-weight:400;line-height:1.6;letter-spacing:var(--term-spacing,.15em);opacity:0;transform:translate3d(-50%,calc(100vh + 90px),0);animation:term-ascent var(--term-period) linear infinite;animation-delay:var(--term-phase);animation-play-state:var(--scene-motion,paused)}
+.term-depth-0{--term-size:15px;--term-opacity:.27;filter:blur(.2px)}
+.term-depth-1{--term-size:23px;--term-opacity:.43}
+.term-depth-2{--term-size:34px;--term-opacity:.34;color:var(--term-accent)}
 .term-side-1 .term-depth-2{--term-size:30px}
-.term-word[data-term-long]{font-size:calc(var(--term-size)*.76);letter-spacing:.08em}
-@keyframes term-ascent{0%{opacity:0;transform:translate3d(calc(-50% - var(--term-drift)),calc(100vh + 90px),0)}12%{opacity:var(--term-opacity)}48%{transform:translate3d(calc(-50% + var(--term-drift)),44vh,0)}80%{opacity:var(--term-opacity)}100%{opacity:0;transform:translate3d(-50%,-150px,0)}}
+.term-word[data-term-long]{font-size:calc(var(--term-render-size)*.76)}
+@keyframes term-ascent{0%{opacity:0;transform:translate3d(calc(-50% - var(--term-drift)),calc(100vh + 90px),0) rotate(var(--term-tilt,0deg))}12%{opacity:calc(var(--term-opacity)*var(--term-strength,1))}48%{transform:translate3d(calc(-50% + var(--term-drift)),44vh,0) rotate(calc(var(--term-tilt,0deg)*-.5))}80%{opacity:calc(var(--term-opacity)*var(--term-strength,1))}100%{opacity:0;transform:translate3d(-50%,calc(-100% - 90px),0) rotate(var(--term-tilt,0deg))}}
+@keyframes term-ascent-next{0%{opacity:0;transform:translate3d(calc(-50% - var(--term-drift)),calc(100vh + 90px),0) rotate(var(--term-tilt,0deg))}12%{opacity:calc(var(--term-opacity)*var(--term-strength,1))}48%{transform:translate3d(calc(-50% + var(--term-drift)),44vh,0) rotate(calc(var(--term-tilt,0deg)*-.5))}80%{opacity:calc(var(--term-opacity)*var(--term-strength,1))}100%{opacity:0;transform:translate3d(-50%,calc(-100% - 90px),0) rotate(var(--term-tilt,0deg))}}
 @media(min-width:1041px) and (max-width:1280px){.term-depth-0,.term-depth-2{display:none}.term-depth-1{--term-size:18px;left:50%;--term-opacity:.37}}
 @media(max-width:1040px),(prefers-reduced-motion:reduce){.term-procession{display:none}.term-word{animation:none!important}}
 @media print{.term-procession{display:none!important}}
@@ -925,17 +926,68 @@ main>section:not(.about){margin-top:29px}
 
   // Ease pointer depth separately from CSS floating; stop requesting frames once settled.
   const atmosphere = document.querySelector(".page-atmosphere");
-  // Swap only off-screen words at the loop boundary; no polling or frame loop.
+  // Each word gets its own pace and shuffled draw; renew only after it exits.
   atmosphere?.querySelectorAll('[data-term-procession]').forEach(field => {
     const banks = JSON.parse(field.querySelector('.term-bank').textContent);
-    const next = [14, 14, 14];
-    field.addEventListener('animationiteration', event => {
-      if (event.animationName !== 'term-ascent' || !event.target.matches('[data-term-word]')) return;
-      const depth = Number(event.target.dataset.termWord);
-      const bank = banks[depth];
-      const word = bank[next[depth]++ % bank.length];
-      event.target.textContent = word.replace(/([，；])/g, '$1\n').split('\n').flatMap(line => line.match(/.{1,7}/gu) || []).join('\n');
-      event.target.toggleAttribute('data-term-long', word.length >= 7);
+    const random = (min, max) => min + Math.random() * (max - min);
+    function shuffle(words) {
+      const result = [...words];
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      return result;
+    }
+    const remaining = banks.map(shuffle);
+    const occupied = banks.map(() => new Set());
+    const durations = [[54, 108], [42, 90], [32, 76]];
+    function renew(element, initialPhase) {
+      const depth = Number(element.dataset.termWord);
+      const previous = element.dataset.termText;
+      occupied[depth].delete(previous);
+      const available = word => word !== previous && !occupied[depth].has(word);
+      let index = remaining[depth].findIndex(available);
+      if (index < 0) {
+        remaining[depth] = shuffle(banks[depth]).filter(available);
+        index = 0;
+      }
+      const word = remaining[depth].splice(index, 1)[0];
+      occupied[depth].add(word);
+      element.dataset.termText = word;
+      element.textContent = word.replace(/([，；])/g, '$1\n').split('\n').flatMap(line => line.match(/.{1,7}/gu) || []).join('\n');
+      element.toggleAttribute('data-term-long', word.length >= 7);
+      const period = random(...durations[depth]);
+      const initial = typeof initialPhase === 'number';
+      const values = {
+        '--term-period': `${period.toFixed(2)}s`,
+        '--term-phase': `${(initial ? -initialPhase * period : random(.8, 9)).toFixed(2)}s`,
+        '--term-scale': random(.74, 1.24).toFixed(3),
+        '--term-x': `${random(19, 81).toFixed(2)}%`,
+        '--term-drift': `${random(-13, 13).toFixed(2)}px`,
+        '--term-tilt': `${random(-1.8, 1.8).toFixed(2)}deg`,
+        '--term-spacing': `${random(.06, word.length >= 7 ? .12 : .22).toFixed(3)}em`,
+        '--term-strength': random(.75, 1.15).toFixed(3),
+      };
+      Object.entries(values).forEach(([name, value]) => element.style.setProperty(name, value));
+      element.style.animationIterationCount = '1';
+      // Alternating identical keyframes starts a fresh clock without layout reads.
+      element.style.animationName = element.style.animationName === 'term-ascent' ? 'term-ascent-next' : 'term-ascent';
+    }
+    field.querySelectorAll('.term-side').forEach(side => {
+      banks.forEach((_, depth) => {
+        const words = [...side.querySelectorAll(`[data-term-word="${depth}"]`)];
+        const gaps = words.map(() => random(.55, 1.65));
+        const sum = gaps.reduce((total, gap) => total + gap, 0);
+        let phase = Math.random();
+        words.forEach((word, index) => {
+          renew(word, phase % 1);
+          phase += gaps[index] / sum;
+        });
+      });
+    });
+    field.addEventListener('animationend', event => {
+      if (!['term-ascent', 'term-ascent-next'].includes(event.animationName) || !event.target.matches('[data-term-word]')) return;
+      renew(event.target);
     });
   });
   // Fade only the later-added companion figures, independently of scene changes.

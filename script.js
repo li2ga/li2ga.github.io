@@ -45,17 +45,68 @@
 
   // Ease pointer depth separately from CSS floating; stop requesting frames once settled.
   const atmosphere = document.querySelector(".page-atmosphere");
-  // Swap only off-screen words at the loop boundary; no polling or frame loop.
+  // Each word gets its own pace and shuffled draw; renew only after it exits.
   atmosphere?.querySelectorAll('[data-term-procession]').forEach(field => {
     const banks = JSON.parse(field.querySelector('.term-bank').textContent);
-    const next = [14, 14, 14];
-    field.addEventListener('animationiteration', event => {
-      if (event.animationName !== 'term-ascent' || !event.target.matches('[data-term-word]')) return;
-      const depth = Number(event.target.dataset.termWord);
-      const bank = banks[depth];
-      const word = bank[next[depth]++ % bank.length];
-      event.target.textContent = word.replace(/([，；])/g, '$1\n').split('\n').flatMap(line => line.match(/.{1,7}/gu) || []).join('\n');
-      event.target.toggleAttribute('data-term-long', word.length >= 7);
+    const random = (min, max) => min + Math.random() * (max - min);
+    function shuffle(words) {
+      const result = [...words];
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      return result;
+    }
+    const remaining = banks.map(shuffle);
+    const occupied = banks.map(() => new Set());
+    const durations = [[54, 108], [42, 90], [32, 76]];
+    function renew(element, initialPhase) {
+      const depth = Number(element.dataset.termWord);
+      const previous = element.dataset.termText;
+      occupied[depth].delete(previous);
+      const available = word => word !== previous && !occupied[depth].has(word);
+      let index = remaining[depth].findIndex(available);
+      if (index < 0) {
+        remaining[depth] = shuffle(banks[depth]).filter(available);
+        index = 0;
+      }
+      const word = remaining[depth].splice(index, 1)[0];
+      occupied[depth].add(word);
+      element.dataset.termText = word;
+      element.textContent = word.replace(/([，；])/g, '$1\n').split('\n').flatMap(line => line.match(/.{1,7}/gu) || []).join('\n');
+      element.toggleAttribute('data-term-long', word.length >= 7);
+      const period = random(...durations[depth]);
+      const initial = typeof initialPhase === 'number';
+      const values = {
+        '--term-period': `${period.toFixed(2)}s`,
+        '--term-phase': `${(initial ? -initialPhase * period : random(.8, 9)).toFixed(2)}s`,
+        '--term-scale': random(.74, 1.24).toFixed(3),
+        '--term-x': `${random(19, 81).toFixed(2)}%`,
+        '--term-drift': `${random(-13, 13).toFixed(2)}px`,
+        '--term-tilt': `${random(-1.8, 1.8).toFixed(2)}deg`,
+        '--term-spacing': `${random(.06, word.length >= 7 ? .12 : .22).toFixed(3)}em`,
+        '--term-strength': random(.75, 1.15).toFixed(3),
+      };
+      Object.entries(values).forEach(([name, value]) => element.style.setProperty(name, value));
+      element.style.animationIterationCount = '1';
+      // Alternating identical keyframes starts a fresh clock without layout reads.
+      element.style.animationName = element.style.animationName === 'term-ascent' ? 'term-ascent-next' : 'term-ascent';
+    }
+    field.querySelectorAll('.term-side').forEach(side => {
+      banks.forEach((_, depth) => {
+        const words = [...side.querySelectorAll(`[data-term-word="${depth}"]`)];
+        const gaps = words.map(() => random(.55, 1.65));
+        const sum = gaps.reduce((total, gap) => total + gap, 0);
+        let phase = Math.random();
+        words.forEach((word, index) => {
+          renew(word, phase % 1);
+          phase += gaps[index] / sum;
+        });
+      });
+    });
+    field.addEventListener('animationend', event => {
+      if (!['term-ascent', 'term-ascent-next'].includes(event.animationName) || !event.target.matches('[data-term-word]')) return;
+      renew(event.target);
     });
   });
   // Fade only the later-added companion figures, independently of scene changes.
