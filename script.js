@@ -854,6 +854,7 @@
     // 历代站标独立保存，避免换 favicon 时把点击图案一起替换。
     { image: "assets/icons/lotus-pink-gold-transparent.svg" },
     { image: "assets/icons/jl-square.svg" },
+    { image: "assets/icons/yin-yang.svg" },
     // 原来的 15 个全部保留。
     "✨", "🤖", "🥳", "⚡", "🌾", "💧", "🔥", "🤩", "🌈", "🚀", "🥇", "🏆", "💎", "🌌", "🪐",
     // 星星、流星与闪光。
