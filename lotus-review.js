@@ -40,8 +40,7 @@
       composite.flames(c, fire, mask, false, 1);
       LotusReviewEffects.embers(c, t, profile, dark, false);
     }
-    if (cold) composite.contained(c, body);
-    else c.drawImage(body, 0, 0);
+    composite.contained(c, body);
     if (showFire && cold) {
       ColdLotusCore.draw(c, fire, true);
       drawLotusLight(c, t * 1000, true, dark, true);
@@ -90,11 +89,9 @@
     sync();
     status.textContent = '正在载入这一款火莲…';
     try {
-      const [base, art] = await Promise.all([
-        image(d.src), cold ? image(d.body) : image(d.src)
-      ]);
+      const base = await image(d.src);
       if (selected !== model) return;
-      model.body = cold ? art : composite.plate(art, d.profile, key);
+      model.body = base;
       model.mask = cold ? null : composite.cupMask(d.profile.cup);
       stage.dataset.lotusStage = d.stage;
       host.dataset.lotusFrame = d.stage;
