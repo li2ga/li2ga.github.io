@@ -6,13 +6,22 @@ from pathlib import Path
 
 CATALOG = json.loads(Path(__file__).with_suffix('.json').read_text(encoding='utf-8'))
 FEATURE_GROUPS = {
-    'ganzhi-cinematic': ['制用与宾主细法', '格局具体取法', '调候具体取法', '格局与结构'],
-    'ziwei-cinematic': ['蔡氏自化细目', '梁氏飞星细目', '星曜具体化象', '星系具体落宫', '星系与格局'],
+    'ganzhi-cinematic': ['伤官比劫具体组合', '经典异格与奇格', '古籍短章', '制用与宾主细法',
+                         '格局具体取法', '调候具体取法', '格局与结构', '用户指定文学意象'],
+    'ziwei-cinematic': ['经典格名与象局', '古赋成句', '蔡氏自化细目', '梁氏飞星细目',
+                        '星曜具体化象', '星系具体落宫', '星系与格局'],
 }
 
 
 def interleave(groups):
     return list(dict.fromkeys(word for row in zip_longest(*groups) for word in row if word))
+
+
+def display_word(word):
+    """Keep each half of a classical couplet readable within the side margin."""
+    lines = word.replace('，', '，\n').replace('；', '；\n').splitlines()
+    return '\n'.join(part for line in lines for part in
+                     (line[i:i+7] for i in range(0, len(line), 7)))
 
 
 def words_for(scene):
@@ -49,7 +58,7 @@ def procession(scene):
                 phase = -(slot / 7 + .041 * depth + .067 * side) * period
                 style = f'--term-period:{period}s;--term-phase:{phase:.3f}s;--term-x:{x}%;--term-drift:{(-1 if side else 1) * (5 + depth * 4)}px'
                 long = ' data-term-long' if len(word) >= 7 else ''
-                slots.append(f'<span class="term-word term-depth-{depth}" data-term-word="{depth}"{long} style="{style}">{escape(word)}</span>')
+                slots.append(f'<span class="term-word term-depth-{depth}" data-term-word="{depth}"{long} style="{style}">{escape(display_word(word))}</span>')
         sides.append(f'<div class="term-side term-side-{side}">{"".join(slots)}</div>')
     data = json.dumps(pools, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     return (f'<div class="term-procession" data-term-procession="{scene}" data-term-count="{len(words)}" lang="zh-CN" aria-hidden="true">'

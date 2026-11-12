@@ -54,7 +54,7 @@
       const depth = Number(event.target.dataset.termWord);
       const bank = banks[depth];
       const word = bank[next[depth]++ % bank.length];
-      event.target.textContent = word;
+      event.target.textContent = word.replace(/([，；])/g, '$1\n').split('\n').flatMap(line => line.match(/.{1,7}/gu) || []).join('\n');
       event.target.toggleAttribute('data-term-long', word.length >= 7);
     });
   });
