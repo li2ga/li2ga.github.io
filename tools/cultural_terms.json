@@ -2,6 +2,7 @@
   "ganzhi-cinematic": {
     "title": "八字术语",
     "groups": {
+      "天干原文与刚柔意象": "乙庚合 甲木参天，脱胎要火 火炽乘龙，水荡骑虎 地润天和，植立千古 怀丁抱丙 藤萝系甲 藤萝系甲，可春可秋 欺霜侮雪 土众成慈，水猖显节 合壬而忠 旺而不烈，衰而不穷 能胜甲兄，输于乙妹 土润则生，土干则脆 得水而清，得火而锐 乐水之盈 能扶社稷，能救生灵 通根透癸，冲天奔地 化则有情，从则相济 合戊见火，火根乃真",
       "鸳鸯德合与比翼": "鸳鸯合 鸳鸯比翼 蝴蝶双飞 鸳鸯德合 天地鸳鸯合 天地德合 干支双合 天合地合 鸳鸯两两 德合双鸯 德合双鸳 德合双鸳，坐槐庭而布政",
       "伤官比劫具体组合": "伤官伤尽 比劫成势 伤官驾杀 伤官合杀 伤官带杀 伤官用财 伤官用杀 伤官用官 伤尽官星 伤官吐秀 比劫抗杀 比劫争财 劫财合杀 比劫夺财 印刃相随 建禄用官 建禄用杀 建禄用食 财旺生官 财喜食生 财格配印 财格带杀 财格透官 印赖杀生 印旺逢财 食神带杀 食神用杀 弃印就财 弃印就食 弃官就食 弃命从财 弃命从杀 弃命从儿 身旺任财 身旺担杀 杀旺印轻 印重身轻 食重身轻 官轻财旺 枭神夺食 财制枭印 食伤泄秀 财生七杀 劫刃化杀 杀刃双显 合官留杀 去杀留官 羊刃逢冲 身旺无依 化神得令 化气逢时 两干不杂 两神成象 三气成象 天元一气 地支一气 天干顺食 专禄归时",
       "经典异格与奇格": "壬骑龙背 六乙鼠贵 六阴朝阳 六壬趋艮 六甲趋乾 飞天禄马 倒冲禄马 冲合禄马 井栏叉格 井栏斜叉 子遥巳禄 丑遥巳禄 虎午奔巳 羊击猪蛇 日禄归时 拱禄格 拱贵格 日贵格 日德格 魁罡格 金神格 时上金神 时上一位贵 时上偏财 福德秀气 禄元互换 子午双包 青龙伏形 白虎持势 朱雀乘风 玄武当权 勾陈得位 还魂借气 八专禄旺 土局润下 木火交辉 火金铸印 四位纯全 一气生成 背禄逐马 水火既济 天地德合 天元坐禄 天元坐财 三奇真贵 财官双透 财官双美 拱禄拱贵 飞财格 冲禄格 天元坐杀 财官印全 杀印刃全 金神入火乡",
@@ -29,6 +30,9 @@
   "ziwei-cinematic": {
     "title": "紫微斗数术语",
     "groups": {
+      "北派自化与质能变技法": "质能变 来因宫质能变 向心力质能变 离心力质能变 质量变 同宫异向 同干异向 向性反背 生年双象并联 单象挤入 单象分裂 本宫破象 单象串联 三爻变 双三爻变 权象三爻变 忌象三爻变 本对移转 飞宫连环忌 化象回路 核心用神 五段叠套法 科随权走 忌随禄走 权随科走 法象溯本归源",
+      "蔡氏秘仪原文技法": "自化三字诀 入出住 同波相应 在天垂象 在地成形 生年定大限 飞宫定流年 腹中星盘",
+      "梁氏转忌追忌串连": "化忌转忌 追忌 追忌转忌 挟忌转忌 同宫相迫 两头见忌 冲破的串连 自化忌出 用归于体 体用合一 用不离体",
       "鸳鸯禄与鸾凤": "禄合鸳鸯 合禄鸳鸯 合禄鸳鸯一世荣 龙池凤阁 红鸾天喜",
       "经典格名与象局": "日月并明 七杀朝斗 机月同梁 极向离明 丹墀桂墀 马头带剑 日出扶桑 三奇嘉会 科权禄拱 科名会禄 禄文拱命 科明禄暗 明禄暗禄 双禄朝垣 双禄夹命 禄合鸳鸯 合禄拱禄 坐贵向贵 魁钺夹命 日月夹命 紫府夹命 左右夹命 昌曲夹命 日月夹财 财荫夹印 荫印拱身 金舆扶驾 天乙拱命 将星得地 寿星入庙 雄宿乾元 府相朝垣 紫府朝垣 紫府同宫 君臣庆会 英星入庙 七杀仰斗 权禄巡逢 科禄巡逢 文星暗拱 文桂文华 文星遇夹 辅弼拱主 巨日同宫 巨机同临 梁居午位 寅逢府相 贵星夹命 日月同临 火贪同宫 铃贪同宫 贪武同行 擎羊入庙 三合明珠 南极星辉 魁钺会照 三台拱命 八座朝垣",
       "古赋成句": "机月同梁作吏人 七杀朝斗，爵禄荣昌 日月并明，佐九重于尧殿 紫府同宫，终身福厚 日照雷门，富贵荣华 月朗天门，进爵封侯 天魁天钺，盖世文章 天禄天马，惊人甲第 丹墀桂墀，早遂青云之志 七杀破军宜出外",
@@ -50,8 +54,46 @@
     }
   },
   "sources": [
-    {"title": "三命通会卷十二：兰台妙选相关原文", "url": "https://zh.wikisource.org/wiki/三命通會_(四庫全書本)/卷12", "scope": "鸳鸯比翼、德合双鸯/双鸳、蝴蝶双飞；古籍异文及现代通称分别记录，不把不同条件的格局视为一回事"},
-    {"title": "五行精纪古籍转录：君臣庆会与天地德合", "url": "https://daizhige.org/易藏/术数/五行精纪.html", "scope": "天地德合、干支合的古籍语境；鸳鸯合/天地鸳鸯合/天合地合/干支双合保留为当代常用称呼"},
+    {
+      "title": "楚天云阔《北派河洛紫微斗数止观录》出版目录",
+      "url": "https://www.books.com.tw/products/0010846953",
+      "scope": "ISBN 9789869831819；自化、质能变、质量变、反背、分裂、三爻变等术语据章节核对，页码见term_evidence；不宣称这些术语均为蔡明宏原话。"
+    },
+    {
+      "title": "北派河洛三大象数体系：作者原发文章",
+      "url": "https://zi-tian.blogspot.com/2017/05/?m=0",
+      "scope": "2017-05-19原发文章明确使用质能变、质量变；这是该作者的北派河洛语境。"
+    },
+    {
+      "title": "梁氏飞星教材：化忌转忌追忌的串连手法",
+      "url": "https://www.transtar-csft-liang.url.tw/hot_195757.html",
+      "scope": "张世贤发布于梁氏教学网站的逻辑心法；同宫相迫、两头见忌、追忌、挟忌转忌、用归于体等短语。"
+    },
+    {
+      "title": "滴天髓·天干论原文",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "scope": "藤萝系甲、怀丁抱丙、能胜甲兄输于乙妹等为原文摘句；乙庚刚柔意象的古文依据另见term_evidence。"
+    },
+    {
+      "title": "兰台妙选·德合双鸳条：古籍原文转录",
+      "url": "https://libokang.com/classics/bazi/兰台妙选/",
+      "scope": "德合双鸳，坐槐庭而布政。仅取古文转录，不取网站白话发挥。"
+    },
+    {
+      "title": "三命通会·四冲得位：古籍原文转录",
+      "url": "https://www.cantian.ai/wiki/zh-Hans/other_geju/sichongdewei/",
+      "scope": "仅取古籍原文区的鸳鸯德合用例，不将网站AI讲解当作古籍。"
+    },
+    {
+      "title": "三命通会卷十二·金声玉振赋：古籍原文转录",
+      "url": "https://www.cnddy.com/1559.html",
+      "scope": "鸳鸯比翼、蝴蝶双飞；注释中有德合双鸯异写。德合双鸳另据兰台妙选，不把两篇混为同一篇。"
+    },
+    {
+      "title": "五行精纪古籍转录：君臣庆会与天地德合",
+      "url": "https://daizhige.org/易藏/术数/五行精纪.html",
+      "scope": "天地德合、干支合的古籍语境；鸳鸯合/天地鸳鸯合/天合地合/干支双合保留为当代常用称呼"
+    },
     {
       "title": "三命通会卷六古籍转录",
       "url": "https://sanqing.com.tw/en/三命通會卷六/",
@@ -73,9 +115,9 @@
       "scope": "太微赋、斗数骨髓赋中的经典格名与短句；现代显示统一为简体"
     },
     {
-      "title": "刘琨诗句与历代诗话所引原文",
-      "url": "https://zh.wikisource.org/zh/厯代詩話_(四庫全書本)/卷30",
-      "scope": "用户指定的百炼刚/绕指柔文学意象；这是文学引句，不标为八字术语"
+      "title": "刘琨《重赠卢谌》原文",
+      "url": "https://zh.wikisource.org/zh-hans/重贈盧諶",
+      "scope": "何意百炼刚，化为绕指柔：保留文学引句。可以借喻乙庚刚柔相合，不能称为原诗专指乙庚，亦不是一个独立格名。"
     },
     {
       "title": "段建业《盲派初级命理学》转录预览",
@@ -118,5 +160,622 @@
       "scope": "宫位自化与飞化术语"
     }
   ],
-  "notes": "仅为可编辑的装饰术语与古籍短章目录，不是个人命盘或命理推断；古典和不同现代流派的词汇分组保存，不将其解释规则合并。用户指定文学引句独立分类，不冒充命理术语。六十甲子按标准干支顺序生成；古籍异体字按现代简体统一，井栏斜叉/井栏叉格为常见异称。八字鸳鸯德合类与斗数禄合鸳鸯分别归类；同一词族中保留异称，不据名称相似推定成格条件相同。"
+  "notes": "仅为可编辑的装饰术语与古籍短章目录，不是个人命盘或命理推断；古典和不同现代流派的词汇分组保存，不将其解释规则合并。用户指定文学引句独立分类，不冒充命理术语。六十甲子按标准干支顺序生成；古籍异体字按现代简体统一，井栏斜叉/井栏叉格为常见异称。八字鸳鸯德合类与斗数禄合鸳鸯分别归类；同一词族中保留异称，不据名称相似推定成格条件相同。 文学意象继续保留；百炼刚/绕指柔可用于乙庚刚柔意象，原诗不专指乙庚。北派自化新组据楚天云阔出版目录核对，蔡氏秘仪与梁氏串连另组保存。",
+  "term_evidence": [
+    {
+      "term": "鸳鸯德合",
+      "work": "三命通会",
+      "section": "四冲得位",
+      "quotation": "六合于格为鸳鸯德合，或天地德合",
+      "url": "https://www.cantian.ai/wiki/zh-Hans/other_geju/sichongdewei/",
+      "evidence_kind": "古籍原文转录",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "鸳鸯比翼",
+      "work": "三命通会",
+      "section": "卷十二·金声玉振赋",
+      "quotation": "鸳鸯比翼见江湖，必遂平生。",
+      "url": "https://www.cnddy.com/1559.html",
+      "evidence_kind": "古籍原文转录",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "蝴蝶双飞",
+      "work": "三命通会",
+      "section": "卷十二·金声玉振赋",
+      "quotation": "蝴蝶双飞逢园囿，方为得所。",
+      "url": "https://www.cnddy.com/1559.html",
+      "evidence_kind": "古籍原文转录",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "德合双鸳",
+      "work": "兰台妙选",
+      "section": "德合双鸳条",
+      "quotation": "德合双鸳，坐槐庭而布政。",
+      "url": "https://libokang.com/classics/bazi/兰台妙选/",
+      "evidence_kind": "古籍原文转录",
+      "variant_note": "德合双鸯为另见于三命通会相关注释的异写。",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "何意百炼刚，化为绕指柔",
+      "work": "刘琨·重赠卢谌",
+      "url": "https://zh.wikisource.org/zh-hans/重贈盧諶",
+      "evidence_kind": "文学原文",
+      "usage_note": "用户指定保留；可在命理讲解中借喻乙庚刚柔之合，但原诗不是在解释乙庚。",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "乙庚合",
+      "work": "滴天髓",
+      "section": "天干论·庚金",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "quotation": "能胜甲兄，输于乙妹。",
+      "commentary_quotation": "乙木虽柔，合而输之。",
+      "evidence_kind": "古籍原文转录",
+      "usage_note": "与百炼刚/绕指柔相呼应的是刚柔取象；相合不等于必然合化成金。",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "质能变",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        191,
+        197
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "来因宫质能变",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        191,
+        197
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "向心力质能变",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        191
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "离心力质能变",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        197
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "质量变",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        231,
+        237,
+        239
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "同宫异向",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        285,
+        289
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "同干异向",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        291
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "向性反背",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        277,
+        281,
+        283
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "生年双象并联",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        243,
+        253,
+        255
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "单象挤入",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        243
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "单象分裂",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        255
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "本宫破象",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        265
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "单象串联",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        269
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "三爻变",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        297,
+        303,
+        309
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "双三爻变",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        305
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "权象三爻变",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        297,
+        303
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "忌象三爻变",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        309
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "本对移转",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        311
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "飞宫连环忌",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        319
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "化象回路",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        340
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "核心用神",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        324,
+        325
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "五段叠套法",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        366
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "科随权走",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        81
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "忌随禄走",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        83
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "权随科走",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        83
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "法象溯本归源",
+      "work": "楚天云阔·北派河洛紫微斗数止观录",
+      "pages": [
+        88
+      ],
+      "url": "https://www.books.com.tw/products/0010846953",
+      "evidence_kind": "出版目录中的术语或章节摘词",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "甲木参天，脱胎要火",
+      "work": "滴天髓",
+      "section": "天干论·甲木",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "火炽乘龙，水荡骑虎",
+      "work": "滴天髓",
+      "section": "天干论·甲木",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "地润天和，植立千古",
+      "work": "滴天髓",
+      "section": "天干论·甲木",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "怀丁抱丙",
+      "work": "滴天髓",
+      "section": "天干论·乙木",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "藤萝系甲",
+      "work": "滴天髓",
+      "section": "天干论·乙木",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "藤萝系甲，可春可秋",
+      "work": "滴天髓",
+      "section": "天干论·乙木",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "欺霜侮雪",
+      "work": "滴天髓",
+      "section": "天干论·丙火",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "土众成慈，水猖显节",
+      "work": "滴天髓",
+      "section": "天干论·丙火",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "合壬而忠",
+      "work": "滴天髓",
+      "section": "天干论·丁火",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "旺而不烈，衰而不穷",
+      "work": "滴天髓",
+      "section": "天干论·丁火",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "能胜甲兄，输于乙妹",
+      "work": "滴天髓",
+      "section": "天干论·庚金",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "土润则生，土干则脆",
+      "work": "滴天髓",
+      "section": "天干论·庚金",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "得水而清，得火而锐",
+      "work": "滴天髓",
+      "section": "天干论·庚金",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "乐水之盈",
+      "work": "滴天髓",
+      "section": "天干论·辛金",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "能扶社稷，能救生灵",
+      "work": "滴天髓",
+      "section": "天干论·辛金",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "通根透癸，冲天奔地",
+      "work": "滴天髓",
+      "section": "天干论·壬水",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "化则有情，从则相济",
+      "work": "滴天髓",
+      "section": "天干论·壬水",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "合戊见火，火根乃真",
+      "work": "滴天髓",
+      "section": "天干论·癸水",
+      "url": "https://zh.wikisource.org/zh-hans/滴天髓",
+      "evidence_kind": "古籍原文摘句",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "自化三字诀",
+      "work": "蔡明宏·斗数秘仪下厨房",
+      "url": "https://www.scribd.com/document/1075319060/蔡明宏-斗数秘仪下厨房",
+      "evidence_kind": "作者著作的公开文字转录预览",
+      "scope_note": "据正文短语收录，不使用Scribd的AI摘要。",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "入出住",
+      "work": "蔡明宏·斗数秘仪下厨房",
+      "url": "https://www.scribd.com/document/1075319060/蔡明宏-斗数秘仪下厨房",
+      "evidence_kind": "作者著作的公开文字转录预览",
+      "scope_note": "据正文短语收录，不使用Scribd的AI摘要。",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "同波相应",
+      "work": "蔡明宏·斗数秘仪下厨房",
+      "url": "https://www.scribd.com/document/1075319060/蔡明宏-斗数秘仪下厨房",
+      "evidence_kind": "作者著作的公开文字转录预览",
+      "scope_note": "据正文短语收录，不使用Scribd的AI摘要。",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "在天垂象",
+      "work": "蔡明宏·斗数秘仪下厨房",
+      "url": "https://www.scribd.com/document/1075319060/蔡明宏-斗数秘仪下厨房",
+      "evidence_kind": "作者著作的公开文字转录预览",
+      "scope_note": "据正文短语收录，不使用Scribd的AI摘要。",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "在地成形",
+      "work": "蔡明宏·斗数秘仪下厨房",
+      "url": "https://www.scribd.com/document/1075319060/蔡明宏-斗数秘仪下厨房",
+      "evidence_kind": "作者著作的公开文字转录预览",
+      "scope_note": "据正文短语收录，不使用Scribd的AI摘要。",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "生年定大限",
+      "work": "蔡明宏·斗数秘仪下厨房",
+      "url": "https://www.scribd.com/document/1075319060/蔡明宏-斗数秘仪下厨房",
+      "evidence_kind": "作者著作的公开文字转录预览",
+      "scope_note": "据正文短语收录，不使用Scribd的AI摘要。",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "飞宫定流年",
+      "work": "蔡明宏·斗数秘仪下厨房",
+      "url": "https://www.scribd.com/document/1075319060/蔡明宏-斗数秘仪下厨房",
+      "evidence_kind": "作者著作的公开文字转录预览",
+      "scope_note": "据正文短语收录，不使用Scribd的AI摘要。",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "腹中星盘",
+      "work": "蔡明宏·斗数秘仪下厨房",
+      "url": "https://www.scribd.com/document/1075319060/蔡明宏-斗数秘仪下厨房",
+      "evidence_kind": "作者著作的公开文字转录预览",
+      "scope_note": "据正文短语收录，不使用Scribd的AI摘要。",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "化忌转忌",
+      "work": "梁氏教学网站·化忌转忌追忌的串连手法",
+      "url": "https://www.transtar-csft-liang.url.tw/hot_195757.html",
+      "evidence_kind": "张世贤教学原文短语",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "追忌",
+      "work": "梁氏教学网站·化忌转忌追忌的串连手法",
+      "url": "https://www.transtar-csft-liang.url.tw/hot_195757.html",
+      "evidence_kind": "张世贤教学原文短语",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "追忌转忌",
+      "work": "梁氏教学网站·化忌转忌追忌的串连手法",
+      "url": "https://www.transtar-csft-liang.url.tw/hot_195757.html",
+      "evidence_kind": "张世贤教学原文短语",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "挟忌转忌",
+      "work": "梁氏教学网站·化忌转忌追忌的串连手法",
+      "url": "https://www.transtar-csft-liang.url.tw/hot_195757.html",
+      "evidence_kind": "张世贤教学原文短语",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "同宫相迫",
+      "work": "梁氏教学网站·化忌转忌追忌的串连手法",
+      "url": "https://www.transtar-csft-liang.url.tw/hot_195757.html",
+      "evidence_kind": "张世贤教学原文短语",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "两头见忌",
+      "work": "梁氏教学网站·化忌转忌追忌的串连手法",
+      "url": "https://www.transtar-csft-liang.url.tw/hot_195757.html",
+      "evidence_kind": "张世贤教学原文短语",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "冲破的串连",
+      "work": "梁氏教学网站·化忌转忌追忌的串连手法",
+      "url": "https://www.transtar-csft-liang.url.tw/hot_195757.html",
+      "evidence_kind": "张世贤教学原文短语",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "自化忌出",
+      "work": "梁氏教学网站·化忌转忌追忌的串连手法",
+      "url": "https://www.transtar-csft-liang.url.tw/hot_195757.html",
+      "evidence_kind": "张世贤教学原文短语",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "用归于体",
+      "work": "梁氏教学网站·化忌转忌追忌的串连手法",
+      "url": "https://www.transtar-csft-liang.url.tw/hot_195757.html",
+      "evidence_kind": "张世贤教学原文短语",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "体用合一",
+      "work": "梁氏教学网站·化忌转忌追忌的串连手法",
+      "url": "https://www.transtar-csft-liang.url.tw/hot_195757.html",
+      "evidence_kind": "张世贤教学原文短语",
+      "verified_on": "2026-11-12"
+    },
+    {
+      "term": "用不离体",
+      "work": "梁氏教学网站·化忌转忌追忌的串连手法",
+      "url": "https://www.transtar-csft-liang.url.tw/hot_195757.html",
+      "evidence_kind": "张世贤教学原文短语",
+      "verified_on": "2026-11-12"
+    }
+  ],
+  "inclusion_policy": "须有可核查的命理文献或真实命理用例，不凭名称好看自造格名、口诀或技术。传统格名、现代技法、作者特定术语、异写、原文摘句与文学借喻分别记录；不同流派不合并条件。term_evidence是本轮逐项核对范围，不表示旧词库所有条目均完成书影校勘。"
 }
