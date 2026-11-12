@@ -38,7 +38,7 @@
     if (new URLSearchParams(location.search).get('intro') !== 'preview') {
       try { localStorage.setItem('jia-li-intro-seen', '1'); } catch (_) { /* The page remains readable without storage. */ }
     }
-    entranceTimer = setTimeout(finishEntrance, 1800);
+    entranceTimer = setTimeout(finishEntrance, Number(entrance.dataset.duration) || 3600);
     document.addEventListener('visibilitychange', finishWhenHidden);
     reducedMotion.addEventListener('change', finishOnReducedMotion);
   } else if (entrance) entrance.remove();
@@ -52,13 +52,13 @@
     presence.append(...scene.childNodes);
     scene.append(presence);
   });
-  const meteorSky = document.querySelector('.sky-meteors');
-  function syncMeteorSky() {
-    meteorSky?.classList.toggle('is-active', !document.hidden && !reducedMotion.matches);
+  const skyLayers = document.querySelectorAll('.sky-meteors, .sky-leaves');
+  function syncSkyMotion() {
+    skyLayers.forEach(layer => layer.classList.toggle('is-active', !document.hidden && !reducedMotion.matches));
   }
-  document.addEventListener('visibilitychange', syncMeteorSky);
-  reducedMotion.addEventListener('change', syncMeteorSky);
-  syncMeteorSky();
+  document.addEventListener('visibilitychange', syncSkyMotion);
+  reducedMotion.addEventListener('change', syncSkyMotion);
+  syncSkyMotion();
   const widePointer = window.matchMedia("(min-width: 1041px) and (pointer: fine)");
   let atmosphereFrame = 0;
   let pointerX = 0;

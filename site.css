@@ -107,14 +107,14 @@ strong,h3{font-weight:700}
 
 /* One first-visit gesture, followed by the ordinary reading page. */
 .site-entrance{display:none;position:fixed;inset:0;z-index:80;overflow:hidden;background:#fff;pointer-events:none}
-.intro-pending .site-entrance{display:block;animation:entrance-clear 1.8s linear both}
+.intro-pending .site-entrance{display:block;animation:entrance-clear var(--intro-duration) linear both}
 .site-entrance>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .entrance-traces{fill:none;stroke:#91a9bf;stroke-width:1.1;stroke-linecap:round;transform-box:view-box;transform-origin:50% 50%}
-.entrance-traces path{stroke-dasharray:1;animation:entrance-gather .78s cubic-bezier(.2,.55,.2,1) both;animation-delay:var(--trace-delay)}
+.entrance-traces path{stroke-dasharray:1;animation:entrance-gather calc(var(--intro-duration)*.433333) cubic-bezier(.2,.55,.2,1) both;animation-delay:var(--trace-delay)}
 .entrance-traces path:nth-child(3n){stroke:#c7ac7d;stroke-width:1.4}
-.entrance-left{animation:entrance-scatter-left .72s 1.05s cubic-bezier(.3,0,.3,1) both}
-.entrance-right{animation:entrance-scatter-right .72s 1.05s cubic-bezier(.3,0,.3,1) both}
-.entrance-name{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:clamp(13px,2vw,29px);font-family:NameLatin,Lato,sans-serif;font-size:clamp(34px,5.3vw,69px);font-weight:500;color:#263a4a;animation:entrance-name 1.8s ease both}
+.entrance-left{animation:entrance-scatter-left calc(var(--intro-duration)*.4) calc(var(--intro-duration)*.583333) cubic-bezier(.3,0,.3,1) both}
+.entrance-right{animation:entrance-scatter-right calc(var(--intro-duration)*.4) calc(var(--intro-duration)*.583333) cubic-bezier(.3,0,.3,1) both}
+.entrance-name{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:clamp(13px,2vw,29px);font-family:NameLatin,Lato,sans-serif;font-size:clamp(34px,5.3vw,69px);font-weight:500;color:#263a4a;animation:entrance-name var(--intro-duration) ease both}
 .entrance-name [lang=zh-CN]{font-family:NameChinese,'Microsoft YaHei',sans-serif;font-size:.88em}
 .entrance-name i{font-family:Lato;font-size:.45em;font-style:normal;font-weight:400;color:#9ba9b1}
 @keyframes entrance-gather{0%{stroke-dashoffset:1;opacity:0}28%{opacity:.4}100%{stroke-dashoffset:0;opacity:.7}}
@@ -286,6 +286,23 @@ strong,h3{font-weight:700}
 @media(max-width:1040px){.meteor-flight{width:120px;height:2px;--meteor-distance:330px}.meteor-flight-2,.meteor-flight-3{display:none}}
 @media(prefers-reduced-motion:reduce){.sky-meteors{display:none}.lotus-companion .ambient-presence,.line-visitor,.line-visitor .ambient-raster,.line-scan{animation:none!important}.lotus-companion .ambient-presence{opacity:var(--presence-static,1)}.line-visitor-0{opacity:var(--line-static,1)}}
 @media print{.sky-meteors{display:none!important}}
+.sky-leaves{position:fixed;inset:0;z-index:2;overflow:hidden;pointer-events:none;contain:strict}
+.autumn-definitions{position:absolute;width:0;height:0;overflow:hidden}
+.leaf-flight{position:absolute;left:var(--leaf-x);top:-45px;width:var(--leaf-size);height:calc(var(--leaf-size)*1.2);opacity:0;animation:leaf-fall var(--leaf-time) linear var(--leaf-phase) infinite;animation-play-state:paused}
+.leaf-sway,.leaf-turn{display:block;width:100%;height:100%;animation-play-state:paused}
+.leaf-sway{animation:leaf-sway var(--sway-time) ease-in-out var(--leaf-phase) infinite;animation-play-state:paused}
+.leaf-turn{transform-origin:48% 53%;animation:leaf-turn var(--turn-time) linear var(--leaf-phase) infinite;animation-play-state:paused}
+.autumn-leaf{display:block;width:100%;height:100%;overflow:visible;color:var(--leaf-color);filter:drop-shadow(0 2px 2px #9f744518)}
+.leaf-silhouette{fill:currentColor;stroke:#99673e73;stroke-width:.7;stroke-linejoin:round}
+.leaf-veins{fill:none;stroke:#fff2c3;stroke-width:.85;opacity:.6;stroke-linecap:round}
+.leaf-stem{fill:none;stroke:#987443;stroke-width:1.25;stroke-linecap:round}
+.sky-leaves.is-active .leaf-flight,.sky-leaves.is-active .leaf-sway,.sky-leaves.is-active .leaf-turn{animation-play-state:running}
+@keyframes leaf-fall{0%{opacity:0;transform:translate3d(-25px,-8vh,0)}8%{opacity:var(--leaf-alpha)}38%{transform:translate3d(calc(var(--leaf-drift)*.28),36vh,0)}70%{opacity:var(--leaf-alpha);transform:translate3d(calc(var(--leaf-drift)*.63),76vh,0)}96%,100%{opacity:0;transform:translate3d(var(--leaf-drift),calc(100vh + 90px),0)}}
+@keyframes leaf-sway{0%,100%{transform:translateX(-14px)}38%{transform:translateX(26px)}72%{transform:translateX(-5px)}}
+@keyframes leaf-turn{0%{transform:rotateZ(-18deg) rotateY(14deg)}26%{transform:rotateZ(76deg) rotateY(76deg)}56%{transform:rotateZ(184deg) rotateY(-60deg)}80%{transform:rotateZ(276deg) rotateY(58deg)}100%{transform:rotateZ(342deg) rotateY(14deg)}}
+@media(max-width:1040px){.leaf-flight{width:calc(var(--leaf-size)*.8);height:var(--leaf-size)}.leaf-flight:nth-of-type(n+7){display:none}}
+@media(prefers-reduced-motion:reduce){.sky-leaves{display:none}.sky-leaves *{animation:none!important}}
+@media print{.sky-leaves{display:none!important}}
 .language-switch{display:flex;width:max-content;gap:2px;align-items:center;margin:4px 5px 0 auto;padding:3px;border:1px solid #e9d8be;border-radius:6px;background:#fff;font-size:12px}
 .language-switch button{background:transparent;border:0;border-radius:3px;color:#555;padding:5px 12px;min-height:32px;font-size:12px;line-height:1.4}
 .language-switch button:hover{background:#fff8ec;color:#ad4c00}
