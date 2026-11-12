@@ -45,6 +45,19 @@
 
   // Ease pointer depth separately from CSS floating; stop requesting frames once settled.
   const atmosphere = document.querySelector(".page-atmosphere");
+  // Swap only off-screen words at the loop boundary; no polling or frame loop.
+  atmosphere?.querySelectorAll('[data-term-procession]').forEach(field => {
+    const banks = JSON.parse(field.querySelector('.term-bank').textContent);
+    const next = [14, 14, 14];
+    field.addEventListener('animationiteration', event => {
+      if (event.animationName !== 'term-ascent' || !event.target.matches('[data-term-word]')) return;
+      const depth = Number(event.target.dataset.termWord);
+      const bank = banks[depth];
+      const word = bank[next[depth]++ % bank.length];
+      event.target.textContent = word;
+      event.target.toggleAttribute('data-term-long', word.length >= 7);
+    });
+  });
   // Fade only the later-added companion figures, independently of scene changes.
   atmosphere?.querySelectorAll('.lotus-companion, .line-procession').forEach(scene => {
     const presence = document.createElement('div');
