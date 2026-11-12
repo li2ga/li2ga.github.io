@@ -19,6 +19,8 @@ def interleave(groups):
 
 def display_word(word):
     """Keep each half of a classical couplet readable within the side margin."""
+    if word == '天行健，君子以自强不息':
+        return word
     lines = word.replace('，', '，\n').replace('；', '；\n').splitlines()
     return '\n'.join(part for line in lines for part in
                      (line[i:i+7] for i in range(0, len(line), 7)))
@@ -58,7 +60,8 @@ def procession(scene):
                 phase = -(slot / 7 + .041 * depth + .067 * side) * period
                 style = f'--term-period:{period}s;--term-phase:{phase:.3f}s;--term-x:{x}%;--term-drift:{(-1 if side else 1) * (5 + depth * 4)}px'
                 long = ' data-term-long' if len(word) >= 7 else ''
-                slots.append(f'<span class="term-word term-depth-{depth}" data-term-word="{depth}"{long} style="{style}">{escape(display_word(word))}</span>')
+                inline = ' data-term-inline' if word == '天行健，君子以自强不息' else ''
+                slots.append(f'<span class="term-word term-depth-{depth}" data-term-word="{depth}"{long}{inline} style="{style}">{escape(display_word(word))}</span>')
         sides.append(f'<div class="term-side term-side-{side}">{"".join(slots)}</div>')
     data = json.dumps(pools, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     return (f'<div class="term-procession" data-term-procession="{scene}" data-term-count="{len(words)}" lang="zh-CN" aria-hidden="true">'

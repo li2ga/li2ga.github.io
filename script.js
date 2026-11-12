@@ -73,8 +73,10 @@
       const word = remaining[depth].splice(index, 1)[0];
       occupied[depth].add(word);
       element.dataset.termText = word;
-      element.textContent = word.replace(/([，；])/g, '$1\n').split('\n').flatMap(line => line.match(/.{1,7}/gu) || []).join('\n');
+      const inline = word === '天行健，君子以自强不息';
+      element.textContent = inline ? word : word.replace(/([，；])/g, '$1\n').split('\n').flatMap(line => line.match(/.{1,7}/gu) || []).join('\n');
       element.toggleAttribute('data-term-long', word.length >= 7);
+      element.toggleAttribute('data-term-inline', inline);
       const period = random(...durations[depth]);
       const initial = typeof initialPhase === 'number';
       const values = {
