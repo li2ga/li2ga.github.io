@@ -84,20 +84,41 @@
     return ctx.canvas;
   }
 
+  const far = buffer();
   const near = buffer();
+  const sky = far.createLinearGradient(0, 0, 0, .105*size);
+  sky.addColorStop(0, 'transparent');
+  sky.addColorStop(.16, 'transparent');
+  sky.addColorStop(.54, 'rgba(255,255,255,.48)');
+  sky.addColorStop(1, '#fff');
+  let projectedFrame = null;
+
+  function project(image) {
+    if (image === projectedFrame) return far.canvas;
+    far.clearRect(0,0,size,size);
+    far.drawImage(image,0,0,size,size);
+    far.globalCompositeOperation = 'destination-in';
+    far.fillStyle = sky;
+    far.fillRect(0,0,size,size);
+    far.globalCompositeOperation = 'source-over';
+    projectedFrame = image;
+    return far.canvas;
+  }
+
   function flames(ctx, image, mask, front, strength) {
     if (!image) return;
+    const projection = project(image);
     ctx.save();
     ctx.globalAlpha = strength;
     if (front) {
       near.clearRect(0,0,size,size);
-      near.drawImage(image,0,0,size,size);
+      near.drawImage(projection,0,0);
       near.globalCompositeOperation = 'destination-in';
       near.drawImage(mask,0,0);
       near.globalCompositeOperation = 'source-over';
       ctx.drawImage(near.canvas,0,0);
     } else {
-      ctx.drawImage(image,0,0,size,size);
+      ctx.drawImage(projection,0,0);
     }
     ctx.restore();
   }
