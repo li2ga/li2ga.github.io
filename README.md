@@ -34,7 +34,7 @@ python -m http.server 8788 --bind 127.0.0.1
 | --- | --- |
 | `index.html` | 生成后的中英文主页 |
 | `site.css` | 布局、字体、背景和交互样式 |
-| `script.js` | 语言切换、开场、背景控制、点击 emoji 等交互 |
+| `script.js` | 语言切换、开场、背景控制、点击 emoji 等交互的可编辑源文件；构建时嵌入主页 |
 | `art-loops.js` | 火莲图像内部的流焰动画及静态回退 |
 | `background-runtime.js` | 从独立背景模块生成的按需加载文件，不手动编辑 |
 | `analytics.js` | 访问记录请求、统计刷新、公开快照和联系备用入口 |
@@ -52,7 +52,7 @@ python -m http.server 8788 --bind 127.0.0.1
 以下生成工具存在于独立的本地源码中，公开发布仓库只保留成品和统计更新工具。
 
 - **正文、论文、经历与奖项**：编辑 `content.json` 的相应中英文内容，再运行 `python tools/build_site.py`。姓名在两种语言下均保留 `Jia Li | 李嘉`。
-- **点击 emoji**：编辑 `script.js` 中的 emoji 数组。当前暂停十二生肖，以及月相组中带暗面或表情的月亮；旧项目保留在注释中。
+- **点击 emoji**：编辑 `script.js` 中的 emoji 数组，再运行 `python tools/build_site.py` 更新主页内的交互代码。当前暂停十二生肖，以及月相组中带暗面或表情的月亮；旧项目保留在注释中。
 - **配色、布局与动态**：修改 `site.css`、`script.js` 或 `art-loops.js`。背景选择、渐隐渐现、固定 / 滚动布局和系统“减少动态效果”的回退均应保留。
 - **标题字体**：参考截图的英文姓名使用 Georgia 常规字重；右上角 Aa 可切换“参考图 / 前版 / 原版”。前版 TeX Gyre Termes Bold 和最初 NameLatin 保留。Georgia 使用设备自带字体，不复制或公开系统字体文件；缺少 Georgia 的设备使用 serif 回退，字形可能略有差别。中文姓名和竖线保持原样。
 - **标签页图标**：当前使用已有的金色火莲 `assets/backgrounds/fire-lotus-gold-v1.png`。运行 `python tools/prepare_favicon.py` 后重新生成页面；小图标导出需要 FFmpeg。背景原图不改变，PNG 与 ICO 保留透明度。原环莲、粉金火莲及蓝色 JL 方块仍保留，便于切回。
@@ -62,7 +62,7 @@ python -m http.server 8788 --bind 127.0.0.1
 
 ### 加载与画质
 
-首屏交互直接加载 `script.js`；六个背景模块合并为 `background-runtime.js`，在需要桌面动态背景时才加载。手机、系统减少动态或静态档不请求该文件。背景脚本延迟或失败时，正文、语言按钮和音乐仍可使用；已下载的完整原图继续显示。修改独立背景模块后，运行 `python tools/build_site.py` 重新生成背景文件，并一起发布。
+样式、主交互与音乐控制在构建时从 `site.css`、`script.js`、`background-music.js` 嵌入HTML，随正文一并送达，避免独立样式或脚本请求延迟导致首屏等待；修改这些源文件后需要重新构建页面。六个背景模块合并为 `background-runtime.js`，在需要桌面动态背景时才加载。手机、系统减少动态或静态档不请求该文件。背景脚本延迟或失败时，正文、语言按钮和音乐仍可使用；已下载的完整原图继续显示。修改独立背景模块后，运行 `python tools/build_site.py` 重新生成背景文件，并一起发布。
 
 主页照片使用原生4031×3024的渐进式JPEG，保留原图解码像素、EXIF和ICC，约5.24MB；下载过程中可逐步显示。点击照片仍打开原来的JPEG。十二张火莲在主页传输原生尺寸的无损WebP，合计从约15.02MB降至10.67MB；PNG原文件保留，逐像素校验一致。附加光焰按当前可见形态加载，当前光焰未准备好时不抢先预取下一形态；两首音乐均在点击播放后才下载。
 
