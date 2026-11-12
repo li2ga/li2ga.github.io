@@ -314,7 +314,10 @@
       if (canLoad && inLayout && !item.pending && !item.error && item.stage !== item.desiredStage) {
         requestLotusStage(item, item.desiredStage, true);
       }
-      const playing = visible && inLayout && !lotusPaused && !reducedMotion.matches && !item.pending && !item.error && item.stage !== null;
+      const particlesLoading = item.element.dataset.lotusParticleState === 'loading'
+        && atmosphere.dataset.artMotion !== 'still';
+      const playing = visible && inLayout && !lotusPaused && !reducedMotion.matches
+        && !item.pending && !item.error && item.stage !== null && !particlesLoading;
       item.element.classList.toggle('lotus-is-playing', playing);
       if (!playing) pauseLotusTimer(item);
       else if (!item.timer) {
@@ -489,8 +492,10 @@
       }
     }
     window.JiaArtLoops?.wake();
+    syncLotusMotion();
   }
   if (atmosphere && backgroundSwitch) {
+    atmosphere.addEventListener('lotusparticlesstate', syncLotusMotion);
     showLotusStage(lotusStage);
     let savedBackground = "auto";
     let savedPlacement = "fixed";

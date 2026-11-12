@@ -28,10 +28,16 @@
     entry.canvas.hidden = !active;
   }
 
+  function announce(entry, state) {
+    if (entry.element.dataset.lotusParticleState === state) return;
+    entry.element.dataset.lotusParticleState = state;
+    root.dispatchEvent(new CustomEvent('lotusparticlesstate'));
+  }
+
   async function load(entry) {
     const controller = new AbortController();
     loading = {entry, controller};
-    const timeout = setTimeout(() => controller.abort('timeout'), 24000);
+    const timeout = setTimeout(() => controller.abort('timeout'), 90000);
     let decoder;
     try {
       const response = await fetch(entry.source.media, {
@@ -52,6 +58,7 @@
     } catch (_) {
       decoder?.close();
       if (!controller.signal.aborted || controller.signal.reason === 'timeout') entry.failed = true;
+      if (entry.failed) announce(entry, 'fallback');
     } finally {
       clearTimeout(timeout);
       loading = null;
@@ -79,6 +86,7 @@
         entry.index = next;
         entry.paints++;
         show(entry, true);
+        announce(entry, 'ready');
       } finally {
         image.close();
       }
@@ -88,6 +96,7 @@
       decoder.close();
       entry.decoder = null;
       show(entry, false);
+      announce(entry, 'fallback');
     }).finally(() => { entry.decoding = false; });
   }
 
@@ -95,7 +104,6 @@
     if (!enabled()) {
       cancelAnimationFrame(animation);
       animation = 0;
-      loading?.controller.abort();
       entries.forEach(entry => show(entry, false));
       return;
     }
@@ -144,6 +152,7 @@
     entries.set(element, entry);
     host.appendChild(canvas);
     observer.observe(host);
+    announce(entry, 'loading');
     wake();
     return true;
   }
