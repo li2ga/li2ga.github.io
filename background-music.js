@@ -3,41 +3,55 @@
   if(!panel)return;
   const toggle=document.querySelector('[data-music-toggle]'), audio=panel.querySelector('audio');
   const input=panel.querySelector('input[type=file]'), list=panel.querySelector('select');
-  const status=panel.querySelector('[role=status]');
-  let tracks=[], current=-1, objectUrl='';
+  const localGroup=list.querySelector('[data-local-tracks]'), status=panel.querySelector('[role=status]');
+  const files=new Map();
+  let loaded='', objectUrl='', nextLocal=0;
   const zh=()=>document.documentElement.lang.startsWith('zh');
   const say=(en,cn)=>status.textContent=zh()?cn:en;
   function sync(){
-    toggle.setAttribute('aria-pressed',String(!audio.paused));
-    panel.querySelector('[data-music-play]').setAttribute('aria-pressed',String(!audio.paused));
+    const pressed=String(!audio.paused);
+    toggle.setAttribute('aria-pressed',pressed);
+    panel.querySelector('[data-music-play]').setAttribute('aria-pressed',pressed);
+  }
+  function loadSelection(){
+    const option=list.selectedOptions[0];
+    if(!option || loaded===option.value)return;
+    if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl='';}
+    if(files.has(option.value))objectUrl=URL.createObjectURL(files.get(option.value));
+    audio.src=objectUrl||option.dataset.musicSrc;
+    loaded=option.value;
   }
   async function play(){
-    if(!tracks.length){panel.showModal();return}
-    try{await audio.play();say('Playing on this device.','正在本机播放。');}
-    catch(_){say('This file could not play. Choose another audio file.','无法播放此文件，请换一首。');}
-  }
-  function select(index, autoplay){
-    audio.pause();
-    if(objectUrl)URL.revokeObjectURL(objectUrl);
-    current=index;list.value=String(index);objectUrl=URL.createObjectURL(tracks[index]);
-    audio.src=objectUrl;
-    if(autoplay)void play();
+    try{loadSelection();await audio.play();say('Playing.','正在播放。');}
+    catch(e){if(e.name!=='AbortError')say('Could not play this track. Choose another and try again.','无法播放这首歌，请换一首重试。');}
   }
   function togglePlay(){if(audio.paused)void play();else{audio.pause();say('Paused.','已暂停。')}}
+  function selectionChanged(){
+    // Changing the selection while paused must not request any music bytes.
+    if(!audio.paused)void play();else say('Ready to play.','已选曲，点击播放即可。');
+  }
   toggle.addEventListener('click',togglePlay);
   panel.querySelector('[data-music-play]').addEventListener('click',togglePlay);
   document.querySelector('[data-music-settings]').addEventListener('click',()=>panel.showModal());
   input.addEventListener('change',()=>{
     if(!input.files.length)return;
-    tracks=Array.from(input.files);
-    list.replaceChildren(...tracks.map((file,i)=>new Option(file.name.replace(/\.[^.]+$/,''),i)));
-    list.disabled=false;
-    select(0,true);
+    const first='local-'+nextLocal;
+    for(const file of input.files){
+      const key='local-'+nextLocal++;
+      files.set(key,file);
+      localGroup.append(new Option(file.name.replace(/\.[^.]+$/,''),key));
+    }
+    localGroup.hidden=false;
+    list.value=first;
+    selectionChanged();
     input.value='';
   });
-  list.addEventListener('change',()=>select(Number(list.value),!audio.paused));
-  audio.addEventListener('ended',()=>{if(current>=0)select((current+1)%tracks.length,true)});
-  for(const event of ['play','pause','ended'])audio.addEventListener(event,sync);
+  list.addEventListener('change',selectionChanged);
+  audio.addEventListener('ended',()=>{
+    const options=[...list.options],at=options.findIndex(option=>option.value===loaded);
+    if(at>=0){list.value=options[(at+1)%options.length].value;void play();}
+  });
+  for(const event of ['play','pause','ended','emptied','error'])audio.addEventListener(event,sync);
   audio.volume=.32;
   panel.querySelector('input[type=range]').addEventListener('input',e=>audio.volume=Number(e.target.value));
   window.addEventListener('pagehide',()=>audio.pause());
