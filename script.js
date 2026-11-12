@@ -139,6 +139,48 @@
   let lotusLayout = null;
   let backgroundUserInitiated = false;
   let portraitHeadStartElapsed = false;
+  let artRuntimeRequest = null;
+  function attachLotusArt(item, stage, image) {
+    if (!window.JiaArtLoops) {
+      if (item.element.matches('.motif-top-right, .motif-lower-right') && atmosphere.dataset.artMotion !== 'still') {
+        item.element.dataset.lotusParticleState = atmosphere.dataset.artRuntime === 'error' ? 'fallback' : 'loading';
+      }
+      ensureArtRuntime();
+      return;
+    }
+    if (!window.JiaLotusAtmosphere?.lotus(item.element, stage, image)) window.JiaArtLoops.lotus(item.element, stage, image);
+  }
+  function ensureArtRuntime() {
+    if (artRuntimeRequest || !wideBackground.matches || reducedMotion.matches || atmosphere?.dataset.artMotion === 'still') return;
+    const source = document.querySelector('#lotus-atmosphere-data')?.dataset.runtimeSrc;
+    if (!source) return;
+    atmosphere.dataset.artRuntime = 'loading';
+    const script = document.createElement('script');
+    script.src = source;
+    script.async = true;
+    script.fetchPriority = backgroundUserInitiated ? 'high' : 'low';
+    artRuntimeRequest = script;
+    const fallback = () => {
+      atmosphere.dataset.artRuntime = 'error';
+      lotusItems.forEach(item => { item.element.dataset.lotusParticleState = 'fallback'; });
+      syncLotusMotion();
+    };
+    const deadline = setTimeout(fallback, 90000);
+    script.onload = () => {
+      clearTimeout(deadline);
+      atmosphere.dataset.artRuntime = 'ready';
+      lotusItems.forEach(item => {
+        const stage = item.stage;
+        if (stage === null) return;
+        lotusLoads.get(stage)?.then(image => {
+          if (item.stage === stage) attachLotusArt(item, stage, image);
+        });
+      });
+      atmosphere.querySelectorAll('img[data-art-ready]').forEach(image => window.JiaArtLoops?.imagery(image));
+    };
+    script.onerror = () => { clearTimeout(deadline); fallback(); };
+    document.head.appendChild(script);
+  }
   try {
     lotusPaused = localStorage.getItem('jia-li-lotus-paused') === '1';
     const stage = Number(localStorage.getItem('jia-li-lotus-stage'));
@@ -265,9 +307,7 @@
       item.stage = stage;
       item.element.dataset.lotusStage = String(stage);
       item.element.dataset.lotusReady = 'true';
-      if (!window.JiaLotusAtmosphere?.lotus(item.element, stage, image)) {
-        window.JiaArtLoops?.lotus(item.element, stage, image);
-      }
+      attachLotusArt(item, stage, image);
       delete item.element.dataset.lotusPending;
       lotusScene.classList.add('lotus-ready');
       if (item.index === 0) showLotusStage(stage);
@@ -308,6 +348,7 @@
     const visible = active && wideBackground.matches && !document.hidden;
     const items = visibleLotusItems();
     const canLoad = visible && (backgroundUserInitiated || portraitHeadStartElapsed || !portraitImage || portraitImage.complete);
+    if (canLoad) ensureArtRuntime();
     const profile = lotusProfiles[lotusLayout || 'fixed'];
     lotusItems.forEach(item => {
       const inLayout = items.includes(item);
@@ -336,7 +377,7 @@
     const playingItems = items.filter(item => item.timer);
     lotusScene.classList.toggle('lotus-is-playing', playingItems.length > 0);
     updateLotusLabels();
-    if (playingItems.length && !items.some(item => item.pending) && (!portraitImage || portraitImage.complete)) {
+    if (playingItems.length && !items.some(item => item.pending || item.element.dataset.lotusParticleState === 'loading') && (!portraitImage || portraitImage.complete)) {
       // Warm only the next imminent change, using the shared two-download queue.
       const soonest = playingItems.reduce((first, item) => item.dueAt < first.dueAt ? item : first);
       loadLotusStage((soonest.stage + 1) % lotusStageCount).catch(() => {});
@@ -365,6 +406,7 @@
     const scene = atmosphere?.querySelector('.imagery-scene[data-active], .has-raster-art[data-active]');
     if (!scene || document.hidden || !wideBackground.matches) return;
     if (!backgroundUserInitiated && portraitImage && !portraitImage.complete) return;
+    ensureArtRuntime();
     let running = lotusLoading + atmosphere.querySelectorAll('[data-art-loading]').length;
     for (const image of scene.querySelectorAll('img[data-imagery-src]')) {
       if (running >= 2) break;
@@ -492,6 +534,7 @@
       }
     }
     window.JiaArtLoops?.wake();
+    if (motion === 'loop' && save) ensureArtRuntime();
     syncLotusMotion();
   }
   if (atmosphere && backgroundSwitch) {
