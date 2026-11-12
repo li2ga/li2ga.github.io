@@ -265,7 +265,9 @@
       item.stage = stage;
       item.element.dataset.lotusStage = String(stage);
       item.element.dataset.lotusReady = 'true';
-      window.JiaArtLoops?.lotus(item.element, stage, image);
+      if (!window.JiaLotusAtmosphere?.lotus(item.element, stage, image)) {
+        window.JiaArtLoops?.lotus(item.element, stage, image);
+      }
       delete item.element.dataset.lotusPending;
       lotusScene.classList.add('lotus-ready');
       if (item.index === 0) showLotusStage(stage);

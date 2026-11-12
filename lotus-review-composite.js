@@ -75,5 +75,26 @@
     ctx.restore();
   }
 
-  window.LotusReviewComposite = {contained, cupMask, flames};
+  function paint(ctx, {body, profile, mask, fire, cold, t, dark = false, showFire = true, snow = true, mist = true}) {
+    ctx.clearRect(0, 0, size, size);
+    if (cold && mist) LotusReviewEffects.coldAir(ctx, t, dark);
+    if (showFire && cold) {
+      ColdLotusCore.draw(ctx, fire, false);
+      drawLotusLight(ctx, t * 1000, false, dark, true);
+    } else if (showFire) {
+      flames(ctx, fire, mask, false, 1);
+      LotusReviewEffects.embers(ctx, t, profile, dark, false);
+    }
+    contained(ctx, body);
+    if (showFire && cold) {
+      ColdLotusCore.draw(ctx, fire, true);
+      drawLotusLight(ctx, t * 1000, true, dark, true);
+    } else if (showFire) {
+      flames(ctx, fire, mask, true, .70);
+      LotusReviewEffects.embers(ctx, t, profile, dark, true);
+    }
+    if (cold && snow) LotusReviewEffects.flakes(ctx, t, dark);
+  }
+
+  window.LotusReviewComposite = {cupMask, paint};
 })();

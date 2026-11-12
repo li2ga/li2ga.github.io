@@ -28,27 +28,8 @@
   function draw() {
     if (!selected?.body) return;
     const {key, body, mask, profile, frame, poster, index, count} = selected;
-    const cold = key === 'cold';
-    const dark = document.body.classList.contains('dark');
-    const fire = frame || poster;
-    c.clearRect(0, 0, size, size);
-    if (cold && mist) LotusReviewEffects.coldAir(c, t, dark);
-    if (showFire && cold) {
-      ColdLotusCore.draw(c, fire, false);
-      drawLotusLight(c, t * 1000, false, dark, true);
-    } else if (showFire) {
-      composite.flames(c, fire, mask, false, 1);
-      LotusReviewEffects.embers(c, t, profile, dark, false);
-    }
-    composite.contained(c, body);
-    if (showFire && cold) {
-      ColdLotusCore.draw(c, fire, true);
-      drawLotusLight(c, t * 1000, true, dark, true);
-    } else if (showFire) {
-      composite.flames(c, fire, mask, true, .70);
-      LotusReviewEffects.embers(c, t, profile, dark, true);
-    }
-    if (cold && snow) LotusReviewEffects.flakes(c, t, dark);
+    composite.paint(c, {body, mask, profile, fire: frame || poster, cold: key === 'cold', t,
+      dark: document.body.classList.contains('dark'), showFire, snow, mist});
     seek.value = index;
     $('#time').value = index + 1 + ' / ' + count;
   }

@@ -22,14 +22,14 @@
     if(rendered===image)return;
     rendered=image;
     cup.clearRect(0,0,size,size);
-    cup.drawImage(image,0,0);
+    cup.drawImage(image,0,0,size,size);
     cup.globalCompositeOperation='destination-in';cup.drawImage(mask,0,0);
     cup.globalCompositeOperation='source-over';
   }
   function draw(c, image, front){
     if(!image)return;
     if(front)update(image);
-    c.drawImage(front?near:image,0,0);
+    c.drawImage(front?near:image,0,0,size,size);
   }
   window.ColdLotusCore = {draw};
 })();
