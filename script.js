@@ -855,6 +855,7 @@
     { image: "assets/icons/lotus-pink-gold-transparent.svg" },
     { image: "assets/icons/jl-square.svg" },
     { image: "assets/icons/yin-yang.svg" },
+    { image: "assets/icons/yin-yang-counter-rotate.svg" },
     // 原来的 15 个全部保留。
     "✨", "🤖", "🥳", "⚡", "🌾", "💧", "🔥", "🤩", "🌈", "🚀", "🥇", "🏆", "💎", "🌌", "🪐",
     // 星星、流星与闪光。

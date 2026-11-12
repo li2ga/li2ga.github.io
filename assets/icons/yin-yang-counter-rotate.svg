@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Yin and yang — counter-rotating ring and fish</title>
+  <style>
+    .fish{transform-origin:32px 32px;animation:fish-spin 12s linear infinite}
+    .ring{transform-origin:32px 32px;animation:ring-spin 8s linear infinite}
+    @keyframes fish-spin{to{transform:rotate(-360deg)}}
+    @keyframes ring-spin{to{transform:rotate(360deg)}}
+    @media(prefers-reduced-motion:reduce){.fish,.ring{animation:none}}
+  </style>
+  <g class="fish">
+    <circle cx="32" cy="32" r="27" fill="#fff"/>
+    <path d="M32 5a27 27 0 0 1 0 54 13.5 13.5 0 0 1 0-27 13.5 13.5 0 0 0 0-27Z" fill="#111318"/>
+    <circle cx="32" cy="18.5" r="4.3" fill="#111318"/>
+    <circle cx="32" cy="45.5" r="4.3" fill="#fff"/>
+    <circle cx="32" cy="32" r="27" fill="none" stroke="#92979f" stroke-width=".7"/>
+  </g>
+  <circle class="ring" cx="32" cy="32" r="30.3" fill="none" stroke="#92979f" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="42 4 9 4"/>
+</svg>
