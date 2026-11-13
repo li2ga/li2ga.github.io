@@ -590,6 +590,7 @@
       entry.context.clearRect(0,0,entry.canvas.width,entry.canvas.height);
       entry.context.drawImage(surface,0,0);
       if(coldSnowEnabled&&entry.mode===1&&entry.variant===1)drawColdSnow(entry,time);
+      if(!classicEmperor&&entry.mode===1&&entry.variant===41)drawBoneCold(entry,time);
       if (entry.key.matches('img') && !entry.fullyRevealed) {
         const opacity=getComputedStyle(entry.image).opacity;
         entry.canvas.style.opacity=opacity;
@@ -628,6 +629,49 @@
           c.lineTo(dx*size*.43+Math.cos(a+side*Math.PI/2)*size*.23,
                    dy*size*.43+Math.sin(a+side*Math.PI/2)*size*.23);
         }
+      }
+      c.stroke();c.restore();
+    }
+    c.restore();
+  }
+
+  function boneColdSnow(index,milliseconds) {
+    const t=milliseconds/1000,phase=(t*(.052+(index%5)*.007)+index*.618033989)%1;
+    return {x:.10+(index*.754877666%1)*.80+.045*Math.sin(t*.61+index*2.1)+.016*Math.sin(t*1.43+index),
+      y:phase*1.16-.08,size:.007+(index%3)*.0025,
+      opacity:Math.sin(phase*Math.PI)*(.46+(index%4)*.10),angle:t*(.20+(index%3)*.08)+index};
+  }
+
+  function drawBoneCold(entry,milliseconds) {
+    const c=entry.context,w=entry.canvas.width,h=entry.canvas.height,t=milliseconds/1000;
+    c.save();
+    // Frost stays behind the intact flame. Low lateral cold air never washes
+    // blue color over the white fire or replaces any of its painted material.
+    c.globalCompositeOperation='destination-over';
+    for(let i=0;i<4;i++){
+      const x=.22+i*.18+.035*Math.sin(t*.32+i*1.9),y=.81+.028*Math.sin(t*.43+i*2.3);
+      c.save();c.translate(x*w,y*h);c.scale(w*.19,h*.042);
+      const mist=c.createRadialGradient(0,0,0,0,0,1);
+      mist.addColorStop(0,'rgba(91,190,229,.14)');mist.addColorStop(.45,'rgba(122,211,241,.07)');mist.addColorStop(1,'rgba(153,225,249,0)');
+      c.fillStyle=mist;c.beginPath();c.arc(0,0,1,0,Math.PI*2);c.fill();c.restore();
+    }
+    for(let i=0;i<7;i++){
+      const left=i%2===0,x=left ? .10+(i%3)*.06 : .78+(i%3)*.045;
+      const y=.66+(i%4)*.065+.009*Math.sin(t*.65+i*1.8),s=w*(.019+(i%3)*.005);
+      c.save();c.translate(x*w,y*h);c.rotate((left?-.23:.24)+.07*Math.sin(t*.43+i));
+      c.globalAlpha=.48+.15*Math.sin(t*.72+i*2.1);c.lineWidth=Math.max(.55,w*.0013);
+      c.fillStyle='rgba(185,234,255,.37)';c.strokeStyle='rgba(87,171,210,.83)';
+      c.beginPath();c.moveTo(0,-s);c.lineTo(s*.42,-s*.12);c.lineTo(0,s);c.lineTo(-s*.42,-s*.12);c.closePath();c.fill();c.stroke();
+      c.strokeStyle='rgba(237,252,255,.9)';c.beginPath();c.moveTo(0,-s*.82);c.lineTo(0,s*.78);c.moveTo(-s*.36,-s*.1);c.lineTo(s*.36,-s*.1);c.stroke();c.restore();
+    }
+    c.strokeStyle='rgb(103,183,220)';c.lineWidth=Math.max(.7,w*.0015);
+    for(let i=0;i<18;i++){
+      const p=boneColdSnow(i,milliseconds),s=w*p.size;
+      c.save();c.translate(p.x*w,p.y*h);c.rotate(p.angle);c.globalAlpha=p.opacity;c.beginPath();
+      for(let arm=0;arm<6;arm++){
+        const a=arm*Math.PI/3,dx=Math.cos(a),dy=Math.sin(a);
+        c.moveTo(0,0);c.lineTo(dx*s,dy*s);
+        for(const side of[-1,1]){c.moveTo(dx*s*.64,dy*s*.64);c.lineTo(dx*s*.43+Math.cos(a+side*Math.PI/2)*s*.23,dy*s*.43+Math.sin(a+side*Math.PI/2)*s*.23);}
       }
       c.stroke();c.restore();
     }
@@ -745,7 +789,7 @@
     wake,
     emperorProfiles:()=>emperorProfiles.map((profile,i)=>({rank:i+1,...profile})),
     inspect() {
-      return {lotusVideo:window.JiaLotusVideos?.inspect(),renderer:root.dataset.artRenderer||'not-needed',enabled:enabled(),periodMs:period,flameClock:'continuous',lotusRendererRevision:'fe08ca2',lotusUsesFuelField:false,coldSnow:{enabled:coldSnowEnabled,count:40,direction:'downward'},emperorMotion:{revision:'shape-directed-v2',classic:classicEmperor,profiles:emperorProfiles.length},flameModel:'original artwork with short source-colored tongues; gallery: source flame transport',fieldSize,fuelEnabled,flameFrameLimit:60,running:!!frame,ticks:stats.ticks,
+      return {lotusVideo:window.JiaLotusVideos?.inspect(),renderer:root.dataset.artRenderer||'not-needed',enabled:enabled(),periodMs:period,flameClock:'continuous',lotusRendererRevision:'fe08ca2',lotusUsesFuelField:false,coldSnow:{enabled:coldSnowEnabled,count:40,direction:'downward'},emperorMotion:{revision:'shape-directed-v3-cold',classic:classicEmperor,profiles:emperorProfiles.length,boneCold:{rank:11,snowflakes:18,iceCrystals:7,air:'low lateral mist',composite:'behind original flame'}},flameModel:'original artwork with short source-colored tongues; gallery: source flame transport',fieldSize,fuelEnabled,flameFrameLimit:60,running:!!frame,ticks:stats.ticks,
               textureCount:textures.size,paints:stats.paints,meanTickMs:stats.ticks?stats.totalMs/stats.ticks:0,maxTickMs:stats.maxMs,
               entries:[...entries.values()].map(entry=>({type:entry.key.matches('[data-lotus-instance]')?'lotus':'imagery',subject:entry.key.closest('.imagery-object')?.dataset.imageryObject,
                 stage:entry.variant,motion:entry.host.dataset.flameMotion,source:entry.image.currentSrc||entry.image.src,sourceWidth:entry.image.naturalWidth,sourceHeight:entry.image.naturalHeight,flowSteps:entry.flow?.steps||0,paints:entry.paints,visible:visible(entry),failed:!!entry.failed,width:entry.canvas.width,height:entry.canvas.height}))};
@@ -753,6 +797,7 @@
     setFuel(value){fuelEnabled=!!value;},
     setColdSnow(value){coldSnowEnabled=!!value;},
     snowProbe(milliseconds){return Array.from({length:40},(_,i)=>coldSnowParticle(i,milliseconds));},
+    boneColdProbe(milliseconds){return Array.from({length:18},(_,i)=>boneColdSnow(i,milliseconds));},
     flowProbe(){
       if(!gl)return [];
       return [...entries.values()].filter(e=>e.flow).map(e=>{
