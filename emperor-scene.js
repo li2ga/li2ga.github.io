@@ -8,6 +8,12 @@
   const wide = matchMedia('(min-width:1041px)');
   const portrait = stage.querySelector('[data-emperor-portrait]');
   const body = stage.querySelector('[data-emperor-body]');
+  const ruler = scene.querySelector('[data-emperor-ruler]');
+  const rulerArt = ruler?.querySelector('[data-ruler-art]');
+  const rulerImage = ruler?.querySelector('[data-ruler-image]');
+  const rulerFloat = ruler?.querySelector('[data-ruler-float]');
+  const rulerFire = ruler?.querySelector('[data-ruler-fire]');
+  const rulerCtx = rulerFire?.getContext('2d');
   const nodes = [...stage.querySelectorAll('[data-emperor-flame]')];
   const back = stage.querySelector('[data-emperor-fire-back]');
   const front = stage.querySelector('[data-emperor-fire-front]');
@@ -15,12 +21,14 @@
   const plates = new Map();
   let raf = 0, clock = 0, last = 0, lastPaint = 0, loading = false;
   let volumeBytes, volumePending, decoder, decoding = false, count = 0, frameIndex = -1, paints = 0;
-  let observed = true;
+  const intersections = new Map([[stage,true],...(ruler?[[ruler,true]]:[])]);
+  let rulerLoading;
   const metrics = {ticks:0, totalMs:0, maxMs:0};
   function selected() { return root.dataset.backgroundCurrent === 'emperor' && (wide.matches || root.dataset.artScope === 'gallery'); }
-  function moving() { return selected() && observed && !document.hidden && !reduced.matches && root.dataset.artMotion !== 'still'; }
-  const observer = new IntersectionObserver(([entry]) => { observed = entry.isIntersecting; wake(); });
+  function moving() { return selected() && [...intersections.values()].some(Boolean) && !document.hidden && !reduced.matches && root.dataset.artMotion !== 'still'; }
+  const observer = new IntersectionObserver(entries => { entries.forEach(entry=>intersections.set(entry.target,entry.isIntersecting)); wake(); });
   observer.observe(stage);
+  if (ruler) observer.observe(ruler);
 
   function orbit(t) {
     nodes.slice(1).forEach((node, i) => {
@@ -36,6 +44,7 @@
       node.style.opacity = plates.has(node.dataset.flamePlate) && plates.get(node.dataset.flamePlate).complete ? String(.72 + (depth + 1) * .12) : '0';
     });
     body.style.transform = `translateY(${Math.sin(t * .48) * 4}px)`;
+    if (rulerFloat) rulerFloat.style.transform = `translate3d(${Math.sin(t*.27)*3}px,${Math.sin(t*.42+1.3)*9}px,0) rotate(${11+Math.sin(t*.23)*1.8}deg)`;
   }
 
   function attach() {
@@ -45,7 +54,19 @@
       if (image?.naturalWidth) window.JiaArtLoops.emperorFlame(node, image, Number(node.dataset.emperorFlame));
     });
     if (portrait.naturalWidth) window.JiaArtLoops.emperor?.(body, portrait);
+    if (rulerImage?.naturalWidth) window.JiaArtLoops.ruler?.(rulerArt, rulerImage);
     window.JiaArtLoops.wake();
+  }
+
+  async function loadRuler() {
+    if (!rulerImage || rulerImage.naturalWidth || rulerLoading) return;
+    rulerLoading = (async()=>{
+      rulerImage.src=rulerImage.dataset.rulerImage;
+      await rulerImage.decode();
+      ruler.dataset.ready='true';
+      attach();
+    })().catch(()=>{rulerImage.removeAttribute('src');ruler.dataset.ready='error';})
+      .finally(()=>{rulerLoading=null;});
   }
 
   async function loadArt() {
@@ -130,12 +151,33 @@
         emit(frontCtx,.23,.59,.32,.32);
         emit(frontCtx,.79,.58,.31,.32);
         emit(frontCtx,.49,.91,.62,.23);
+        paintRulerFire(image);
         backCtx.globalAlpha=frontCtx.globalAlpha=1;
         frameIndex=next;paints++;
       } finally { image.close(); }
     }).catch(() => {
       if (decoder===activeDecoder) {decoder.close();decoder=null;stage.dataset.volume='fallback';}
     }).finally(() => {decoding=false;});
+  }
+
+  function paintRulerFire(image) {
+    if (!rulerCtx || !rulerImage.naturalWidth) return;
+    // Align emission with the contained artwork, rather than the host's box.
+    // All volume fire is behind the complete rigid weapon.
+    const scale=Math.min(rulerArt.clientWidth/1024,rulerArt.clientHeight/1536);
+    const iw=1024*scale,ih=1536*scale;
+    const w=Math.max(1,Math.ceil(rulerArt.clientWidth*devicePixelRatio));
+    const h=Math.max(1,Math.ceil(rulerArt.clientHeight*devicePixelRatio));
+    if (rulerFire.width!==w || rulerFire.height!==h) {rulerFire.width=w;rulerFire.height=h;}
+    rulerCtx.clearRect(0,0,w,h);
+    const ox=(w-iw*devicePixelRatio)/2,oy=(h-ih*devicePixelRatio)/2;
+    for (let side=0;side<2;side++) for(let i=0;i<7;i++) {
+      const y=.10+i*.073,x=side?.663:.337;
+      const size=iw*devicePixelRatio*(.19+.035*Math.sin(clock*1.3+i*1.7+side));
+      rulerCtx.globalAlpha=.16+.045*Math.sin(clock*.9+i*2.4+side*1.9);
+      rulerCtx.drawImage(image,ox+x*iw*devicePixelRatio-size*.5,oy+y*ih*devicePixelRatio-size*.72,size,size);
+    }
+    rulerCtx.globalAlpha=1;
   }
 
   function tick(now) {
@@ -153,22 +195,25 @@
     raf=requestAnimationFrame(tick);
   }
   function wake() {
-    if (selected()) void loadArt();
+    if (selected()) {void loadArt();void loadRuler();}
     if (moving()) {
       attach();
       if (stage.dataset.volume!=='fallback') void openVolume();
       back.hidden=front.hidden=false;
+      if (rulerFire) rulerFire.hidden=false;
       if (!raf) raf=requestAnimationFrame(tick);
     } else {
       cancelAnimationFrame(raf);raf=0;last=0;
       back.hidden=front.hidden=true;
+      if (rulerFire) rulerFire.hidden=true;
       if (!selected() && decoder && !decoding) {decoder.close();decoder=null;delete stage.dataset.volume;}
       orbit(clock);
     }
   }
   window.JiaEmperorScene={wake,inspect:()=>({selected:selected(),running:!!raf,clock,outerFlames:nodes.length-1,bodyIsEmperorFlame:true,
     plates:plates.size,portraitLoaded:!!portrait.naturalWidth,volume:stage.dataset.volume,volumeFrames:count,volumePaints:paints,metrics,
-    ranks:nodes.map(node=>Number(node.dataset.emperorFlame)),coreAnchors:['torso','left-palm','right-palm','robe-hem']})};
+    ranks:nodes.map(node=>Number(node.dataset.emperorFlame)),coreAnchors:['torso','left-palm','right-palm','robe-hem'],
+    ruler:{loaded:!!rulerImage?.naturalWidth,source:rulerImage?.currentSrc,ready:ruler?.dataset.ready,edgeEmitters:14,volumeLayer:'behind intact weapon',pose:rulerFloat?.style.transform}})};
   new MutationObserver(wake).observe(root,{attributes:true,attributeFilter:['data-background-current','data-art-motion','data-art-runtime','class']});
   document.addEventListener('visibilitychange',wake);
   reduced.addEventListener('change',wake);wide.addEventListener('change',wake);

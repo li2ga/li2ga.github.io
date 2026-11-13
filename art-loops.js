@@ -291,7 +291,31 @@
       vec4 result=stable+fire*(1.-stable.a);
       return vec4(min(result.rgb,vec3(result.a)),result.a);
     }
+    vec4 rulerDetail(vec2 at){
+      vec4 original=artwork(at);
+      float t=flameClock;
+      // Blade occupies x .335-.665, above the guard. Classify its rigid
+      // silhouette before any shifted flame can be sampled over the metal.
+      float edge=smoothstep(.155,.185,abs(at.x-.5));
+      edge*=smoothstep(.397,.435,at.y)*(1.-smoothstep(.945,.982,at.y));
+      float solid=smoothstep(.86,.97,original.a);
+      float moving=edge*(1.-solid);
+      vec3 domain=vec3(at.x*31.,at.y*24.-t*2.1,t*.35);
+      float n=fireFbm(domain),m=fireFbm(domain+vec3(9.3,2.7,4.1));
+      vec2 curl=vec2(m-.5,n-.5);
+      vec2 displaced=at-moving*vec2(curl.x*.035,curl.y*.026);
+      vec4 fire=artwork(displaced);
+      vec4 result=mix(vec4(original.rgb*original.a,original.a),vec4(fire.rgb*fire.a,fire.a),moving);
+      // Flow in the colored recessed channels does not bend the spine.
+      float chroma=max(max(original.r,original.g),original.b)-min(min(original.r,original.g),original.b);
+      float channel=(1.-edge)*smoothstep(.13,.33,chroma)*smoothstep(.4,.5,at.y);
+      float streak=pow(max(0.,sin(at.y*39.-t*3.6+at.x*11.)),10.);
+      float glint=.026*pow(max(0.,sin(at.y*7.+at.x*9.-t*.54)),28.);
+      result.rgb+=original.rgb*original.a*(channel*streak*.13+glint);
+      return vec4(min(result.rgb,vec3(result.a)),result.a);
+    }
     void main(){
+      if(mode>7.5){gl_FragColor=rulerDetail(uv);return;}
       if(mode>.5&&mode<1.5){
         if(variant>30.&&variant<60.&&motionProfile.y>0.)gl_FragColor=emperorFlameDetail(uv);
         else gl_FragColor=variant<100.?detailFlame(uv):livingFlame(uv);
@@ -558,7 +582,7 @@
     try {
       const image = entry.image;
       const sourceWidth=image.naturalWidth*entry.rect[2],sourceHeight=image.naturalHeight*entry.rect[3];
-      const displayScale=(entry.mode===1||entry.mode===7)&&!nativeProof
+      const displayScale=(entry.mode===1||entry.mode===7||entry.mode===8)&&!nativeProof
         ? Math.min(1,(devicePixelRatio||1)*Math.min(entry.host.clientWidth/sourceWidth,entry.host.clientHeight/sourceHeight)) : 1;
       const width=Math.max(1,Math.ceil(sourceWidth*displayScale));
       const height=Math.max(1,Math.ceil(sourceHeight*displayScale));
@@ -772,6 +796,10 @@
     },
     emperor(host,image) {
       install(host,host,image,7);
+    },
+    ruler(host,image) {
+      host.dataset.flameMotion='尺缘上行火舌与槽内流光；骨架保持刚性';
+      install(host,host,image,8);
     },
     flame(host,image,rank) {
       const cell=(rank-1)%6,col=cell%3,row=Math.floor(cell/3);

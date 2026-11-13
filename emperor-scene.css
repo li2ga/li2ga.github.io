@@ -12,9 +12,19 @@
 .emperor-tableau .art-loop-canvas[hidden]{display:none!important}
 .emperor-fire-back,.emperor-fire-front{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.9}
 .emperor-fire-back{z-index:4}.emperor-fire-front{z-index:11}
+.emperor-ruler{position:absolute;right:max(0px,calc((100vw - 1840px)/2));top:12vh;width:calc((100vw - 860px)/2);max-width:470px;height:min(80vh,860px);isolation:isolate;transform:translate3d(calc(var(--trace-x,0px)*-.48),calc(var(--trace-y,0px)*.52),0)}
+.emperor-ruler-float{position:relative;width:100%;height:100%;transform:rotate(11deg);transform-origin:50% 55%}
+.emperor-ruler-art{position:absolute;inset:0;z-index:2}
+.emperor-ruler-art>img,.emperor-ruler-art>.art-loop-canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.emperor-ruler-art>img:not([src]){visibility:hidden}
+.emperor-ruler-art.has-art-loop>img{visibility:hidden}
+.emperor-ruler-art>.art-loop-canvas[hidden]{display:none!important}
+.emperor-ruler-fire{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.page-atmosphere[data-background-layout=page] .emperor-ruler{top:140px}
+.page-atmosphere[data-background-visibility=subtle] .emperor-ruler{animation:emperor-presence 30s ease-in-out infinite;animation-delay:-5s;animation-play-state:var(--scene-motion,paused)}
 .emperor-tableau[data-volume=ready] .emperor-origin{opacity:.60}
 .page-atmosphere[data-background-layout=page] .emperor-tableau{top:80px}
 .page-atmosphere[data-background-visibility=subtle] .emperor-tableau{animation:emperor-presence 30s ease-in-out infinite;animation-play-state:var(--scene-motion,paused)}
 @keyframes emperor-presence{0%,100%{opacity:0}12%,58%{opacity:1}90%{opacity:0}}
-@media(prefers-reduced-motion:reduce){.emperor-tableau{animation:none!important}.emperor-fire-back,.emperor-fire-front{display:none}}
+@media(prefers-reduced-motion:reduce){.emperor-tableau,.emperor-ruler{animation:none!important}.emperor-fire-back,.emperor-fire-front,.emperor-ruler-fire{display:none}}
 @media print{.emperor-scene{display:none!important}}
