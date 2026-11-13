@@ -174,7 +174,7 @@
   }
 
   const backgroundSwitch = document.querySelector(".background-switch");
-  const backgroundScenes = ["trajectory", "ziwei-cinematic", "ganzhi-cinematic", "lotus"];
+  const backgroundScenes = ["trajectory", "ziwei-cinematic", "ganzhi-cinematic", "lotus", "emperor"];
   const availableBackgrounds = [...backgroundScenes, "lotus-still", "lotus-classic"];
   const wideBackground = window.matchMedia("(min-width: 1041px)");
   const autoBackgroundButton = document.querySelector('[data-background="auto"]');
@@ -505,7 +505,9 @@
     updateLotusLabels();
     updateImageryStatus();
     const motionOptions = document.querySelector('[data-art-motion-options]');
-    if (motionOptions) motionOptions.hidden = !['lotus','ziwei-cinematic','ganzhi-cinematic'].includes(atmosphere?.dataset.backgroundCurrent);
+    if (motionOptions) motionOptions.hidden = !['lotus','emperor','ziwei-cinematic','ganzhi-cinematic'].includes(atmosphere?.dataset.backgroundCurrent);
+    const emperorLink = document.querySelector('.emperor-preview-link');
+    if (emperorLink) emperorLink.hidden = atmosphere?.dataset.backgroundCurrent !== 'emperor';
     if (!autoBackgroundButton) return;
     autoBackgroundButton.disabled = reducedMotion.matches;
     autoBackgroundButton.title = reducedMotion.matches
@@ -527,6 +529,7 @@
     updateBackgroundLabels();
     syncLotusMotion();
     syncImagery();
+    if (atmosphere.dataset.backgroundCurrent === 'emperor') ensureArtRuntime();
     if (moving && backgroundChoice === "auto") {
       backgroundTimer = setTimeout(() => {
         const next = (backgroundScenes.indexOf(atmosphere.dataset.backgroundCurrent) + 1) % backgroundScenes.length;

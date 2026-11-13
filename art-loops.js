@@ -87,8 +87,13 @@
       }
       return height*hot*(1.-metal)*color.a;
     }
+    vec4 detailSample(vec2 p){
+      if(variant>30.&&variant<60.)return artwork(p);
+      return texture2D(picture,p);
+    }
     vec4 detailFlame(vec2 at){
-      vec4 original=texture2D(picture,at);
+      if(variant>30.&&variant<60.)at=(at-.5)/.86+.5;
+      vec4 original=detailSample(at);
       bool fineBranches=variant>11.5&&variant<12.5;
       float rigidGold=0.;
       if(hasFramework()){
@@ -112,7 +117,7 @@
       // travel inside it. Low and lateral tongues also receive some motion.
       shift.x+=sin(at.y*11.-t*1.4+variant)*.008*h*strength;
       if(fineBranches)shift*=.58;
-      vec4 moving=texture2D(picture,clamp(at-shift,0.,1.));
+      vec4 moving=detailSample(clamp(at-shift,0.,1.));
       float mask=max(detailFuel(at,original),detailFuel(at-shift,moving));
       mask*=1.-rigidGold;
       vec4 body=mix(original,moving,clamp(mask*1.25,0.,1.));
@@ -123,7 +128,7 @@
       for(int i=1;i<=6;i++){
         float age=float(i)/6.;
         vec2 source=at-vec2((curl.x*.055+sin(at.y*31.-t*1.8)*.006)*age,.065*age);
-        vec4 sampleColor=texture2D(picture,clamp(source,0.,1.));
+        vec4 sampleColor=detailSample(clamp(source,0.,1.));
         float f=detailFuel(source,sampleColor);
         float d=f*smoothstep(.48+age*.08,.76,strand+.06*sin(age*19.-t))*(.18*(1.-age*.8));
         // Existing opaque material occludes trails; no halo over polished metal.
@@ -161,7 +166,16 @@
       vec2 p=uv;
       float t=phase;
       float light=0.;
-      if(mode>5.5&&mode<6.5){
+      if(mode>6.5){
+        // Keep the emperor's face and central armor rigid. Only long hair and
+        // the loose lateral robes flex; a fine glint crosses silver engraving.
+        float edge=smoothstep(.12,.40,abs(uv.x-.50));
+        float hair=smoothstep(.73,.90,uv.y)*smoothstep(.10,.30,abs(uv.x-.46));
+        float cloth=max(edge*(1.-smoothstep(.63,.77,uv.y)),hair);
+        p.x+=cloth*(.004*sin(uv.y*24.-flameClock*1.7)+.002*sin(uv.y*43.+flameClock*.91));
+        p.y+=cloth*.0028*sin(uv.x*29.-flameClock*1.23);
+        light=.065*pow(max(0.,sin(uv.x*7.+uv.y*11.-flameClock*.54)),26.);
+      }else if(mode>5.5&&mode<6.5){
         // The lamp has its own wick: keep its metal body fixed, move only fire.
         float flame=smoothstep(.515,.555,uv.y)*smoothstep(.63,.74,uv.x);
         p.x+=flame*(.008*sin(uv.y*29.-flameClock*3.1)+.003*sin(uv.y*57.+flameClock*2.3));
@@ -350,8 +364,9 @@
 
   function advanceFlow(entry,time,nativeProof) {
     if(!entry.flow){
-      const width=Math.min(fieldSize,Math.max(192,entry.canvas.width));
-      const height=Math.min(fieldSize,Math.max(192,entry.canvas.height));
+      const minimum=entry.key.closest('[data-background-scene="emperor"]')?96:192;
+      const width=Math.min(fieldSize,Math.max(minimum,entry.canvas.width));
+      const height=Math.min(fieldSize,Math.max(minimum,entry.canvas.height));
       const pairs=Array.from({length:2},()=>{
         const t=gl.createTexture();gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,t);
         gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
@@ -400,7 +415,7 @@
     try {
       const image = entry.image;
       const sourceWidth=image.naturalWidth*entry.rect[2],sourceHeight=image.naturalHeight*entry.rect[3];
-      const displayScale=entry.mode===1&&!nativeProof
+      const displayScale=(entry.mode===1||entry.mode===7)&&!nativeProof
         ? Math.min(1,(devicePixelRatio||1)*Math.min(entry.host.clientWidth/sourceWidth,entry.host.clientHeight/sourceHeight)) : 1;
       const width=Math.max(1,Math.ceil(sourceWidth*displayScale));
       const height=Math.max(1,Math.ceil(sourceHeight*displayScale));
@@ -422,7 +437,9 @@
       gl.clearColor(0,0,0,0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
-      if (gl.getError() !== gl.NO_ERROR) throw new Error('Image motion rendering failed');
+      // Checking after each orbiting sprite forces 24 GPU synchronizations.
+      // This scene checks once after the complete frame instead.
+      if (root.dataset.backgroundCurrent!=='emperor' && gl.getError() !== gl.NO_ERROR) throw new Error('Image motion rendering failed');
       entry.context.clearRect(0,0,entry.canvas.width,entry.canvas.height);
       entry.context.drawImage(surface,0,0);
       if(coldSnowEnabled&&entry.mode===1&&entry.variant===1)drawColdSnow(entry,time);
@@ -490,6 +507,9 @@
         }
         if (setup()) draw(entry,elapsed);
       }
+      if(root.dataset.backgroundCurrent==='emperor'&&gl&&gl.getError()!==gl.NO_ERROR){
+        entries.forEach(entry=>{if(visible(entry)){entry.failed=true;show(entry,false);}});
+      }
       const duration = performance.now()-start;
       stats.ticks++;
       stats.totalMs += duration;
@@ -553,6 +573,15 @@
   const subjects = { moon:4, sun:0, palace:3, scroll:5, 'star-sword':3, crane:0,
                      pine:0, blade:3, 'water-dragon':2, lamp:6, vine:5, mountain:2 };
   window.JiaArtLoops = {
+    emperorFlame(host,image,rank) {
+      const cell=(rank-1)%6,col=cell%3,row=Math.floor(cell/3);
+      // The approved source-detail lotus renderer retains the entire artwork.
+      // Do not replace these 23 forms with the gallery's transported gas field.
+      install(host,host,image,1,30+rank,[col/3,(1-row)/2,1/3,1/2]);
+    },
+    emperor(host,image) {
+      install(host,host,image,7);
+    },
     flame(host,image,rank) {
       const cell=(rank-1)%6,col=cell%3,row=Math.floor(cell/3);
       install(host,host,image,1,100+rank,[col/3,(1-row)/2,1/3,1/2]);

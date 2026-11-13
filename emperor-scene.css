@@ -1,0 +1,20 @@
+/* A single intact figure; Emperor Flame grows behind it and along the cuffs. */
+.emperor-tableau{position:absolute;left:max(0px,calc((100vw - 1840px)/2));top:7vh;width:calc((100vw - 820px)/2);max-width:500px;height:min(84vh,900px);transform:translate3d(calc(var(--trace-x,0px)*.65),calc(var(--trace-y,0px)*.65),0);isolation:isolate}
+.emperor-body{position:absolute;z-index:10;left:7%;top:7%;width:86%;height:87%;filter:drop-shadow(0 1px 5px #8c99bd20)}
+.emperor-body>img,.emperor-body>.art-loop-canvas{width:100%;height:100%;object-fit:contain;position:absolute;inset:0}
+.emperor-body>img:not([src]){visibility:hidden}
+.emperor-body.has-art-loop>img{visibility:hidden}
+.emperor-orbit-flame,.emperor-origin{position:absolute;background-repeat:no-repeat;background-size:300% 200%;background-position:var(--cell-x) var(--cell-y);aspect-ratio:1;transform:translate(-50%,-50%);will-change:transform}
+.emperor-orbit-flame{left:50%;top:50%;width:27%;max-width:128px;z-index:8;opacity:0;transition:opacity .8s}
+.emperor-origin{left:50%;top:35%;width:110%;height:75%;z-index:2;opacity:.78;background-size:300% 200%}
+.emperor-origin.has-art-loop,.emperor-orbit-flame.has-art-loop{background-image:none!important}
+.emperor-tableau .art-loop-canvas{display:block;width:100%;height:100%;object-fit:contain}
+.emperor-tableau .art-loop-canvas[hidden]{display:none!important}
+.emperor-fire-back,.emperor-fire-front{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.9}
+.emperor-fire-back{z-index:4}.emperor-fire-front{z-index:11}
+.emperor-tableau[data-volume=ready] .emperor-origin{opacity:.60}
+.page-atmosphere[data-background-layout=page] .emperor-tableau{top:80px}
+.page-atmosphere[data-background-visibility=subtle] .emperor-tableau{animation:emperor-presence 30s ease-in-out infinite;animation-play-state:var(--scene-motion,paused)}
+@keyframes emperor-presence{0%,100%{opacity:0}12%,58%{opacity:1}90%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.emperor-tableau{animation:none!important}.emperor-fire-back,.emperor-fire-front{display:none}}
+@media print{.emperor-scene{display:none!important}}
