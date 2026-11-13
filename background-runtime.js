@@ -17,6 +17,34 @@
   const fieldSize = 768;
   let frame = 0, elapsed = 0, last = 0, lastPaint = 0, serial = 0;
   const stats = { paints: 0, ticks: 0, totalMs: 0, maxMs: 0 };
+  // These profiles describe the existing painted shapes, not new replacement art.
+  // family: plume, vortex, lotus, dragon, fan, mineral, dual current.
+  const emperorProfiles = [
+    {family:0,speed:1.12,bend:1.00,trail:.70,anchor:[.50,.35],head:[.50,.70],motion:'万色流焰'},
+    {family:1,speed:.82,bend:1.18,trail:.35,anchor:[.50,.48],head:[.50,.48],motion:'向心吞卷'},
+    {family:2,speed:.88,bend:.86,trail:.72,anchor:[.50,.37],head:[.50,.69],motion:'净莲瓣缘起焰'},
+    {family:0,speed:1.78,bend:.82,trail:1.05,anchor:[.50,.18],head:[.50,.79],motion:'金丝急焰'},
+    {family:0,speed:.91,bend:1.35,trail:.82,anchor:[.50,.22],head:[.50,.76],motion:'分枝生长'},
+    {family:4,speed:1.23,bend:1.04,trail:.60,anchor:[.50,.36],head:[.50,.61],motion:'翼缘破焰'},
+    {family:1,speed:.61,bend:.90,trail:.58,anchor:[.50,.34],head:[.50,.40],motion:'低回金涡'},
+    {family:2,speed:1.04,bend:1.12,trail:.95,anchor:[.50,.34],head:[.50,.65],motion:'红莲逐瓣燃烧'},
+    {family:3,speed:1.13,bend:1.35,trail:.65,anchor:[.43,.44],head:[.76,.76],motion:'紫龙脊焰游走'},
+    {family:0,speed:1.93,bend:1.26,trail:1.02,anchor:[.43,.20],head:[.67,.72],motion:'斜掠风焰'},
+    {family:0,speed:.97,bend:.88,trail:.78,anchor:[.48,.22],head:[.52,.80],motion:'冷白细焰'},
+    {family:4,speed:1.55,bend:.76,trail:.65,anchor:[.50,.37],head:[.50,.65],motion:'龙首雷脉'},
+    {family:5,speed:.67,bend:.56,trail:.54,anchor:[.50,.34],head:[.82,.35],motion:'龟甲地火流隙'},
+    {family:3,speed:.81,bend:1.17,trail:.36,anchor:[.45,.39],head:[.72,.76],motion:'无形心焰游走'},
+    {family:0,speed:1.09,bend:1.40,trail:.86,anchor:[.48,.21],head:[.53,.78],motion:'海潮上涌'},
+    {family:6,speed:1.10,bend:1.06,trail:.74,anchor:[.50,.28],head:[.50,.69],motion:'水火错流'},
+    {family:5,speed:.86,bend:.69,trail:.84,anchor:[.50,.30],head:[.50,.49],motion:'熔隙喷焰'},
+    {family:3,speed:1.47,bend:1.36,trail:.84,anchor:[.51,.40],head:[.27,.72],motion:'风龙鬃焰'},
+    {family:2,speed:.96,bend:1.08,trail:.94,anchor:[.50,.34],head:[.50,.67],motion:'青莲心焰上生'},
+    {family:0,speed:.78,bend:1.45,trail:.86,anchor:[.50,.22],head:[.50,.75],motion:'毒焰卷枝'},
+    {family:6,speed:.83,bend:1.15,trail:.40,anchor:[.50,.31],head:[.50,.73],motion:'阴阳两仪错流'},
+    {family:4,speed:1.17,bend:1.15,trail:.75,anchor:[.51,.35],head:[.28,.69],motion:'兽首鬃翼流焰'},
+    {family:0,speed:.74,bend:1.03,trail:.79,anchor:[.50,.19],head:[.50,.77],motion:'玄黄厚焰'}
+  ];
+  const classicEmperor = new URLSearchParams(location.search).get('flames') === 'classic';
   const crossings = 'IntersectionObserver' in window
     ? new IntersectionObserver(changes => { if (changes.some(change => change.isIntersecting)) wake(); }) : null;
   let visibilityWake = 0;
@@ -66,7 +94,7 @@
   // gallery transport and imagery/lamp motion retain their current behavior.
   const fragment = `precision highp float;
     uniform sampler2D picture, noiseField, heatField;
-    uniform vec4 imageRect;
+    uniform vec4 imageRect, motionProfile, motionShape;
     uniform float phase, mode, variant, flameClock;
     varying vec2 uv;
     ${flameLayers}
@@ -144,6 +172,108 @@
       float alpha=clamp(body.a+opacity*(1.-body.a),0.,1.);
       return vec4(min(rgb,vec3(alpha)),alpha);
     }
+    vec4 emperorSample(vec2 p){
+      vec4 color=artwork(p);
+      // Generated atlas cells contain a few neighboring-tip specks at their
+      // extreme borders. A transparent gutter isolates each complete sprite.
+      float border=min(min(p.x,p.y),min(1.-p.x,1.-p.y));
+      color.a*=smoothstep(.015,.055,border);
+      return color;
+    }
+    vec4 emperorFlameDetail(vec2 point){
+      vec2 at=(point-.5)/.86+.5;
+      vec4 original=emperorSample(at);
+      float rank=variant-30.,family=motionProfile.x;
+      float t=flameClock*motionProfile.y;
+      vec2 center=motionShape.xy,delta=at-center;
+      float radius=length(delta),angle=atan(delta.y,delta.x);
+      float height=smoothstep(center.y-.09,.90,at.y);
+      float edge=smoothstep(.045,.38,radius);
+      vec3 domain=vec3(at.x*17.,at.y*15.-t*1.5,rank*5.3+t*.17);
+      float n=fireFbm(domain),m=fireNoise(domain+vec3(7.2,3.1,5.7));
+      vec2 shift=vec2(0.);
+      float flowing=1.,stream=at.y*27.-t*5.;
+      float bright=max(max(original.r,original.g),original.b);
+      if(family<.5){
+        // Coherent tongues bend from their roots; fine eddies travel upward.
+        float branches=abs(rank-5.)<.1||abs(rank-20.)<.1?1.:0.;
+        float wave=sin(at.y*12.-t*2.3+sin(at.x*11.+t*.7));
+        shift=vec2((wave*.019+(m-.5)*.044)*height,(n-.5)*.030*height);
+        shift.x+=branches*.012*sin(at.x*24.+at.y*15.-t*1.7)*height;
+        if(abs(rank-10.)<.1){shift.x+=.021*height*sin(at.y*18.-t*2.8);stream+=at.x*18.;}
+        if(abs(rank-15.)<.1){shift.x+=.012*sin(at.y*24.-t*2.1)*height;}
+      }else if(family<1.5){
+        // Differential curl and inward-running ridges; the card never rotates.
+        float twist=(.12*sin(radius*25.+t*2.)+.05*(m-.5))*edge;
+        vec2 tangent=vec2(-delta.y,delta.x);
+        shift=tangent*twist+normalize(delta+vec2(.0001))*.012*sin(radius*32.+t*3.1)*edge;
+        flowing=edge;stream=radius*47.+t*5.2+angle*2.;
+      }else if(family<2.5){
+        // The calyx stays planted. Separate petal sectors flex out of phase.
+        float petal=sin(angle*7.+radius*9.-t*1.45);
+        float fixedBase=1.-smoothstep(center.y-.08,center.y+.06,at.y);
+        shift=normalize(delta+vec2(.0001))*(.012*petal+.013*(m-.5))*edge;
+        shift+=vec2(.016*sin(at.y*16.-t*2.2)+(m-.5)*.025,(n-.5)*.025)*height;
+        shift*=1.-fixedBase*.72;stream=radius*39.-t*4.8+sin(angle*6.);
+      }else if(family<3.5){
+        // Protect the painted head; a traveling spinal wave reaches the tail.
+        float head=exp(-dot(at-motionShape.zw,at-motionShape.zw)*105.);
+        float side=motionShape.z<.5?-1.:1.;
+        float spine=at.x*11.*side+at.y*5.-t*2.05;
+        shift=vec2(.016*sin(spine*.79)+(m-.5)*.014,.023*sin(spine)+(n-.5)*.014);
+        shift*=1.-head*.90;stream=at.x*24.*side+at.y*12.-t*5.1;
+        flowing=.22+.78*(1.-head);
+      }else if(family<4.5){
+        // Rigid head/core, independently rippling fan, wing and mane edges.
+        float head=exp(-dot(at-motionShape.zw,at-motionShape.zw)*105.);
+        vec2 tangent=vec2(-delta.y,delta.x);
+        shift=tangent*.07*sin(radius*18.-t*2.5+angle*3.)*edge;
+        shift+=vec2((m-.5)*.030,(n-.5)*.026)*edge;
+        shift*=1.-head*.87;stream=radius*42.-t*6.1+angle*3.;
+        flowing=.20+.80*edge*(1.-head*.8);
+      }else if(family<5.5){
+        // Dark shell and volcanic rock are solid. Only their hot seams flow.
+        flowing=smoothstep(.40,.88,bright)*smoothstep(.035,.22,original.r-original.b);
+        shift=vec2((m-.5)*.023,(n-.5)*.024)*flowing;
+        stream=at.y*36.+at.x*19.-t*4.7;
+      }else{
+        // Red/blue and black/white remain distinct material streams.
+        float side=abs(rank-21.)<.1?mix(-1.,1.,smoothstep(.30,.66,bright))
+          :mix(-1.,1.,smoothstep(-.08,.08,original.r-original.b));
+        shift=vec2(.023*sin(at.y*17.-t*2.2*side)+(m-.5)*.014,
+                   .014*cos(at.x*16.+at.y*7.-t*1.8*side));
+        shift*=.30+.70*height;stream=at.y*29.-t*5.*side+at.x*13.;
+      }
+      shift*=motionProfile.z;
+      // Resample the complete native artwork; no fuel mask cuts into its body.
+      vec4 body=emperorSample(at-shift);
+      float ridge=pow(max(0.,sin(stream+(n-.5)*4.)),13.);
+      float glint=(ridge*.15-.018)*flowing;
+      if(abs(rank-12.)<.1){
+        float flash=pow(max(0.,sin(t*6.1+floor(angle*4.))),24.);
+        glint+=flash*pow(max(0.,sin(radius*63.-angle*5.+t*14.)),20.)*.32;
+      }
+      // Multiplication preserves black-white separation and the source palette.
+      body.rgb=clamp(body.rgb*(1.+glint),0.,1.);
+      vec3 emitted=vec3(0.);float opacity=0.;
+      for(int i=1;i<=3;i++){
+        float lane=float(i),age=fract(t*(.39+lane*.09)+rank*.173+lane*.317+at.x*.75);
+        float life=smoothstep(0.,.18,age)*(1.-smoothstep(.65,1.,age));
+        vec2 travel=vec2((m-.5)*.065+sin(t*1.7+at.y*18.+lane)*.014,.10);
+        if(family> .5&&family<1.5)travel=-normalize(delta+vec2(.0001))*.085+vec2(-delta.y,delta.x)*.11;
+        if(abs(rank-10.)<.1)travel.x+=.055;
+        vec2 source=at-shift-travel*age;
+        vec4 fuel=emperorSample(source);
+        float hot=smoothstep(.43,.86,max(max(fuel.r,fuel.g),fuel.b));
+        float shred=smoothstep(.48,.78,fireNoise(vec3(at.x*69.+lane*13.,at.y*45.-t*3.5,rank*7.+lane)));
+        float amount=fuel.a*hot*life*shred*.24*motionProfile.w;
+        amount*=1.-body.a*.94;
+        emitted+=fuel.rgb*amount;opacity+=amount;
+      }
+      float alpha=clamp(body.a+opacity*(1.-body.a),0.,1.);
+      vec3 rgb=body.rgb*body.a+emitted*(1.-body.a*.7);
+      return vec4(min(rgb,vec3(alpha)),alpha);
+    }
     vec4 livingFlame(vec2 at){
       vec4 original=artwork(at);
       float rigid=rigidMaterial(original);
@@ -163,10 +293,15 @@
       return vec4(min(result.rgb,vec3(result.a)),result.a);
     }
     void main(){
-      if(mode>.5&&mode<1.5){gl_FragColor=variant<100.?detailFlame(uv):livingFlame(uv);return;}
+      if(mode>.5&&mode<1.5){
+        if(variant>30.&&variant<60.&&motionProfile.y>0.)gl_FragColor=emperorFlameDetail(uv);
+        else gl_FragColor=variant<100.?detailFlame(uv):livingFlame(uv);
+        return;
+      }
       vec2 p=uv;
       float t=phase;
       float light=0.;
+      vec3 fringeLight=vec3(0.);
       if(mode>6.5){
         // Keep the emperor's face and central armor rigid. Only long hair and
         // the loose lateral robes flex; a fine glint crosses silver engraving.
@@ -176,6 +311,13 @@
         p.x+=cloth*(.004*sin(uv.y*24.-flameClock*1.7)+.002*sin(uv.y*43.+flameClock*.91));
         p.y+=cloth*.0028*sin(uv.x*29.-flameClock*1.23);
         light=.065*pow(max(0.,sin(uv.x*7.+uv.y*11.-flameClock*.54)),26.);
+        // The dialogue PV shows cyan/violet light traveling through long hair
+        // and cool silver reflections, with the face kept clear and solid.
+        float face=1.-smoothstep(.07,.14,length((uv-vec2(.47,.76))*vec2(1.,.8)));
+        float shoulder=edge*smoothstep(.58,.70,uv.y)*(1.-smoothstep(.81,.87,uv.y));
+        float sheen=.5+.5*sin(uv.y*19.+uv.x*9.-flameClock*.87);
+        fringeLight=mix(vec3(.29,.65,1.),vec3(.80,.35,1.),sheen)
+          *(.032*hair+.020*shoulder)*(1.-face);
       }else if(mode>5.5&&mode<6.5){
         // The lamp has its own wick: keep its metal body fixed, move only fire.
         float flame=smoothstep(.515,.555,uv.y)*smoothstep(.63,.74,uv.x);
@@ -212,6 +354,7 @@
       float brightness=dot(c.rgb,vec3(.2126,.7152,.0722));
       vec3 tint=mix(c.rgb,vec3(1.),.35);
       c.rgb=clamp(c.rgb+tint*light*(.25+.75*brightness),0.,1.);
+      c.rgb=clamp(c.rgb+fringeLight*smoothstep(.28,.74,brightness),0.,1.);
       gl_FragColor=vec4(c.rgb*c.a,c.a);
     }`;
 
@@ -290,7 +433,7 @@
       const position = gl.getAttribLocation(program, 'position');
       gl.enableVertexAttribArray(position);
       gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-      locations = Object.fromEntries(['picture','phase','mode','variant','flameClock','noiseField','heatField','imageRect'].map(name => [name, gl.getUniformLocation(program,name)]));
+      locations = Object.fromEntries(['picture','phase','mode','variant','flameClock','noiseField','heatField','imageRect','motionProfile','motionShape'].map(name => [name, gl.getUniformLocation(program,name)]));
       gl.uniform1i(locations.picture, 0);
       gl.uniform1i(locations.heatField, 2);
       transportProgram=gl.createProgram();
@@ -435,6 +578,10 @@
       gl.uniform1f(locations.flameClock,time/1000+entry.seed*13.7);
       gl.uniform1f(locations.mode, entry.mode);
       gl.uniform1f(locations.variant, entry.variant);
+      const personality=entry.variant>30&&entry.variant<60?emperorProfiles[entry.variant-31]:null;
+      gl.uniform4fv(locations.motionProfile,personality&&!classicEmperor
+        ?[personality.family,personality.speed,personality.bend,personality.trail]:[0,0,0,0]);
+      gl.uniform4fv(locations.motionShape,personality?[...personality.anchor,...personality.head]:[.5,.3,.5,.7]);
       gl.clearColor(0,0,0,0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
@@ -576,8 +723,8 @@
   window.JiaArtLoops = {
     emperorFlame(host,image,rank) {
       const cell=(rank-1)%6,col=cell%3,row=Math.floor(cell/3);
-      // The approved source-detail lotus renderer retains the entire artwork.
-      // Do not replace these 23 forms with the gallery's transported gas field.
+      // Each form keeps its native artwork and receives its own local flow.
+      host.dataset.flameMotion=emperorProfiles[rank-1].motion;
       install(host,host,image,1,30+rank,[col/3,(1-row)/2,1/3,1/2]);
     },
     emperor(host,image) {
@@ -597,11 +744,12 @@
       if (object) install(image,image.parentElement,image,subjects[object.dataset.imageryObject]??0);
     },
     wake,
+    emperorProfiles:()=>emperorProfiles.map((profile,i)=>({rank:i+1,...profile})),
     inspect() {
-      return {lotusVideo:window.JiaLotusVideos?.inspect(),renderer:root.dataset.artRenderer||'not-needed',enabled:enabled(),periodMs:period,flameClock:'continuous',lotusRendererRevision:'fe08ca2',lotusUsesFuelField:false,coldSnow:{enabled:coldSnowEnabled,count:40,direction:'downward'},flameModel:'original artwork with short source-colored tongues; gallery: source flame transport',fieldSize,fuelEnabled,flameFrameLimit:60,running:!!frame,ticks:stats.ticks,
+      return {lotusVideo:window.JiaLotusVideos?.inspect(),renderer:root.dataset.artRenderer||'not-needed',enabled:enabled(),periodMs:period,flameClock:'continuous',lotusRendererRevision:'fe08ca2',lotusUsesFuelField:false,coldSnow:{enabled:coldSnowEnabled,count:40,direction:'downward'},emperorMotion:{revision:'shape-directed-v2',classic:classicEmperor,profiles:emperorProfiles.length},flameModel:'original artwork with short source-colored tongues; gallery: source flame transport',fieldSize,fuelEnabled,flameFrameLimit:60,running:!!frame,ticks:stats.ticks,
               textureCount:textures.size,paints:stats.paints,meanTickMs:stats.ticks?stats.totalMs/stats.ticks:0,maxTickMs:stats.maxMs,
               entries:[...entries.values()].map(entry=>({type:entry.key.matches('[data-lotus-instance]')?'lotus':'imagery',subject:entry.key.closest('.imagery-object')?.dataset.imageryObject,
-                stage:entry.variant,source:entry.image.currentSrc||entry.image.src,sourceWidth:entry.image.naturalWidth,sourceHeight:entry.image.naturalHeight,flowSteps:entry.flow?.steps||0,paints:entry.paints,visible:visible(entry),failed:!!entry.failed,width:entry.canvas.width,height:entry.canvas.height}))};
+                stage:entry.variant,motion:entry.host.dataset.flameMotion,source:entry.image.currentSrc||entry.image.src,sourceWidth:entry.image.naturalWidth,sourceHeight:entry.image.naturalHeight,flowSteps:entry.flow?.steps||0,paints:entry.paints,visible:visible(entry),failed:!!entry.failed,width:entry.canvas.width,height:entry.canvas.height}))};
     },
     setFuel(value){fuelEnabled=!!value;},
     setColdSnow(value){coldSnowEnabled=!!value;},

@@ -82,6 +82,7 @@
 
   async function openVolume() {
     if (decoder || volumePending || !window.ImageDecoder || !moving()) return;
+    let candidate;
     volumePending = (async () => {
       if (!volumeBytes) {
         const response = await fetch(stage.dataset.emperorFire, {priority:'low'});
@@ -89,17 +90,23 @@
         volumeBytes = await response.arrayBuffer();
       }
       if (!moving()) return;
-      decoder = new ImageDecoder({data:volumeBytes.slice(0), type:'image/webp', preferAnimation:true});
-      await decoder.tracks.ready;
-      count = decoder.tracks.selectedTrack.frameCount;
+      candidate = new ImageDecoder({data:volumeBytes.slice(0), type:'image/webp', preferAnimation:true});
+      await candidate.tracks.ready;
+      if (!moving()) {candidate.close();return;}
+      const frames = candidate.tracks.selectedTrack.frameCount;
+      if (!frames) throw Error('Emperor Flame has no animation frames');
+      // Publish only a ready decoder. A render tick during tracks.ready used
+      // to request frame NaN (count was still zero) and disable the body flame.
+      decoder = candidate;
+      count = frames;
       frameIndex = -1;
       stage.dataset.volume = 'ready';
-    })().catch(() => { decoder?.close(); decoder = null; stage.dataset.volume = 'fallback'; })
+    })().catch(() => { candidate?.close(); decoder?.close(); decoder = null; stage.dataset.volume = 'fallback'; })
       .finally(() => { volumePending = null; });
   }
 
   function volumeFrame() {
-    if (!decoder || decoding || !backCtx || !frontCtx) return;
+    if (!decoder || !count || decoding || !backCtx || !frontCtx) return;
     decoding = true;
     const activeDecoder = decoder, next = (frameIndex + 1) % count;
     activeDecoder.decode({frameIndex:next}).then(({image}) => {
