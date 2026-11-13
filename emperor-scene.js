@@ -14,11 +14,25 @@
   const rulerFloat = ruler?.querySelector('[data-ruler-float]');
   const rulerFire = ruler?.querySelector('[data-ruler-fire]');
   const rulerCtx = rulerFire?.getContext('2d');
+  const rulerChannels = ruler?.querySelector('[data-ruler-channels]');
+  const channelCtx = rulerChannels?.getContext('2d');
   const nodes = [...stage.querySelectorAll('[data-emperor-flame]')];
   const back = stage.querySelector('[data-emperor-fire-back]');
   const front = stage.querySelector('[data-emperor-fire-front]');
   const backCtx = back.getContext('2d'), frontCtx = front.getContext('2d');
   const plates = new Map();
+  const rulerFrames = [];
+  let rulerPaints = 0;
+  const fusedPaints = Array(22).fill(0);
+  let flameProfiles;
+  const profiles=()=>flameProfiles||(flameProfiles=window.JiaArtLoops?.emperorProfiles());
+  // Rank 1 is the Emperor's own body. Ranks 2–23 bind to the two forged flanks.
+  // Hue is only for the connecting current; the native artwork and motion are
+  // copied from each distinct live flame, not recolored from one generic fire.
+  const fusedColors=['#705396','#ffd7ed','#ffd36b','#8dffb2','#f9ac48',
+    '#edbf67','#ff455c','#bd7aff','#9bb5e4','#c7faff','#dbd5ff',
+    '#c0ad5e','#ffb8ba','#57ccff','#dfb2ff','#ff7543','#a6d27a',
+    '#65f5db','#a9e75b','#f7f6ff','#eeac5c','#e6b459'];
   let raf = 0, clock = 0, last = 0, lastPaint = 0, loading = false;
   let volumeBytes, volumePending, decoder, decoding = false, count = 0, frameIndex = -1, paints = 0;
   const intersections = new Map([[stage,true],...(ruler?[[ruler,true]]:[])]);
@@ -151,7 +165,8 @@
         emit(frontCtx,.23,.59,.32,.32);
         emit(frontCtx,.79,.58,.31,.32);
         emit(frontCtx,.49,.91,.62,.23);
-        paintRulerFire(image);
+        if (rulerCtx && rulerImage.naturalWidth) prepareRulerPlume(image);
+        paintRulerFire();
         backCtx.globalAlpha=frontCtx.globalAlpha=1;
         frameIndex=next;paints++;
       } finally { image.close(); }
@@ -160,7 +175,41 @@
     }).finally(() => {decoding=false;});
   }
 
-  function paintRulerFire(image) {
+  function prepareRulerPlume(image) {
+    const canvas=rulerFrames.length<8?document.createElement('canvas'):rulerFrames.pop();
+    if (canvas.width!==214 || canvas.height!==225) {canvas.width=214;canvas.height=225;}
+    const c=canvas.getContext('2d',{willReadFrequently:true});
+    c.clearRect(0,0,214,225);
+    c.drawImage(image,122,0,214,225,0,0,214,225);
+    const pixels=c.getImageData(0,0,214,225),rgba=pixels.data;
+    // Keep the simulated filament density, but map its cool/pink palette to
+    // clear amber heat. A sepia filter made thin flames look like brown vapor.
+    for (let i=0;i<rgba.length;i+=4) {
+      if (!rgba[i+3]) continue;
+      const heat=(rgba[i]*.30+rgba[i+1]*.55+rgba[i+2]*.15)/255;
+      const q=Math.max(0,Math.min(1,(heat-.14)/.20));
+      rgba[i]=255;rgba[i+1]=94+161*Math.pow(heat,.8);rgba[i+2]=12+220*heat*heat*heat;
+      const density=rgba[i+3]/255*q*q*(3-2*q);
+      rgba[i+3]=255*(1-Math.pow(1-density,2.05));
+    }
+    c.putImageData(pixels,0,0);
+    // Tint a small shared plume six times, not the full-size target 22 times.
+    // Each native fire keeps its own original artwork; these are only the
+    // extra finite fluid tongues that support the same hot roots.
+    const filters=['none','hue-rotate(95deg)','hue-rotate(155deg)',
+      'hue-rotate(235deg)','hue-rotate(310deg)','grayscale(1)'];
+    canvas.tints||=[];
+    filters.forEach((filter,i)=>{
+      const tint=canvas.tints[i]||document.createElement('canvas');
+      if(tint.width!==214||tint.height!==225){tint.width=214;tint.height=225;}
+      const tc=tint.getContext('2d');tc.clearRect(0,0,214,225);
+      tc.filter=filter;tc.drawImage(canvas,0,0);tc.filter='none';
+      canvas.tints[i]=tint;
+    });
+    rulerFrames.unshift(canvas);
+  }
+
+  function paintRulerFire() {
     if (!rulerCtx || !rulerImage.naturalWidth) return;
     // Align emission with the contained artwork, rather than the host's box.
     // All volume fire is behind the complete rigid weapon.
@@ -171,13 +220,102 @@
     if (rulerFire.width!==w || rulerFire.height!==h) {rulerFire.width=w;rulerFire.height=h;}
     rulerCtx.clearRect(0,0,w,h);
     const ox=(w-iw*devicePixelRatio)/2,oy=(h-ih*devicePixelRatio)/2;
-    for (let side=0;side<2;side++) for(let i=0;i<7;i++) {
-      const y=.10+i*.073,x=side?.663:.337;
-      const size=iw*devicePixelRatio*(.19+.035*Math.sin(clock*1.3+i*1.7+side));
-      rulerCtx.globalAlpha=.16+.045*Math.sin(clock*.9+i*2.4+side*1.9);
-      rulerCtx.drawImage(image,ox+x*iw*devicePixelRatio-size*.5,oy+y*ih*devicePixelRatio-size*.72,size,size);
+    if (rulerChannels.width!==w || rulerChannels.height!==h) {rulerChannels.width=w;rulerChannels.height=h;}
+    channelCtx.clearRect(0,0,w,h);
+    rulerCtx.save();channelCtx.save();
+    rulerCtx.translate(ox,oy);channelCtx.translate(ox,oy);
+    rulerCtx.scale(iw*devicePixelRatio,ih*devicePixelRatio);
+    channelCtx.scale(iw*devicePixelRatio,ih*devicePixelRatio);
+    for (let i=0;i<22;i++) {
+      const p=fusedFlame(i,clock),node=nodes[p.rank-1];
+      const live=node?.querySelector('.art-loop-canvas');
+      const plate=plates.get(node?.dataset.flamePlate);
+      if (!plate?.naturalWidth) continue;
+      rulerCtx.save();
+      rulerCtx.translate(p.x,p.y);
+      // Roots remain welded to the blade. Only the native flame bends, grows
+      // and sheds; no independent orbit or floating icon is introduced here.
+      rulerCtx.rotate(p.side?.22:-.22);
+      const profile=profiles()?.[p.rank-1];
+      const anchor=profile?.anchor||[.5,.25];
+      const width=p.width,height=p.height;
+      rulerCtx.globalAlpha=.88;
+      if (live&&!live.hidden&&live.width) {
+        rulerCtx.drawImage(live,-anchor[0]*width,-(1-anchor[1])*height,width,height);
+      } else {
+        const cell=(p.rank-1)%6;
+        rulerCtx.drawImage(plate,(cell%3)*512,Math.floor(cell/3)*512,512,512,-anchor[0]*width,-(1-anchor[1])*height,width,height);
+      }
+      // A short, finite fluid tongue emerges at the very same hot root.
+      // Its hue supplements, rather than replacing, the distinct native body.
+      const fluid=rulerFrames[(i*3)%Math.max(1,rulerFrames.length)];
+      if (fluid) {
+        rulerCtx.globalAlpha=p.alpha*(p.rank===2||p.rank===21?.18:.56);
+        const tint=[3,4,0,1,0,0,4,3,2,2,3,0,4,2,3,0,1,2,1,5,0,0][i];
+        rulerCtx.drawImage(fluid.tints?.[tint]||fluid,-.044,-p.tongueHeight,.088,p.tongueHeight);
+      }
+      rulerCtx.restore();
+      drawFusionChannel(channelCtx,p,clock);
+      fusedPaints[i]++;
     }
-    rulerCtx.globalAlpha=1;
+    rulerCtx.restore();channelCtx.restore();
+    rulerPaints++;
+  }
+
+  function fusedFlame(index,t) {
+    const side=index>=11?1:0,row=side?21-index:index;
+    const rank=index+2,profile=profiles()?.[rank-1];
+    const speed=profile?.speed||1;
+    const duration=1.25+1.10/speed,life=(t/duration+index*.381966)%1;
+    const smooth=v=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v);};
+    return {index,rank,side,row,x:side?.650:.350,y:.108+row*.052,
+      width:.225,height:.122+(rank===9||rank===18?.025:0),
+      duration,life,alpha:smooth(life/.14)*(1-smooth((life-.64)/.36)),
+      tongueHeight:(.045+.060*smooth(life/.55))*(rank===4?1.25:1),
+      color:fusedColors[index],motion:profile?.motion,paints:fusedPaints[index]};
+  }
+
+  function drawFusionChannel(c,p,t) {
+    const side=p.side?1:-1,phase=(t*.46+p.index*.213)%1;
+    c.save();
+    // Narrow currents follow the forged recess; the opaque spine is never
+    // displaced, erased or covered by a luminous blanket.
+    c.lineWidth=.0018;c.strokeStyle=p.color;c.globalAlpha=.24;
+    c.beginPath();c.moveTo(p.x,p.y);
+    c.bezierCurveTo(p.x-side*.055,p.y+.012,.5+side*.055,p.y-.014,.5+side*.043,p.y-.032);c.stroke();
+    const sx=p.x+(side*.043+.5-p.x)*phase,sy=p.y-.032*phase;
+    const g=c.createRadialGradient(sx,sy,0,sx,sy,.012);
+    g.addColorStop(0,p.color);g.addColorStop(.22,p.color+'b0');g.addColorStop(1,p.color+'00');
+    c.globalAlpha=.7;c.fillStyle=g;c.fillRect(sx-.012,sy-.012,.024,.024);
+    c.translate(p.x+side*.045,p.y-.03);
+    if(p.rank===11){
+      // Local cold plume stays behind the snow, close to its own blade root.
+      for(let j=0;j<12;j++){
+        const age=(t/(2.2+j*.11)+j*.618)%1;
+        const x=(Math.sin(j*13.7)*.066)+Math.sin(t*.65+j)*.010,y=-.105+age*.155;
+        const r=.0027+(j%3)*.00065;
+        c.globalAlpha=Math.sin(age*Math.PI)*.9;c.strokeStyle='#dcfaff';c.lineWidth=.001;
+        c.beginPath();for(let arm=0;arm<3;arm++){const a=arm*Math.PI/3+t*.07;const dx=Math.cos(a)*r,dy=Math.sin(a)*r;c.moveTo(x-dx,y-dy);c.lineTo(x+dx,y+dy);}c.stroke();
+      }
+    }else if(p.rank===12){
+      const flash=Math.pow(Math.max(0,Math.sin(t*9.7)),9);
+      c.globalAlpha=.25+.7*flash;c.strokeStyle='#e5deff';c.lineWidth=.002;
+      c.beginPath();for(let j=0;j<9;j++){const y=-j*.010,x=Math.sin(j*17+Math.floor(t*12))*.012; j?c.lineTo(x,y):c.moveTo(0,0);}c.stroke();
+    }else if(p.rank===2||p.rank===21){
+      for(let a=0;a<2;a++){
+        c.strokeStyle=p.rank===2?'#524069':a?'#f9fcff':'#251e38';c.globalAlpha=.8;c.lineWidth=.0023;
+        c.beginPath();for(let j=0;j<24;j++){const u=j/23,angle=u*5.5+t*(p.rank===2?-1.6:1.1)+a*Math.PI,r=(1-u)*.023,x=Math.cos(angle)*r,y=-u*.084; j?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();
+      }
+    }else if(p.rank===4||p.rank===5||p.rank===20){
+      // Gold filaments rise quickly; life/poison sparks branch more slowly.
+      for(let j=0;j<5;j++){
+        const age=(t*(p.rank===4?1.7:.55)+j*.27)%1;
+        c.globalAlpha=Math.sin(age*Math.PI)*.8;c.strokeStyle=p.color;c.lineWidth=.0013;
+        const x=Math.sin(j*3.6+age*4)*.018;
+        c.beginPath();c.moveTo(x,-age*.09);c.lineTo(x+Math.sin(j)*.003,-age*.09-.006);c.stroke();
+      }
+    }
+    c.restore();
   }
 
   function tick(now) {
@@ -201,19 +339,22 @@
       if (stage.dataset.volume!=='fallback') void openVolume();
       back.hidden=front.hidden=false;
       if (rulerFire) rulerFire.hidden=false;
+      if (rulerChannels) rulerChannels.hidden=false;
       if (!raf) raf=requestAnimationFrame(tick);
     } else {
       cancelAnimationFrame(raf);raf=0;last=0;
       back.hidden=front.hidden=true;
       if (rulerFire) rulerFire.hidden=true;
+      if (rulerChannels) rulerChannels.hidden=true;
       if (!selected() && decoder && !decoding) {decoder.close();decoder=null;delete stage.dataset.volume;}
+      if (!selected()) rulerFrames.length=0;
       orbit(clock);
     }
   }
-  window.JiaEmperorScene={wake,inspect:()=>({selected:selected(),running:!!raf,clock,outerFlames:nodes.length-1,bodyIsEmperorFlame:true,
+  window.JiaEmperorScene={wake,rulerTongues:t=>Array.from({length:22},(_,i)=>fusedFlame(i,t)),inspect:()=>({selected:selected(),running:!!raf,clock,outerFlames:nodes.length-1,bodyIsEmperorFlame:true,
     plates:plates.size,portraitLoaded:!!portrait.naturalWidth,volume:stage.dataset.volume,volumeFrames:count,volumePaints:paints,metrics,
     ranks:nodes.map(node=>Number(node.dataset.emperorFlame)),coreAnchors:['torso','left-palm','right-palm','robe-hem'],
-    ruler:{loaded:!!rulerImage?.naturalWidth,source:rulerImage?.currentSrc,ready:ruler?.dataset.ready,edgeEmitters:14,volumeLayer:'behind intact weapon',pose:rulerFloat?.style.transform}})};
+    ruler:{revision:'twenty-two-fused-v1',loaded:!!rulerImage?.naturalWidth,source:rulerImage?.currentSrc,ready:ruler?.dataset.ready,edgeEmitters:22,fusedRanks:Array.from({length:22},(_,i)=>i+2),fusion:Array.from({length:22},(_,i)=>fusedFlame(i,clock)),volumeLayer:'22 native shape-directed fires and finite fluid tongues rooted in blade flanks; narrow front-channel currents and local cold/lightning/dual-flow accents',paints:rulerPaints,phaseFrames:rulerFrames.length,lifetimeSeconds:[1.7,3.1],pose:rulerFloat?.style.transform}})};
   new MutationObserver(wake).observe(root,{attributes:true,attributeFilter:['data-background-current','data-art-motion','data-art-runtime','class']});
   document.addEventListener('visibilitychange',wake);
   reduced.addEventListener('change',wake);wide.addEventListener('change',wake);

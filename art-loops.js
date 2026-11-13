@@ -293,26 +293,13 @@
     }
     vec4 rulerDetail(vec2 at){
       vec4 original=artwork(at);
-      float t=flameClock;
-      // Blade occupies x .335-.665, above the guard. Classify its rigid
-      // silhouette before any shifted flame can be sampled over the metal.
-      float edge=smoothstep(.155,.185,abs(at.x-.5));
-      edge*=smoothstep(.397,.435,at.y)*(1.-smoothstep(.945,.982,at.y));
-      float solid=smoothstep(.86,.97,original.a);
-      float moving=edge*(1.-solid);
-      vec3 domain=vec3(at.x*31.,at.y*24.-t*2.1,t*.35);
-      float n=fireFbm(domain),m=fireFbm(domain+vec3(9.3,2.7,4.1));
-      vec2 curl=vec2(m-.5,n-.5);
-      vec2 displaced=at-moving*vec2(curl.x*.035,curl.y*.026);
-      vec4 fire=artwork(displaced);
-      vec4 result=mix(vec4(original.rgb*original.a,original.a),vec4(fire.rgb*fire.a,fire.a),moving);
-      // Flow in the colored recessed channels does not bend the spine.
+      // A rigid metal object. All 22 live native fires are separately attached
+      // to its flanks; no alpha displacement or uniform fire veil on the body.
       float chroma=max(max(original.r,original.g),original.b)-min(min(original.r,original.g),original.b);
-      float channel=(1.-edge)*smoothstep(.13,.33,chroma)*smoothstep(.4,.5,at.y);
-      float streak=pow(max(0.,sin(at.y*39.-t*3.6+at.x*11.)),10.);
-      float glint=.026*pow(max(0.,sin(at.y*7.+at.x*9.-t*.54)),28.);
-      result.rgb+=original.rgb*original.a*(channel*streak*.13+glint);
-      return vec4(min(result.rgb,vec3(result.a)),result.a);
+      float channel=smoothstep(.16,.35,chroma)*smoothstep(.25,.35,at.y);
+      float streak=pow(max(0.,sin(at.y*39.-flameClock*3.6+at.x*11.)),10.);
+      vec3 color=original.rgb*(1.+channel*streak*.09);
+      return vec4(min(color,vec3(1.))*original.a,original.a);
     }
     void main(){
       if(mode>7.5){gl_FragColor=rulerDetail(uv);return;}
@@ -798,7 +785,7 @@
       install(host,host,image,7);
     },
     ruler(host,image) {
-      host.dataset.flameMotion='尺缘上行火舌与槽内流光；骨架保持刚性';
+      host.dataset.flameMotion='二十二火各循本形，刃槽汇流；金属保持刚性';
       install(host,host,image,8);
     },
     flame(host,image,rank) {

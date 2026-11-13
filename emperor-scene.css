@@ -20,11 +20,12 @@
 .emperor-ruler-art.has-art-loop>img{visibility:hidden}
 .emperor-ruler-art>.art-loop-canvas[hidden]{display:none!important}
 .emperor-ruler-fire{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.emperor-ruler-channels{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}
 .page-atmosphere[data-background-layout=page] .emperor-ruler{top:140px}
 .page-atmosphere[data-background-visibility=subtle] .emperor-ruler{animation:emperor-presence 30s ease-in-out infinite;animation-delay:-5s;animation-play-state:var(--scene-motion,paused)}
 .emperor-tableau[data-volume=ready] .emperor-origin{opacity:.60}
 .page-atmosphere[data-background-layout=page] .emperor-tableau{top:80px}
 .page-atmosphere[data-background-visibility=subtle] .emperor-tableau{animation:emperor-presence 30s ease-in-out infinite;animation-play-state:var(--scene-motion,paused)}
 @keyframes emperor-presence{0%,100%{opacity:0}12%,58%{opacity:1}90%{opacity:0}}
-@media(prefers-reduced-motion:reduce){.emperor-tableau,.emperor-ruler{animation:none!important}.emperor-fire-back,.emperor-fire-front,.emperor-ruler-fire{display:none}}
+@media(prefers-reduced-motion:reduce){.emperor-tableau,.emperor-ruler{animation:none!important}.emperor-fire-back,.emperor-fire-front,.emperor-ruler-fire,.emperor-ruler-channels{display:none}}
 @media print{.emperor-scene{display:none!important}}
