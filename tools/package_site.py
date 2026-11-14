@@ -62,6 +62,7 @@ PUBLIC_FILES = [
     "vault-preview.html", "assets/entrance/vault-preview-v1.js", "assets/entrance/THREE-LICENSE.txt",
     "assets/backgrounds/fire-lotus-emperor-v1.svg",
     "assets/backgrounds/fire-lotus-tuoshe-v1.png",
+    "assets/backgrounds/fire-lotus-tuoshe-v2-lossless.webp", "tuoshe-lotus-comparison.html",
     "assets/backgrounds/fire-lotus-destruction-v1.png",
     "assets/backgrounds/fire-lotus-radial-v1.png",
     "assets/backgrounds/fire-lotus-formation-v1.png",

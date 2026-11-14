@@ -152,15 +152,19 @@ def background_controls():
     older=''.join(f'<button type="button" data-background="{key}" aria-pressed="false">{pair(en,zh)}</button>' for key,en,zh in [('lotus-still','Pearl lotus study','粉白莲原版'),('lotus-classic','First lotus','初版火莲')])
     lotus_buttons=[]
     for i,slug,en,zh,source in lotus_artworks():
+        reference = ''
+        if slug == 'tuoshe':
+            path = 'assets/backgrounds/fire-lotus-tuoshe-v2-lossless.webp'
+            reference = f' data-lotus-reference-src="{path}?v={hashlib.sha256((ROOT/path).read_bytes()).hexdigest()[:12]}"'
         label = (' aria-label="Blue-white Buddha Fury Lotus: Bone Spirit Cold Fire and Green Lotus Earth Core Flame"'
                  ' data-label-en="Blue-white Buddha Fury Lotus: Bone Spirit Cold Fire and Green Lotus Earth Core Flame"'
                  ' data-label-zh="青白双色佛怒火莲：骨灵冷火与青莲地心火融合"') if i == 1 else ''
-        lotus_buttons.append(f'<button type="button" data-lotus-stage="{i}" data-lotus-name="{slug}" data-lotus-src="{source}" aria-pressed="{str(i==0).lower()}"{label}>{pair(en,zh)}</button>')
+        lotus_buttons.append(f'<button type="button" data-lotus-stage="{i}" data-lotus-name="{slug}" data-lotus-src="{source}" aria-pressed="{str(i==0).lower()}"{reference}{label}>{pair(en,zh)}</button>')
     lotus_buttons=''.join(lotus_buttons)
     return f'''<details class="background-switch" hidden><summary>{pair('Background','背景')}</summary>
       <div class="background-options"><div class="background-choices" role="group" aria-label="Background scene" data-label-en="Background scene" data-label-zh="背景图案">{buttons}</div><details class="background-archive"><summary>{pair('Previous studies','之前的方案')}</summary><div class="background-choices">{older}</div></details>
       <div class="lotus-options" hidden><div class="lotus-stage-buttons" role="group" aria-label="Lotus stages" data-label-en="Lotus stages" data-label-zh="火莲形态">{lotus_buttons}</div><button type="button" class="lotus-play-toggle" data-lotus-toggle aria-pressed="false">{pair('Pause evolution','暂停演变')}</button><p class="lotus-load-status" data-lotus-status role="status" aria-live="polite" hidden></p><button type="button" data-lotus-retry hidden>{pair('Try again','重新加载')}</button></div><p class="emperor-preview-link" hidden><a href="emperor-preview.html">{pair('View the Emperor scene','展开古帝全景')}</a></p>
-      <p class="seven-star-preview-link" hidden><a href="seven-star-preview.html">{pair('Xiao Yan & Lin Dong','萧炎与林动全景')}</a><br><a href="pink-lotus-comparison.html">{pair('Golden veins · compare','金粉莲新旧对比')}</a></p>
+      <p class="seven-star-preview-link" hidden><a href="seven-star-preview.html">{pair('Xiao Yan & Lin Dong','萧炎与林动全景')}</a><br><a href="pink-lotus-comparison.html">{pair('Golden veins · compare','金粉莲新旧对比')}</a><br><a href="tuoshe-lotus-comparison.html">{pair('Tuoshe lotus · compare','古帝莲左右对比')}</a></p>
       <div class="imagery-load-options" data-imagery-options hidden><p class="lotus-load-status" data-imagery-status role="status" aria-live="polite" hidden></p><button type="button" data-imagery-retry hidden>{pair('Reload missing artwork','重试未加载的形象')}</button></div>
       <div class="background-placement" role="group" aria-label="Background placement" data-label-en="Background placement" data-label-zh="背景位置">
       <button type="button" data-background-layout="fixed" aria-pressed="true">{pair('Stay in view','固定视窗')}</button>

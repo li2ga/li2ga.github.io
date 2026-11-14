@@ -126,7 +126,7 @@
   const fragment = `precision highp float;
     uniform sampler2D picture, noiseField, heatField;
     uniform vec4 imageRect, motionProfile, motionShape;
-    uniform float phase, mode, variant, flameClock;
+    uniform float phase, mode, variant, flameClock, referenceFlow;
     varying vec2 uv;
     ${flameLayers}
     float fireNoise(vec3 p){
@@ -202,6 +202,33 @@
       vec3 rgb=body.rgb*body.a+emission*(1.-body.a*.5);
       float alpha=clamp(body.a+opacity*(1.-body.a),0.,1.);
       return vec4(min(rgb,vec3(alpha)),alpha);
+    }
+    vec4 tuosheReference(vec2 p){
+      vec4 original=artwork(p);
+      vec2 center=vec2(.50,.49),delta=p-center;
+      float radius=length(delta),angle=atan(delta.y,delta.x);
+      float cup=1.-smoothstep(.90,1.18,length((p-vec2(.50,.49))/vec2(.155,.125)));
+      float crown=1.-smoothstep(.85,1.18,length((p-vec2(.50,.635))/vec2(.065,.115)));
+      float keep=max(cup,crown);
+      // The complete central lotus/apparition uses the unchanged source pixels.
+      if(keep>.995)return vec4(original.rgb*original.a,original.a);
+      vec2 direction=delta/max(radius,.001),tangent=vec2(-direction.y,direction.x);
+      float t=flameClock;
+      float curl=fireFbm(vec3(p*18.-direction*t*.7,t*.17));
+      float fine=fireNoise(vec3(p*43.-direction*t*1.9,t*.31));
+      float phaseA=fract(t*.46),phaseB=fract(t*.46+.5);
+      vec2 bend=tangent*((curl-.5)*.014+(fine-.5)*.0035);
+      vec2 a=center+delta*(1.-phaseA*.095)+bend;
+      vec2 b=center+delta*(1.-phaseB*.095)+bend;
+      vec4 first=artwork(a),second=artwork(b);
+      float wa=pow(sin(phaseA*3.14159265),2.),wb=pow(sin(phaseB*3.14159265),2.);
+      vec4 flow=(first*wa+second*wb)/max(wa+wb,.001);
+      float field=(1.-keep)*smoothstep(.11,.25,radius);
+      vec4 body=mix(original,flow,field*.72);
+      // Highlights travel from the hub along the long streams, never rotating it.
+      float pulse=pow(max(0.,sin(radius*46.-t*4.8+sin(angle*3.)*.7+curl*2.)),8.);
+      body.rgb=clamp(body.rgb*(1.+field*pulse*.17),0.,1.);
+      return vec4(body.rgb*body.a,body.a);
     }
     vec4 emperorSample(vec2 p){
       vec4 color=artwork(p);
@@ -338,6 +365,7 @@
     void main(){
       if(mode>7.5){gl_FragColor=rulerDetail(uv);return;}
       if(mode>.5&&mode<1.5){
+        if(referenceFlow>.5){gl_FragColor=tuosheReference(uv);return;}
         if(variant>30.&&variant<60.&&motionProfile.y>0.)gl_FragColor=emperorFlameDetail(uv);
         else gl_FragColor=variant<100.?detailFlame(uv):livingFlame(uv);
         return;
@@ -478,7 +506,7 @@
       const position = gl.getAttribLocation(program, 'position');
       gl.enableVertexAttribArray(position);
       gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-      locations = Object.fromEntries(['picture','phase','mode','variant','flameClock','noiseField','heatField','imageRect','motionProfile','motionShape'].map(name => [name, gl.getUniformLocation(program,name)]));
+      locations = Object.fromEntries(['picture','phase','mode','variant','flameClock','referenceFlow','noiseField','heatField','imageRect','motionProfile','motionShape'].map(name => [name, gl.getUniformLocation(program,name)]));
       gl.uniform1i(locations.picture, 0);
       gl.uniform1i(locations.heatField, 2);
       transportProgram=gl.createProgram();
@@ -625,6 +653,7 @@
       gl.uniform1f(locations.flameClock,time/1000+entry.seed*13.7);
       gl.uniform1f(locations.mode, entry.mode);
       gl.uniform1f(locations.variant, entry.variant);
+      gl.uniform1f(locations.referenceFlow, entry.variant===13&&entry.image.currentSrc.includes('fire-lotus-tuoshe-v2')?1:0);
       const personality=entry.variant>30&&entry.variant<60?emperorProfiles[entry.variant-31]:null;
       gl.uniform4fv(locations.motionProfile,personality&&!classicEmperor
         ?[personality.family,personality.speed,personality.bend,personality.trail]:[0,0,0,0]);

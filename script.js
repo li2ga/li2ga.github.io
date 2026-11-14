@@ -204,6 +204,8 @@
   let lotusPaused = false;
   let lotusLayout = null;
   let backgroundUserInitiated = false;
+  const usesTuosheReference = (item, stage) => stage === 13 && item.element.matches('.motif-top-right, .motif-lower-right');
+  const lotusLoadKey = (stage, reference = false) => reference ? `${stage}:reference` : stage;
   let portraitHeadStartElapsed = false;
   let artRuntimeRequest = null;
   function attachLotusArt(item, stage, image) {
@@ -238,7 +240,7 @@
       lotusItems.forEach(item => {
         const stage = item.stage;
         if (stage === null) return;
-        lotusLoads.get(stage)?.then(image => {
+        lotusLoads.get(lotusLoadKey(stage, usesTuosheReference(item, stage)))?.then(image => {
           if (item.stage === stage) attachLotusArt(item, stage, image);
         });
       });
@@ -325,30 +327,27 @@
       image.src = source;
     });
   }
-  function loadLotusStage(stage, priority = false) {
-    if (lotusLoads.has(stage)) {
-      const queued = lotusQueue.findIndex(job => job.stage === stage);
+  function loadLotusStage(stage, priority = false, reference = false) {
+    const key = lotusLoadKey(stage, reference);
+    if (lotusLoads.has(key)) {
+      const queued = lotusQueue.findIndex(job => job.stage === key);
       if (priority && queued > 0) lotusQueue.unshift(lotusQueue.splice(queued, 1)[0]);
-      return lotusLoads.get(stage);
+      return lotusLoads.get(key);
     }
     const loading = new Promise((resolve, reject) => {
       const job = {
-        stage,
+        stage: key,
         start() {
           lotusLoading++;
-          const source = lotusButtons[stage].dataset.lotusSrc;
-          decodeLotusImage(source).then(image => {
-            lotusScene.querySelectorAll(`[data-lotus-frame="${stage}"]`).forEach(frame => {
-              frame.style.backgroundImage = `url("${source}")`;
-            });
-            resolve(image);
-          }, reject).finally(() => { lotusLoading--; pumpLotusQueue(); syncImagery(); });
+          const button = lotusButtons[stage];
+          const source = reference ? button.dataset.lotusReferenceSrc : button.dataset.lotusSrc;
+          decodeLotusImage(source).then(resolve, reject).finally(() => { lotusLoading--; pumpLotusQueue(); syncImagery(); });
         }
       };
       if (priority) lotusQueue.unshift(job);
       else lotusQueue.push(job);
-    }).catch(error => { lotusLoads.delete(stage); throw error; });
-    lotusLoads.set(stage, loading);
+    }).catch(error => { lotusLoads.delete(key); throw error; });
+    lotusLoads.set(key, loading);
     pumpLotusQueue();
     return loading;
   }
@@ -367,10 +366,11 @@
     item.element.dataset.lotusPending = 'true';
     delete item.element.dataset.lotusError;
     const request = ++item.request;
-    loadLotusStage(stage, priority).then(image => {
+    loadLotusStage(stage, priority, usesTuosheReference(item, stage)).then(image => {
       if (request !== item.request) return;
       item.pending = false;
       item.stage = stage;
+      item.element.querySelector(`[data-lotus-frame="${stage}"]`).style.backgroundImage = `url("${image.currentSrc || image.src}")`;
       item.element.dataset.lotusStage = String(stage);
       item.element.dataset.lotusReady = 'true';
       attachLotusArt(item, stage, image);

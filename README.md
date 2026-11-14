@@ -197,3 +197,11 @@ The grounded ruler now embeds the same episode still at its native 1024×555 res
 第13项 `branches` 由稀疏金枝版更新为分层金粉脉络莲，菜单名为「金粉脉络 / Golden veins」。参考[《守你所望》官方MV](https://weibo.com/5898310988/5365094215061300)约2:51.5–2:53与用户提供动图，独立重绘相连的金色肋架、粉色瓣面、菱形叶脉和附着火舌；原片与动图只作本地参考，不直接播放在主页。原有十四项顺序保持。
 
 作者源图为 `assets/backgrounds/fire-lotus-branches-v2.png`（1536×1024），网页使用相同尺寸的逐像素无损WebP。沿用原实时火焰渲染器，金色骨架保持、光焰局部流动，整朵不旋转。旧版源素材保留；[新旧动态对比](https://li2ga.github.io/pink-lotus-comparison.html)可看同尺寸浅深背景和静态效果。对比页由 `python tools/pink_lotus_preview.py` 生成。
+
+### 古帝火莲左右两版
+
+「古帝火莲 / Tuoshe lotus」仍是第14项。主页左侧保留原版，右侧增加更贴近用户电影PV参考的紫白光焰版：中央莲体凝聚，银紫尖瓣围绕细长法相，外围光焰分叉并延展为白、紫、青、粉色长流条。原片只作绘制参考，没有在主页嵌入。两侧独立演变，选择古帝火莲时可同时比较；固定视窗与随页滚动均使用相同左右映射。
+
+新增源图 `assets/backgrounds/fire-lotus-tuoshe-v2.png` 原生1536×1024，网页交付为同尺寸无损WebP，解码RGBA逐像素一致。`art-loops.js`只为这张新图启用向外输运、局部弯曲和沿流条传播的光亮，中央莲体与法相保护区保持原像素；原版及其他形态沿用原有着色路径。整幅不旋转，静态与系统减少动态时显示对应原图。两种素材分别按需加载，异步完成不会相互覆盖。
+
+[古帝莲左右对比](https://li2ga.github.io/tuoshe-lotus-comparison.html)支持深浅背景和动静切换，由 `python tools/tuoshe_lotus_preview.py` 生成；修改着色器后须重新生成此页并运行主页构建。此效果是基于独立原画的二维实时流动。原版素材、其他十四项选择、人物和歌单保留。
