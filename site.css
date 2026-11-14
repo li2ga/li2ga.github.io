@@ -105,23 +105,56 @@ strong,h3{font-weight:700}
 .background-archive>summary{padding:6px 0;font-size:11px;color:#6c6258;cursor:pointer}
 .background-choices [data-background=auto]{grid-column:1 / -1}
 
-/* One first-visit gesture, followed by the ordinary reading page. */
+/* Indexed seal frames unlock once, then release the original trajectories. */
 .site-entrance{display:none;position:fixed;inset:0;z-index:80;overflow:hidden;background:#fff;pointer-events:none}
 .intro-pending .site-entrance{display:block;animation:entrance-clear var(--intro-duration) linear both}
 .site-entrance>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.entrance-vault{position:absolute;left:50%;top:50%;width:min(78vw,410px);aspect-ratio:1;transform:translate(-50%,-50%);animation:vault-arrival var(--intro-prelude) cubic-bezier(.2,.65,.2,1) both}
+.entrance-vault>svg{display:block;width:100%;height:100%;overflow:visible}
+.vault-construction{fill:none;stroke:#c2d1dc;stroke-width:.65;animation:vault-construction var(--intro-prelude) ease both}
+.vault-construction path+path{stroke:#eadcba;stroke-width:.45}
+.vault-seals{animation:vault-seals-release var(--intro-prelude) ease both;opacity:.48}
+.vault-seal{transform-origin:0 0;animation:vault-index 650ms var(--seal-delay) cubic-bezier(.18,.75,.26,1) both}
+.vault-frame-edge{fill:none;stroke:#9bb0bf;stroke-width:5.6;filter:drop-shadow(0 1px 1px #738a9d35)}
+.vault-frame{fill:none;stroke:url(#vault-metal);stroke-width:4.4}
+.vault-engraving{fill:none;stroke:#819caf;stroke-width:.7;stroke-linejoin:round}
+.vault-inlay{fill:none;stroke:url(#vault-gold);stroke-width:2.5}
+.vault-corona{transform-origin:0 0;animation:vault-corona var(--intro-prelude) cubic-bezier(.2,.7,.2,1) both}
+.vault-crystal{transform-origin:64px 0;animation:vault-crystal var(--intro-prelude) var(--crystal-delay) cubic-bezier(.2,.8,.2,1) both}
+.vault-crystal-body{fill:url(#vault-metal);stroke:#90aebf;stroke-width:.65}
+.vault-crystal-facet{fill:#effbfe;fill-opacity:.75;stroke:#fff;stroke-width:.5}
+.vault-crystal-spine{fill:none;stroke:url(#vault-gold);stroke-width:.8}
+.vault-latch{animation:vault-unlock var(--intro-prelude) var(--latch-delay) cubic-bezier(.22,.75,.2,1) both}
+.vault-plate{fill:url(#vault-metal);stroke:#94aaba;stroke-width:.8}
+.vault-bevel{fill:none;stroke:#fff;stroke-width:1.5}
+.vault-cut{fill:none;stroke:#91a9bb;stroke-width:.7;stroke-linejoin:round}
+.vault-pin{fill:none;stroke:url(#vault-gold);stroke-width:2}
+.vault-heart{fill:#fff9e8;stroke:url(#vault-gold);stroke-width:1.2;animation:vault-heart var(--intro-prelude) ease both}
+.vault-heart path+path{fill:#e2f6f8;stroke:#a9c7cf;stroke-width:.6}
+.vault-release{opacity:0;animation:vault-release var(--intro-prelude) ease both}
+.vault-release>path{fill:none;stroke:#c2ad7c;stroke-width:.55}
+@keyframes vault-arrival{0%{opacity:0;transform:translate(-50%,-50%) scale(.85)}15%,87%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.13)}}
+@keyframes vault-index{0%{transform:rotate(var(--seal-start)) scale(.85);opacity:.15}78%{transform:rotate(-1deg) scale(var(--seal-depth));opacity:1}100%{transform:rotate(0) scale(1);opacity:1}}
+@keyframes vault-construction{0%{opacity:0;transform:scale(.92)}25%,65%{opacity:.7}100%{opacity:0;transform:scale(1.16)}}
+@keyframes vault-seals-release{0%,55%{transform:scale(1);opacity:.48}100%{transform:scale(1.35);opacity:0}}
+@keyframes vault-corona{0%{transform:rotate(-23deg) scale(.78)}57%{transform:rotate(0) scale(1)}100%{transform:rotate(7deg) scale(1.12)}}
+@keyframes vault-crystal{0%{transform:translateX(64px) scaleX(.3);opacity:0}28%{opacity:.9}51%,64%{transform:translateX(0) rotate(0);opacity:1}100%{transform:translateX(27px) rotate(-18deg);opacity:0}}
+@keyframes vault-unlock{0%{transform:translateX(26px) rotate(-19deg);opacity:0}32%{transform:translateX(0) rotate(0);opacity:1}58%{transform:translateX(0) rotate(0);opacity:1}100%{transform:translateX(51px) rotate(20deg);opacity:0}}
+@keyframes vault-heart{0%,35%{opacity:0;transform:scale(.6)}58%,70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.7)}}
+@keyframes vault-release{0%,60%{opacity:0;transform:scale(.25)}78%{opacity:.8}100%{opacity:0;transform:scale(1.8)}}
 .entrance-traces{fill:none;stroke:#91a9bf;stroke-width:1.1;stroke-linecap:round;transform-box:view-box;transform-origin:50% 50%}
-.entrance-traces path{stroke-dasharray:1;animation:entrance-gather calc(var(--intro-duration)*.433333) cubic-bezier(.2,.55,.2,1) both;animation-delay:var(--trace-delay)}
+.entrance-traces path{stroke-dasharray:1;animation:entrance-gather calc(var(--intro-trace-duration)*.433333) cubic-bezier(.2,.55,.2,1) both;animation-delay:calc(var(--intro-prelude) + var(--trace-delay))}
 .entrance-traces path:nth-child(3n){stroke:#c7ac7d;stroke-width:1.4}
-.entrance-left{animation:entrance-scatter-left calc(var(--intro-duration)*.4) calc(var(--intro-duration)*.583333) cubic-bezier(.3,0,.3,1) both}
-.entrance-right{animation:entrance-scatter-right calc(var(--intro-duration)*.4) calc(var(--intro-duration)*.583333) cubic-bezier(.3,0,.3,1) both}
-.entrance-name{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:clamp(13px,2vw,29px);font-family:NameLatin,Lato,sans-serif;font-size:clamp(34px,5.3vw,69px);font-weight:500;color:#263a4a;animation:entrance-name var(--intro-duration) ease both}
+.entrance-left{animation:entrance-scatter-left calc(var(--intro-trace-duration)*.4) calc(var(--intro-prelude) + var(--intro-trace-duration)*.583333) cubic-bezier(.3,0,.3,1) both}
+.entrance-right{animation:entrance-scatter-right calc(var(--intro-trace-duration)*.4) calc(var(--intro-prelude) + var(--intro-trace-duration)*.583333) cubic-bezier(.3,0,.3,1) both}
+.entrance-name{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:clamp(13px,2vw,29px);font-family:NameLatin,Lato,sans-serif;font-size:clamp(34px,5.3vw,69px);font-weight:500;color:#263a4a;animation:entrance-name var(--intro-trace-duration) var(--intro-prelude) ease both}
 .entrance-name [lang=zh-CN]{font-family:NameChinese,'Microsoft YaHei',sans-serif;font-size:.88em}
 .entrance-name i{font-family:Lato;font-size:.45em;font-style:normal;font-weight:400;color:#9ba9b1}
 @keyframes entrance-gather{0%{stroke-dashoffset:1;opacity:0}28%{opacity:.4}100%{stroke-dashoffset:0;opacity:.7}}
 @keyframes entrance-scatter-left{0%{transform:translateX(0) scale(1);opacity:1}100%{transform:translateX(-40%) scale(.72);opacity:0}}
 @keyframes entrance-scatter-right{0%{transform:translateX(0) scale(1);opacity:1}100%{transform:translateX(40%) scale(.72);opacity:0}}
 @keyframes entrance-name{0%,26%{opacity:0;transform:translateY(5px);filter:blur(4px)}42%,68%{opacity:1;transform:translateY(0);filter:blur(0)}100%{opacity:0;transform:translateY(-3px)}}
-@keyframes entrance-clear{0%,64%{background:#fff}100%{background:#ffffff00;visibility:hidden}}
+@keyframes entrance-clear{0%,73.55%{background:#fff}100%{background:#ffffff00;visibility:hidden}}
 .cinematic-scene .motif-top-left{top:13vh}
 .cinematic-scene .motif-top-right{top:52vh}
 .demon-petal{stroke:#cf8cbe;stroke-width:.65;opacity:var(--petal-light,.8)}

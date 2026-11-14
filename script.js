@@ -38,7 +38,7 @@
     if (new URLSearchParams(location.search).get('intro') !== 'preview') {
       try { localStorage.setItem('jia-li-intro-seen', '1'); } catch (_) { /* The page remains readable without storage. */ }
     }
-    entranceTimer = setTimeout(finishEntrance, Number(entrance.dataset.duration) || 3600);
+    entranceTimer = setTimeout(finishEntrance, Number(entrance.dataset.duration) || 4900);
     document.addEventListener('visibilitychange', finishWhenHidden);
     reducedMotion.addEventListener('change', finishOnReducedMotion);
   } else if (entrance) entrance.remove();
