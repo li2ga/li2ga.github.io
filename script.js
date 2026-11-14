@@ -508,6 +508,8 @@
     if (motionOptions) motionOptions.hidden = !['lotus','emperor','ziwei-cinematic','ganzhi-cinematic'].includes(atmosphere?.dataset.backgroundCurrent);
     const emperorLink = document.querySelector('.emperor-preview-link');
     if (emperorLink) emperorLink.hidden = atmosphere?.dataset.backgroundCurrent !== 'emperor';
+    const sevenStarLink = document.querySelector('.seven-star-preview-link');
+    if (sevenStarLink) sevenStarLink.hidden = atmosphere?.dataset.backgroundCurrent !== 'lotus';
     if (!autoBackgroundButton) return;
     autoBackgroundButton.disabled = reducedMotion.matches;
     autoBackgroundButton.title = reducedMotion.matches

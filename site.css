@@ -300,6 +300,14 @@ strong,h3{font-weight:700}
 .lotus-companion .ambient-presence{animation:companion-breath 29s ease-in-out -7s infinite;animation-play-state:var(--scene-motion,paused)}
 .lotus-companion-1{left:auto;right:max(12px,calc((100vw - 1500px)/2));top:5vh;--companion-depth:.82}
 .lotus-companion-1 .ambient-presence{animation-duration:37s;animation-delay:-19s}
+.lotus-companion-4{top:1vh;aspect-ratio:2/3;z-index:3;--companion-depth:.64}
+.lotus-companion-4 .ambient-presence{animation-duration:41s;animation-delay:-14s}
+.seven-star-art{isolation:isolate}
+.seven-star-art canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.seven-star-art [data-thunder-back]{z-index:0}
+.seven-star-art img{position:relative;z-index:1;filter:none}
+.seven-star-art [data-thunder-front]{z-index:2}
+.page-atmosphere[data-background-layout=page] .lotus-companion-4{top:60%}
 .lotus-companion-2,.lotus-companion-3{display:none}
 .page-atmosphere[data-background-layout=page] .lotus-companion-0{top:18%}
 .page-atmosphere[data-background-layout=page] .lotus-companion-1{top:41%}
