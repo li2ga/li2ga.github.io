@@ -67,7 +67,7 @@
       const image = plates.get(node.dataset.flamePlate);
       if (image?.naturalWidth) window.JiaArtLoops.emperorFlame(node, image, Number(node.dataset.emperorFlame));
     });
-    if (portrait.naturalWidth) window.JiaArtLoops.emperor?.(body, portrait);
+    if (portrait.complete && portrait.naturalWidth) window.JiaArtLoops.emperor?.(body, portrait);
     // Metal is the intact native PNG. The 22 live fires and forged-channel
     // currents have their own canvases; a second GPU copy of this rigid body
     // adds no necessary motion and can fail during staggered texture uploads.
