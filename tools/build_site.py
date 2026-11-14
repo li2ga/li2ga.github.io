@@ -25,7 +25,9 @@ LOTUS_STAGES = [
 
 
 def lotus_artworks():
-    for stage, (slug, en, zh) in enumerate(LOTUS_STAGES):
+    # Keep saved stage IDs stable while placing the three gold versions together.
+    stages = sorted(enumerate(LOTUS_STAGES), key=lambda item: item[1][0] == 'tuoshe')
+    for stage, (slug, en, zh) in stages:
         extension = 'svg' if slug == 'emperor' else 'png'
         source = f'assets/backgrounds/fire-lotus-{slug}-v1.{extension}'
         lossless = f'assets/backgrounds/fire-lotus-{slug}-v1-lossless.webp'

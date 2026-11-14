@@ -186,6 +186,8 @@
   const lotusToggle = document.querySelector('[data-lotus-toggle]');
   const lotusButtons = [...document.querySelectorAll('button[data-lotus-stage]')];
   const lotusStageCount = lotusButtons.length;
+  const lotusStageOrder = lotusButtons.map(button => Number(button.dataset.lotusStage));
+  const nextLotusStage = (stage, offset = 1) => lotusStageOrder[(lotusStageOrder.indexOf(stage) + offset) % lotusStageCount];
   const lotusStatus = document.querySelector('[data-lotus-status]');
   const lotusRetry = document.querySelector('[data-lotus-retry]');
   const lotusLoads = new Map();
@@ -339,7 +341,7 @@
         stage: key,
         start() {
           lotusLoading++;
-          const button = lotusButtons[stage];
+          const button = lotusButtons.find(button => Number(button.dataset.lotusStage) === stage);
           const source = reference ? button.dataset.lotusReferenceSrc : button.dataset.lotusSrc;
           decodeLotusImage(source).then(resolve, reject).finally(() => { lotusLoading--; pumpLotusQueue(); syncImagery(); });
         }
@@ -395,7 +397,7 @@
       pauseLotusTimer(item);
       item.remaining = null;
       if (item.stage === null && !lotusPaused) {
-        const target = (lotusStage + profile.offsets[item.index]) % lotusStageCount;
+        const target = nextLotusStage(lotusStage, profile.offsets[item.index]);
         if (item.desiredStage !== target) {
           item.request++;
           item.pending = false;
@@ -435,7 +437,7 @@
         item.timer = setTimeout(() => {
           item.timer = 0;
           item.remaining = null;
-          requestLotusStage(item, (item.stage + 1) % lotusStageCount);
+          requestLotusStage(item, nextLotusStage(item.stage));
           syncLotusMotion();
         }, delay);
       }
@@ -446,7 +448,7 @@
     if (playingItems.length && !items.some(item => item.pending || item.element.dataset.lotusParticleState === 'loading') && (!portraitImage || portraitImage.complete)) {
       // Warm only the next imminent change, using the shared two-download queue.
       const soonest = playingItems.reduce((first, item) => item.dueAt < first.dueAt ? item : first);
-      loadLotusStage((soonest.stage + 1) % lotusStageCount).catch(() => {});
+      loadLotusStage(nextLotusStage(soonest.stage)).catch(() => {});
     }
   }
   function updateImageryStatus() {
