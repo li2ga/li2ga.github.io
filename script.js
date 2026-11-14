@@ -474,7 +474,10 @@
     if (!backgroundUserInitiated && portraitImage && !portraitImage.complete) return;
     ensureArtRuntime();
     let running = lotusLoading + atmosphere.querySelectorAll('[data-art-loading]').length;
-    for (const image of scene.querySelectorAll('img[data-imagery-src]')) {
+    // Show the newly selected figure before duplicated legacy companion slots.
+    const images = [...scene.querySelectorAll('img[data-imagery-src]')].sort((a,b) =>
+      Number(!!b.closest('[data-seven-star]')) - Number(!!a.closest('[data-seven-star]')));
+    for (const image of images) {
       if (running >= 2) break;
       if (image.hasAttribute('data-art-ready') || image.hasAttribute('data-art-loading') || image.hasAttribute('data-art-error')) continue;
       running++;
