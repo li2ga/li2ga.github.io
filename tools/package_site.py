@@ -54,7 +54,7 @@ PUBLIC_FILES = [
     "assets/icons/yin-yang-counter-rotate.svg",
     *[f"assets/backgrounds/anime-v2/{name}" for name in ['miris-v2.png', 'pikachu-official-v1.png', 'ruler-official-v1.svg', 'emperor-v2.png']],
     *[f"assets/backgrounds/anime-v2/{name}" for name in ['pikachu-smash-v1.png', 'miris-light-v1.png', 'dimo-royal-v1.png']],
-    "assets/backgrounds/anime-v2/ruler-emperor-v1.svg",
+    "assets/backgrounds/anime-v2/ruler-emperor-v2.svg",
     "seven-star.js", "seven-star-preview.html", "assets/backgrounds/anime-v2/xiaoyan-seven-star-v3.png",
     "vault-preview.html", "assets/entrance/vault-preview-v1.js", "assets/entrance/THREE-LICENSE.txt",
     "assets/backgrounds/fire-lotus-emperor-v1.svg",

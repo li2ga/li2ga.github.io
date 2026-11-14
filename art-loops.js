@@ -837,7 +837,7 @@
     imagery(image) {
       const object=image.closest('.imagery-object');
       if (object) install(image,image.parentElement,image,subjects[object.dataset.imageryObject]??0);
-      else if(image.currentSrc.includes('/ruler-emperor-v1.svg')){
+      else if(image.currentSrc.includes('/ruler-emperor-v2.svg')){
         const host=image.parentElement;
         host.dataset.groundedRuler='';
         host.dataset.flameMotion='原图火焰向上输运、冷却消散；尺身原样保留';

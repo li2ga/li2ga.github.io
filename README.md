@@ -179,3 +179,7 @@ python tools/package_site.py ../Jia-Li-homepage-publish.zip
 新增第14款「古帝火莲 / Tuoshe lotus」，参考用户提供的电影PV画面重绘紫白、银边的宽展莲体；原金红帝炎莲及此前十三款均保留。PNG保留生成原图字节，形态按需加载；新增形态通过原图着色器呈现细丝和上升光焰，未伪称为官方模型或GIF。可从火莲菜单选择，亦纳入自动演变。
 
 插地玄重尺沿用原剧集帧SVG，新增独立的火焰输运通道：按源帧尺身轮廓保护金属，以原火焰颜色为燃料，向上输运并冷却消散。动效覆盖火莲陪景与线条模式里的同款尺子，静态与减少动态使用原SVG；没有把生成的替代尺子换回。
+
+### Grounded ruler clarity
+
+The grounded ruler now embeds the same episode still at its native 1024×555 resolution, replacing the 700×380 delivery variant. Original JPEG bytes are embedded directly without another lossy encode or artificial sharpening. The SVG keeps its existing logical crop, pose and fire flow; only the weapon-mask feather is reduced (2.5 to 0.6 pixels), and its natural drawing size increases to 418×440. This remains a public episode still, not a full-HD video extraction.

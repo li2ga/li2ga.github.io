@@ -7,7 +7,7 @@ ASSETS = {
     'pikachu': ('pikachu-smash-v1.png', 986, 1226),
     'dimo-royal': ('dimo-royal-v1.png', 1311, 1200),
     'miris-light': ('miris-light-v1.png', 2024, 1496),
-    'ruler': ('ruler-emperor-v1.svg', 285, 300),
+    'ruler': ('ruler-emperor-v2.svg', 418, 440),
     'emperor': ('emperor-v2.png', 1086, 1448),
     'seven-star': ('xiaoyan-seven-star-v3.png', 1122, 1402),
 }
