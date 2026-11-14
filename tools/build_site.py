@@ -18,6 +18,7 @@ LOTUS_STAGES = [
     ('destruction', 'Destruction lotus', '毁灭火莲'), ('radial', 'Metal structure', '金属结构'),
     ('formation', 'Formation', '凝聚形态'), ('refined', 'Reforged flame', '重铸流焰'),
     ('branches', 'Golden branches', '金枝柔焰'),
+    ('tuoshe', 'Tuoshe lotus', '古帝火莲'),
 ]
 
 
@@ -274,25 +275,25 @@ def honors_list(items):
 
 def music_control():
     tracks = (
-        ('our-adventure-instrumental', '我们的冒险 · 伴奏（AI分离）', 'our-adventure-instrumental-v1.flac'),
+        ('shou-ni-suo-wang', '守你所望 · 刘端端', 'shou-ni-suo-wang-v1.flac'),
         ('chi-nian', '炽念 · 柯淳', 'chi-nian-v1.mp3'),
-        ('rebirth-instrumental', '重生 · 伴奏（AI分离）', 'rebirth-instrumental-v1.flac'),
         ('far-beyond-us-instrumental', '远不止你我 · 伴奏', 'far-beyond-us-instrumental-v1.flac'),
-        ('dominate-instrumental', '主宰 · 伴奏', 'dominate-instrumental-v2.mp3'),
-        ('zhi-wo-instrumental', '知我 · 伴奏', 'zhi-wo-instrumental-v1.flac'),
-        ('zong-ma-ta-ge-xing', '纵马踏歌行 · 刘宇宁', 'zong-ma-ta-ge-xing-v1.flac'),
+        ('our-adventure-instrumental', '我们的冒险 · 伴奏（AI分离）', 'our-adventure-instrumental-v1.flac'),
         ('bu-mie-instrumental', '不灭 · 伴奏', 'bu-mie-instrumental-v1.mp3'),
-        ('xin-ji-instrumental', '心寄 · 伴奏', 'xin-ji-instrumental-v1.flac'),
         ('qian-hui', '千回 · 袁艺菲', 'qian-hui-v1.flac'),
         ('zhu-guang', '逐光 · 韩富Richard', 'zhu-guang-v1.flac'),
         ('xian-zai-huan-wo', '现在换我 · 许哲', 'xian-zai-huan-wo-v1.flac'),
+        ('wo-jiu-shi-wo', '我就是我 · 墨绛', 'wo-jiu-shi-wo-v1.flac'),
+        ('xin-ji-instrumental', '心寄 · 伴奏', 'xin-ji-instrumental-v1.flac'),
+        ('wen-xing', '问星 · Mr.mo', 'wen-xing-v1.flac'),
+        ('rebirth-instrumental', '重生 · 伴奏（AI分离）', 'rebirth-instrumental-v1.flac'),
+        ('dominate-instrumental', '主宰 · 伴奏', 'dominate-instrumental-v2.mp3'),
+        ('zhi-wo-instrumental', '知我 · 伴奏', 'zhi-wo-instrumental-v1.flac'),
+        ('zong-ma-ta-ge-xing', '纵马踏歌行 · 刘宇宁', 'zong-ma-ta-ge-xing-v1.flac'),
         ('wu-yang', '无恙 · 徐均朔', 'wu-yang-v1.flac'),
         ('wen-ding', '问鼎 · 黄子弘凡', 'wen-ding-v1.flac'),
         ('zhan-ge', '战歌 · CoCo李玟', 'zhan-ge-v1.flac'),
-        ('wo-jiu-shi-wo', '我就是我 · 墨绛', 'wo-jiu-shi-wo-v1.flac'),
         ('wen', '问 · 陈家淇', 'wen-v1.flac'),
-        ('wen-xing', '问星 · Mr.mo', 'wen-xing-v1.flac'),
-        ('shou-ni-suo-wang', '守你所望 · 刘端端', 'shou-ni-suo-wang-v1.flac'),
         ('our-adventure', '我们的冒险 · 曹寅', 'our-adventure-v1.mp3'),
     )
     choices = ''.join(

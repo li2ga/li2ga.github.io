@@ -58,6 +58,7 @@ PUBLIC_FILES = [
     "seven-star.js", "seven-star-preview.html", "assets/backgrounds/anime-v2/xiaoyan-seven-star-v3.png",
     "vault-preview.html", "assets/entrance/vault-preview-v1.js", "assets/entrance/THREE-LICENSE.txt",
     "assets/backgrounds/fire-lotus-emperor-v1.svg",
+    "assets/backgrounds/fire-lotus-tuoshe-v1.png",
     "assets/backgrounds/fire-lotus-destruction-v1.png",
     "assets/backgrounds/fire-lotus-radial-v1.png",
     "assets/backgrounds/fire-lotus-formation-v1.png",

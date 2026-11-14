@@ -195,7 +195,7 @@
     fixed: { offsets: [0, 4, 2, 6], holds: [5600, 8300, 6500, 9700] },
     page: { offsets: [0, 1, 3, 5], holds: [4300, 6100, 7600, 5200] }
   };
-  const lotusStageHolds = [1, 1.18, .91, 1.11, 1.26, 1.14, .95, 1.22, 1.24, 1.18, 1.20, 1.5, 1.6];
+  const lotusStageHolds = [1, 1.18, .91, 1.11, 1.26, 1.14, .95, 1.22, 1.24, 1.18, 1.20, 1.5, 1.6, 1.55];
   const lotusItems = [...(lotusScene?.querySelectorAll('[data-lotus-instance]') || [])].map((element, index) => ({
     element, index, stage: null, desiredStage: null, pending: false, error: false,
     timer: 0, dueAt: 0, remaining: null, request: 0

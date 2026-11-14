@@ -51,6 +51,30 @@
   const vertex = `attribute vec2 position; varying vec2 uv;
     void main(){uv=position*.5+.5;gl_Position=vec4(position,0.,1.);}`;
   const flameLayers = `
+    bool groundedRuler(){return variant>199.5&&variant<200.5;}
+    float rulerMetal(vec2 uv){
+      // The outline follows weapon-body in the unchanged official-frame SVG.
+      // Protect the guard, hilt and complete blade before transporting fire.
+      vec2 p=vec2(275.,80.)+vec2(uv.x,1.-uv.y)*vec2(285.,300.);
+      vec2 v[14];
+      v[0]=vec2(326.,102.);v[1]=vec2(337.,115.);v[2]=vec2(376.,109.);
+      v[3]=vec2(376.,120.);v[4]=vec2(363.,126.);v[5]=vec2(451.,319.);
+      v[6]=vec2(448.,347.);v[7]=vec2(410.,357.);v[8]=vec2(381.,303.);
+      v[9]=vec2(315.,143.);v[10]=vec2(306.,145.);v[11]=vec2(299.,140.);
+      v[12]=vec2(306.,133.);v[13]=vec2(325.,121.);
+      bool inside=false;float distance=1000.;vec2 a=v[13];
+      for(int i=0;i<14;i++){
+        vec2 b=v[i],edge=b-a;
+        float u=clamp(dot(p-a,edge)/max(dot(edge,edge),.001),0.,1.);
+        distance=min(distance,length(p-a-u*edge));
+        if((a.y>p.y)!=(b.y>p.y)){
+          float crossing=(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x;
+          if(p.x<crossing)inside=!inside;
+        }
+        a=b;
+      }
+      return inside?1.:1.-smoothstep(4.,9.,distance);
+    }
     bool hasFramework(){return (variant>4.5&&variant<5.5)||(variant>8.5&&variant<13.);}
     float goldMaterial(vec4 c){return smoothstep(.04,.17,c.r-c.b)*smoothstep(.01,.1,c.g-c.b);}
     vec4 artwork(vec2 p){
@@ -58,6 +82,8 @@
       return texture2D(picture,imageRect.xy+clamp(p,.0005,.9995)*imageRect.zw);
     }
     float burnerRoot(float x){
+      if(groundedRuler())return .09+.025*sin(x*5.);
+      if(variant>12.5&&variant<13.5)return .70-.15*exp(-pow((x-.5)*7.,2.));
       if(variant>100.){
         // Lotus forms retain their lower petals. Other flames are gas all the
         // way down and have no persistent upper silhouette.
@@ -71,6 +97,7 @@
       return .46+.08*exp(-pow((x-.5)*2.8,2.));
     }
     float flameRegion(vec2 p){
+      if(groundedRuler())return (1.-rulerMetal(p))*smoothstep(0.,.045,p.y)*(1.-smoothstep(.76,.94,p.y));
       float root=burnerRoot(p.x);
       float region=smoothstep(root-.025,root+.045,p.y);
       if(variant<.5){
@@ -86,6 +113,11 @@
       return goldMaterial(c)*smoothstep(.35,.7,c.a);
     }
     float movingMaterial(vec2 p,vec4 c){
+      if(groundedRuler()){
+        float orange=smoothstep(.035,.16,c.r-c.b);
+        float white=smoothstep(.65,.94,min(c.r,c.g))*smoothstep(.40,.75,c.b);
+        return flameRegion(p)*max(orange,white)*smoothstep(.02,.14,c.a);
+      }
       return flameRegion(p)*(1.-rigidMaterial(c));
     }
   `;
@@ -275,6 +307,7 @@
     }
     vec4 livingFlame(vec2 at){
       vec4 original=artwork(at);
+      if(groundedRuler()&&rulerMetal(at)>.02)return vec4(original.rgb*original.a,original.a);
       float rigid=rigidMaterial(original);
       if(rigid>.7)return vec4(original.rgb*original.a,original.a);
       // Remove the original flame pixels from the fixed image. This is a
@@ -287,6 +320,7 @@
       alpha*=smoothstep(0.,.025,at.x)*(1.-smoothstep(.975,1.,at.x))*(1.-smoothstep(.87,.995,at.y));
       vec3 color=fire.rgb/max(density,.003);
       color*=mix(.94,1.1,smoothstep(.05,.65,density));
+      if(groundedRuler())color=mix(vec3(1.,.40,.055),color,smoothstep(.12,.92,density));
       fire=vec4(clamp(color,0.,1.)*alpha,alpha);
       vec4 result=stable+fire*(1.-stable.a);
       return vec4(min(result.rgb,vec3(result.a)),result.a);
@@ -387,6 +421,7 @@
       float e=.009;
       vec2 curl=vec2(psi(p+vec2(0.,e))-psi(p-vec2(0.,e)),psi(p-vec2(e,0.))-psi(p+vec2(e,0.)))/(2.*e);
       float heat=texture2D(previous,clamp(p,0.,1.)).a;
+      if(groundedRuler())return vec2(.018-.035*(p.x-.6),.33+heat*.18)+curl*.018;
       return vec2(-.06*(p.x-.5),.20+heat*.11)+curl*.025;
     }
     void main(){
@@ -405,8 +440,8 @@
       old=clamp(old+(old-local)*.12,0.,1.);
       old.rgb=min(old.rgb,vec3(old.a));
       if(source.y<0.||source.y>1.||source.x<0.||source.x>1.)old=vec4(0.);
-      float loss=variant>100.?.85:1.75;
-      float consumption=variant>100.?.08:.16;
+      float loss=groundedRuler()?1.05:variant>100.?.85:1.75;
+      float consumption=groundedRuler()?.09:variant>100.?.08:.16;
       float cooled=max(0.,old.a*exp(-dt*loss)-dt*consumption);
       float density=floor(cooled*255.+n(uv*127.+vec2(clock*19.,-clock*23.)))/255.;
       vec3 carried=old.rgb*(density/max(old.a,.003));
@@ -561,6 +596,8 @@
 
   function visible(entry) {
     if (!entry.key.isConnected || !entry.key.closest('[data-background-scene][data-active]')) return false;
+    if(entry.key.matches('[data-lotus-instance]')&&entry.key.dataset.lotusStage
+      &&Number(entry.key.dataset.lotusStage)!==entry.variant)return false;
     const box = entry.host.getBoundingClientRect();
     return box.width > 0 && box.height > 0 && box.right > 0 && box.left < innerWidth && box.bottom > 0 && box.top < innerHeight;
   }
@@ -740,7 +777,7 @@
   }
 
   function install(key,host,image,mode,variant=0,rect=[0,0,1,1]) {
-    if (entries.get(key)?.image === image && entries.get(key)?.host === host&&entries.get(key)?.variant===variant) return;
+    if (entries.get(key)?.image === image && entries.get(key)?.host === host&&entries.get(key)?.variant===variant) { wake(); return; }
     let entry = entries.get(key);
     if (entry) {
       releaseFlow(entry);
@@ -800,6 +837,12 @@
     imagery(image) {
       const object=image.closest('.imagery-object');
       if (object) install(image,image.parentElement,image,subjects[object.dataset.imageryObject]??0);
+      else if(image.currentSrc.includes('/ruler-emperor-v1.svg')){
+        const host=image.parentElement;
+        host.dataset.groundedRuler='';
+        host.dataset.flameMotion='原图火焰向上输运、冷却消散；尺身原样保留';
+        install(image,host,image,1,200);
+      }
     },
     wake,
     emperorProfiles:()=>emperorProfiles.map((profile,i)=>({rank:i+1,...profile})),

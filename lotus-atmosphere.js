@@ -126,16 +126,23 @@
     if (!element.matches('.motif-top-right, .motif-lower-right')) return false;
     const source = sources[stage];
     const host = element.querySelector('[data-lotus-frame="' + stage + '"]');
-    if (!host || !source) return false;
+    if (!host) return false;
     const old = entries.get(element);
     if (old) {
-      if (old.stage === stage && old.image === image && !old.failed) return true;
+      if (source && old.stage === stage && old.image === image && !old.failed) return true;
       if (loading?.entry === old) loading.controller.abort();
       observer.unobserve(old.host);
       old.decoder?.close();
       show(old, false);
       old.canvas.remove();
       entries.delete(element);
+    }
+    // Native image stages have no pre-rendered WebP fuel clip. Release the
+    // previous stage's decoder, then let the original-image renderer take over.
+    if (!source) {
+      element.dataset.lotusParticleState = 'native';
+      root.dispatchEvent(new CustomEvent('lotusparticlesstate'));
+      return false;
     }
     const canvas = document.createElement('canvas');
     canvas.className = 'art-loop-canvas lotus-particle-canvas';
