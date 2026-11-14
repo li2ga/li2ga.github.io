@@ -192,6 +192,8 @@ The grounded ruler now embeds the same episode still at its native 1024×555 res
 
 四张原生透明PNG保留在素材目录，网页交付使用同尺寸无损WebP，经解码验证RGBA像素完全一致；未缩小人物或另做有损压缩。隐藏的轮换人物在被选择后加载。独立检查入口为[人物全景](https://li2ga.github.io/seven-star-preview.html)，可切换四种形象、双人构图、浅深背景与动静状态。作者素材映射在`tools/ambient_art.py`，预览生成器在`tools/character_gallery.py`。参考入口：[第219集](https://www.youtube.com/watch?v=Ckv638UDMLM&t=1250s)、[初成帝PV画面](https://www.youtube.com/watch?v=-A95Xg7F_Cs&t=18s)、[林动第六季PV](https://weibo.com/6310852010/5228112855436069)、[林动第七季PV](https://weibo.com/6310852010/R5hN8bIts)。
 
+初成帝萧炎已按参考帧修正发型：去掉头顶束发结和辫状发带，改为向后散开的长发。现用素材为 `xiaoyan-young-emperor-v2-lossless.webp`，原生1199×1312，源PNG保留；无损WebP与编辑后的PNG解码像素一致。脸型、姿态与金甲沿用原设计，原有金焰渲染和人物轮换保持。
+
 ### 金粉脉络火莲
 
 第13项 `branches` 由稀疏金枝版更新为分层金粉脉络莲，菜单名为「金粉脉络 / Golden veins」。参考[《守你所望》官方MV](https://weibo.com/5898310988/5365094215061300)约2:51.5–2:53与用户提供动图，独立重绘相连的金色肋架、粉色瓣面、菱形叶脉和附着火舌；原片与动图只作本地参考，不直接播放在主页。原有十四项顺序保持。

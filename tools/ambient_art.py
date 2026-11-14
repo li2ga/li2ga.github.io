@@ -10,7 +10,7 @@ ASSETS = {
     'ruler': ('ruler-emperor-v2.svg', 418, 440),
     'emperor': ('emperor-v2.png', 1086, 1448),
     'seven-star': ('xiaoyan-seven-star-v4-lossless.webp', 1122, 1402),
-    'young-emperor': ('xiaoyan-young-emperor-v1-lossless.webp', 1199, 1312),
+    'young-emperor': ('xiaoyan-young-emperor-v2-lossless.webp', 1199, 1312),
     'lindong-six': ('lindong-six-v1-lossless.webp', 1154, 1363),
     'lindong-seven': ('lindong-seven-v1-lossless.webp', 1086, 1448),
 }
