@@ -291,6 +291,8 @@ def music_control():
         ('zhan-ge', '战歌 · CoCo李玟', 'zhan-ge-v1.flac'),
         ('wo-jiu-shi-wo', '我就是我 · 墨绛', 'wo-jiu-shi-wo-v1.flac'),
         ('wen', '问 · 陈家淇', 'wen-v1.flac'),
+        ('wen-xing', '问星 · Mr.mo', 'wen-xing-v1.flac'),
+        ('shou-ni-suo-wang', '守你所望 · 刘端端', 'shou-ni-suo-wang-v1.flac'),
         ('our-adventure', '我们的冒险 · 曹寅', 'our-adventure-v1.mp3'),
     )
     choices = ''.join(

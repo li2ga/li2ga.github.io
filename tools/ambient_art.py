@@ -9,7 +9,7 @@ ASSETS = {
     'miris-light': ('miris-light-v1.png', 2024, 1496),
     'ruler': ('ruler-emperor-v1.svg', 285, 300),
     'emperor': ('emperor-v2.png', 1086, 1448),
-    'seven-star': ('xiaoyan-seven-star-v2.png', 1024, 1536),
+    'seven-star': ('xiaoyan-seven-star-v3.png', 1122, 1402),
 }
 
 
