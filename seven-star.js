@@ -9,27 +9,28 @@
   const random=n=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v);};
   const smooth=x=>{x=clamp(x);return x*x*(3-2*x);};
   let frame=0,last=0,clock=0,lastPaint=0;
-  // Routes curve around the silhouette. Shoulder/forearm endpoints are local
-  // anchors in the generated portrait, never rays through the eyes or face.
+  // Physical contact points on the armor. Each discharge rebuilds its channel;
+  // face and eyes stay outside the front-layer routes.
   const routes=[
-    [[.48,.07],[.26,.15],[.15,.28],[.23,.42]],
-    [[.56,.05],[.74,.12],[.85,.3],[.77,.43]],
-    [[.14,.37],[.1,.49],[.19,.62],[.23,.81]],
-    [[.85,.34],[.92,.51],[.81,.65],[.78,.87]],
-    [[.29,.24],[.15,.19],[.09,.1]],
-    [[.7,.22],[.85,.16],[.94,.06]],
-    [[.3,.58],[.2,.7],[.3,.87],[.44,.96]],
-    [[.71,.56],[.82,.73],[.72,.9],[.58,.97]]
+    [[.25,.33],[.13,.39],[.20,.54]],
+    [[.76,.29],[.94,.36],[.87,.52]],
+    [[.15,.49],[.07,.64],[.16,.81]],
+    [[.83,.48],[.95,.67],[.85,.86]],
+    [[.22,.39],[.10,.29],[.13,.19]],
+    [[.79,.34],[.94,.23],[.91,.13]],
+    [[.30,.67],[.22,.80],[.38,.94]],
+    [[.72,.67],[.84,.80],[.70,.96]]
   ];
   function pathPoints(route,seed){
     const points=[];
     for(let j=0;j<route.length-1;j++){
       const a=route[j],b=route[j+1],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
-      const count=Math.max(7,Math.ceil(len*70));
-      for(let k=0;k<count;k++){
-        const q=k/count,offset=(random(seed+j*71+k*11)-.5)*.048*Math.sin(Math.PI*q);
-        points.push([a[0]+dx*q-dy/len*offset,a[1]+dy*q+dx/len*offset]);
+      function split(p,q,depth,s){
+        if(!depth){points.push(p);return;}
+        const jitter=(random(s)-.5)*len*.36*Math.pow(.53,5-depth),mx=(p[0]+q[0])*.5-dy/len*jitter,my=(p[1]+q[1])*.5+dx/len*jitter;
+        split(p,[mx,my],depth-1,s*1.73+19);split([mx,my],q,depth-1,s*2.13+41);
       }
+      split(a,b,5,seed+j*71);
     }
     points.push(route.at(-1));return points;
   }
@@ -39,27 +40,29 @@
     ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);
     for(let i=1;i<count;i++)ctx.lineTo(points[i][0],points[i][1]);
     ctx.globalAlpha=alpha;ctx.lineCap='round';ctx.lineJoin='round';
-    ctx.strokeStyle='#c98716';ctx.lineWidth=width*4;ctx.globalAlpha=alpha*.18;ctx.stroke();
-    ctx.strokeStyle='#f7b528';ctx.lineWidth=width*7;ctx.globalAlpha=alpha*.13;ctx.stroke();
-    ctx.strokeStyle='#ffcd4f';ctx.lineWidth=width*2.8;ctx.globalAlpha=alpha*.52;ctx.stroke();
-    ctx.strokeStyle='#fff7c9';ctx.lineWidth=width;ctx.globalAlpha=alpha;ctx.stroke();
+    ctx.strokeStyle='#e99409';ctx.lineWidth=width*13;ctx.globalAlpha=alpha*.055;ctx.stroke();
+    ctx.strokeStyle='#ffb619';ctx.lineWidth=width*6;ctx.globalAlpha=alpha*.18;ctx.stroke();
+    ctx.strokeStyle='#ffdc66';ctx.lineWidth=width*2.9;ctx.globalAlpha=alpha*.66;ctx.stroke();
+    ctx.strokeStyle='#fffbe6';ctx.lineWidth=width;ctx.globalAlpha=alpha;ctx.stroke();
   }
   function bolt(ctx,route,index,t,foreground){
-    const period=1.17+random(index+8)*1.15;
+    const period=.72+random(index+8)*1.32;
     const tick=t/period+random(index+19)*3,cycle=Math.floor(tick),age=tick-cycle;
     // A channel has a finite strike, a short return stroke, then extinguishes.
-    const envelope=age<.1?smooth(age/.1):Math.exp(-(age-.1)*7.5)*(age<.72?1:0);
-    const flicker=.7+.3*Math.sin(age*83+index);
+    const seconds=age*period;
+    const envelope=seconds<.022?smooth(seconds/.022):
+      Math.exp(-(seconds-.022)*14)+.76*Math.exp(-Math.pow((seconds-.12)/.023,2))+.42*Math.exp(-Math.pow((seconds-.23)/.018,2));
+    const flicker=.84+.16*Math.sin(age*211+index);
     const seed=index*379+cycle*997;
-    const points=pathPoints(route,seed),alpha=envelope*flicker*(foreground?.8:1);
-    const reveal=Math.min(1,age/.12);
-    stroke(ctx,points,alpha,.0019,reveal);
-    for(let j=0;j<3;j++){
+    const points=pathPoints(route,seed),alpha=clamp(envelope*flicker)*(foreground?1:.88);
+    const reveal=Math.min(1,seconds/.026);
+    stroke(ctx,points,alpha,foreground?.0033:.0028,reveal);
+    for(let j=0;j<4;j++){
       const k=Math.floor(points.length*(.27+j*.2)),p=points[k],side=index%2?1:-1;
       const end=[p[0]+side*(.035+random(seed+j+4)*.07),p[1]-.035-random(seed+j+9)*.06];
-      stroke(ctx,pathPoints([p,[(p[0]+end[0])*.5+.016*side,(p[1]+end[1])*.5],end],seed+j*113),alpha*.52,.0008,reveal);
+      stroke(ctx,pathPoints([p,[(p[0]+end[0])*.5+.016*side,(p[1]+end[1])*.5],end],seed+j*113),alpha*.75,.00125,reveal);
     }
-    if(age>.18&&age<.42)stroke(ctx,points,.32*Math.sin((age-.18)/.24*Math.PI),.00065,1);
+    if(seconds>.06&&seconds<.32)stroke(ctx,points,.18*(1-(seconds-.06)/.26),.0008,1);
   }
   function resize(entry){
     const box=entry.host.getBoundingClientRect();
@@ -73,14 +76,14 @@
       if(staticPose)continue;
       ctx.save();ctx.scale(canvas.width,canvas.height);
       if(layer===0){
-        // A narrow warm rim stays outside the torso; no opaque yellow wash.
-        const glow=ctx.createRadialGradient(.5,.47,.14,.5,.47,.48);
-        glow.addColorStop(0,'#ffdf8a00');glow.addColorStop(.62,'#ffda7020');glow.addColorStop(1,'#f6b72700');
-        ctx.fillStyle=glow;ctx.fillRect(0,0,1,1);
         routes.forEach((route,i)=>bolt(ctx,route,i,t,false));
       }else{
-        // Short arcs follow the outside of the gauntlets and lower hem only.
-        const cuffs=[[[.28,.41],[.22,.46],[.27,.54]],[[.73,.4],[.79,.46],[.74,.54]],[[.42,.83],[.35,.9],[.46,.94]]];
+        const cuffs=[
+          [[.26,.39],[.37,.45],[.46,.52]],[[.74,.37],[.65,.45],[.58,.52]],
+          [[.44,.51],[.52,.59],[.43,.67]],[[.67,.48],[.72,.59],[.62,.67]],
+          [[.19,.60],[.23,.72],[.17,.84]],[[.83,.60],[.77,.72],[.83,.83]],
+          [[.34,.66],[.49,.70],[.62,.67]],[[.37,.75],[.47,.84],[.43,.91]]
+        ];
         cuffs.forEach((r,i)=>bolt(ctx,r,12+i,t,true));
         for(let i=0;i<22;i++){
           const a=(t*(.18+random(i)*.12)+random(i+40))%1;
@@ -94,7 +97,7 @@
     entry.paints++;
   }
   function selected(){return root.dataset.backgroundCurrent==='lotus'&&(wide.matches||root.dataset.artScope==='gallery');}
-  function eligible(e){return selected()&&e.inside&&e.image.complete&&e.image.naturalWidth>0&&e.image.hasAttribute('data-art-ready');}
+  function eligible(e){return selected()&&e.inside&&!e.host.closest('[hidden]')&&e.image.complete&&e.image.naturalWidth>0&&e.image.hasAttribute('data-art-ready');}
   function moving(){return !document.hidden&&!reduced.matches&&root.dataset.artMotion!=='still';}
   function tick(now){
     frame=0;if(!moving()||!entries.some(eligible)){last=0;return;}

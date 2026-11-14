@@ -1,0 +1,24 @@
+"""Review the independent character paintings with their homepage renderers."""
+from pathlib import Path
+import runpy
+
+ROOT = Path(__file__).resolve().parents[1]
+FORMS = [('seven-star', '七星斗圣 · 萧炎'), ('young-emperor', '初成帝 · 萧炎'),
+         ('lindong-six', '林动 · 第六季'), ('lindong-seven', '林动 · 第七季')]
+
+
+def gallery(initial='seven-star'):
+    art = runpy.run_path(str(ROOT/'tools/ambient_art.py'))['artwork']
+    figures = ''.join(f'<div class="study" data-study="{name}"{(" hidden" if name != initial else "")}>'
+                      + art(name) + '</div>' for name, _ in FORMS)
+    buttons = ''.join(f'<button data-view="{name}" aria-pressed="{str(name == initial).lower()}">{label}</button>' for name, label in FORMS)
+    styles = '''*{box-sizing:border-box}body{margin:0;background:#f6f8fb;color:#2b3541;font:14px/1.6 system-ui,'Microsoft YaHei',sans-serif}body.dark{background:#0d1420;color:#e3e9f2}header{position:relative;z-index:3;padding:22px 30px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}h1{font:500 24px/1.4 Georgia,serif;margin:0 0 5px}p{font-size:12px;opacity:.65;margin:0}nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}button,a{font:inherit;color:inherit}button{border:1px solid #91a1b44a;border-radius:22px;background:transparent;padding:7px 13px;cursor:pointer}button[aria-pressed=true]{border-color:#c19b55;background:#c19b5514}a{text-decoration:none;border-bottom:1px solid #b6a17a;margin-left:8px}.page-atmosphere{display:flex;justify-content:center;min-height:calc(100vh - 145px);gap:0}.study{position:relative;width:min(590px,92vw,calc((100vh - 140px)*.86));height:calc(100vh - 145px);min-height:300px}.study[hidden]{display:none!important}.ambient-presence{position:relative;width:100%;height:100%;isolation:isolate;mask-image:linear-gradient(#000 0 88%,transparent 100%)}.ambient-raster{width:100%;height:100%;object-fit:contain;position:relative;z-index:1}.seven-star-art canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}[data-thunder-back]{z-index:0}[data-thunder-front]{z-index:2}[data-character-flow]{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:2;pointer-events:none}.character-energy[data-flow-active] img{opacity:0}.duo .study{width:min(46vw,540px)}footer{padding:0 30px 15px;color:#a38c64;font-size:11px;letter-spacing:.09em}button:focus-visible,a:focus-visible{outline:2px solid #ba9654;outline-offset:4px}@media(max-width:700px){header{padding:16px 18px;gap:12px}h1{font-size:21px}button{font-size:11px;padding:5px 9px}.study{height:calc(100svh - 220px);width:95vw}.page-atmosphere{min-height:calc(100svh - 230px)}footer{padding:0 18px 12px;font-size:9px}.duo .study{height:calc(100svh - 230px)}}'''
+    ui = '''const root=document.querySelector('.page-atmosphere');
+function show(name){document.body.classList.toggle('duo',name==='duo');document.querySelectorAll('[data-study]').forEach(study=>{const visible=name==='duo'?['young-emperor','lindong-seven'].includes(study.dataset.study):study.dataset.study===name;study.hidden=!visible;if(visible){const img=study.querySelector('img');if(!img.src){img.onload=async()=>{await img.decode();img.setAttribute('data-art-ready','');window.JiaSevenStar?.wake();window.JiaCharacterArt?.wake()};img.src=img.dataset.imagerySrc;}}});document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===name)));window.JiaSevenStar?.wake();window.JiaCharacterArt?.wake();}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>show(b.dataset.view));document.querySelector('#theme').onclick=e=>{document.body.classList.toggle('dark');e.target.textContent=document.body.classList.contains('dark')?'浅色':'深色'};document.querySelector('#motion').onclick=e=>{const on=root.dataset.artMotion==='still';root.dataset.artMotion=on?'loop':'still';e.target.textContent=on?'动态':'静态';e.target.setAttribute('aria-pressed',String(on))};show(INITIAL);'''.replace('INITIAL', repr(initial))
+    scripts = ''.join('<script>'+(ROOT/name).read_text(encoding='utf-8').replace('</script', '<\\/script')+'</script>' for name in ['seven-star.js','character-art.js'])
+    return ('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>炎武 · 人物动态</title>'
+            '<link rel="icon" href="assets/favicon.png"><style>'+styles+'</style><header><div><h1>炎武 · 人物动态</h1><p>萧炎与林动 · 独立人物重绘</p></div><nav>'+buttons
+            +'<button data-view="duo" aria-pressed="false">双人</button><button id="motion" aria-pressed="true">动态</button><button id="theme">深色</button>'
+             '<a href="./?background=lotus&amp;artmotion=loop">主页</a></nav></header><main class="page-atmosphere" data-background-current="lotus" data-art-scope="gallery" data-art-motion="loop">'
+            +figures+'</main><footer>GOLDEN THUNDER / EMPEROR FLAME / AZURE DRAGON</footer>'+scripts+'<script>'+ui+'</script></html>')

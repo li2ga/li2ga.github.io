@@ -9,7 +9,10 @@ ASSETS = {
     'miris-light': ('miris-light-v1.png', 2024, 1496),
     'ruler': ('ruler-emperor-v2.svg', 418, 440),
     'emperor': ('emperor-v2.png', 1086, 1448),
-    'seven-star': ('xiaoyan-seven-star-v3.png', 1122, 1402),
+    'seven-star': ('xiaoyan-seven-star-v4-lossless.webp', 1122, 1402),
+    'young-emperor': ('xiaoyan-young-emperor-v1-lossless.webp', 1199, 1312),
+    'lindong-six': ('lindong-six-v1-lossless.webp', 1154, 1363),
+    'lindong-seven': ('lindong-seven-v1-lossless.webp', 1086, 1448),
 }
 
 
@@ -29,7 +32,16 @@ def artwork(name):
         return ('<div class="ambient-presence seven-star-art" data-seven-star>'
                 '<canvas data-thunder-back aria-hidden="true"></canvas>'
                 + raster(name) + '<canvas data-thunder-front aria-hidden="true"></canvas></div>')
+    if name in {'young-emperor', 'lindong-six', 'lindong-seven'}:
+        return (f'<div class="ambient-presence character-energy" data-character-energy="{name}">'
+                + raster(name) + '<canvas data-character-flow aria-hidden="true"></canvas></div>')
     return f'<div class="ambient-presence">{raster(name)}</div>'
+
+
+def character_group(side, names):
+    return f'<div class="character-cycle" data-character-cycle="{side}">' + ''.join(
+        f'<div class="character-form" data-character-form="{name}"{(" hidden" if index else "")}>{artwork(name)}</div>'
+        for index, name in enumerate(names)) + '</div>'
 
 
 def line_parade():
@@ -42,7 +54,10 @@ def line_parade():
 
 
 def lotus_companions():
-    return ''.join(f'<div class="lotus-companion lotus-companion-{index}" data-lotus-companion="{name}"><div class="companion-depth">{artwork(name)}</div></div>'
+    return ''.join(f'<div class="lotus-companion lotus-companion-{index}" data-lotus-companion="{name}"><div class="companion-depth">'
+                   + (character_group('left', ['seven-star', 'young-emperor']) if index == 4 else
+                      character_group('right', ['lindong-six', 'lindong-seven', 'emperor']) if index == 1 else artwork(name))
+                   + '</div></div>'
                    for index, name in enumerate(['ruler', 'emperor', 'ruler', 'emperor', 'seven-star']))
 
 

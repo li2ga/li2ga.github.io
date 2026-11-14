@@ -454,7 +454,7 @@
     const scene = atmosphere?.querySelector('.imagery-scene[data-active], .has-raster-art[data-active]');
     if (options) options.hidden = !scene;
     if (!scene) return;
-    const images = [...scene.querySelectorAll('img[data-imagery-src]')];
+    const images = [...scene.querySelectorAll('img[data-imagery-src]')].filter(image => !image.closest('[data-character-form][hidden]'));
     const failed = images.some(image => image.hasAttribute('data-art-error'));
     const pending = images.some(image => !image.hasAttribute('data-art-ready') && !image.hasAttribute('data-art-error'));
     const status = document.querySelector('[data-imagery-status]');
@@ -479,6 +479,7 @@
       Number(!!b.closest('[data-seven-star]')) - Number(!!a.closest('[data-seven-star]')));
     for (const image of images) {
       if (running >= 2) break;
+      if (image.closest('[data-character-form][hidden]')) continue;
       if (image.hasAttribute('data-art-ready') || image.hasAttribute('data-art-loading') || image.hasAttribute('data-art-error')) continue;
       running++;
       image.setAttribute('data-art-loading', '');
@@ -504,6 +505,7 @@
       image.src = image.dataset.imagerySrc;
     }
   }
+  document.addEventListener('jia-character-change', syncImagery);
   function updateBackgroundLabels() {
     updateLotusLabels();
     updateImageryStatus();

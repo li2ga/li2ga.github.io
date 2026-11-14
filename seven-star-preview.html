@@ -1,9 +1,4 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>七星 · 金雷</title><link rel="icon" href="assets/favicon.png"><style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#f7f9fc;color:#283b4a;font:14px/1.7 system-ui,'Microsoft YaHei',sans-serif;transition:background .5s,color .5s}body.dark{background:#101a25;color:#e3e9ef}header{position:fixed;z-index:3;top:22px;left:30px;right:30px;display:flex;align-items:start;justify-content:space-between;gap:20px}h1{font:500 23px/1.4 Georgia,'Noto Serif CJK SC',serif;margin:0 0 4px}p{margin:0;opacity:.65;font-size:12px}nav{display:flex;gap:10px;align-items:center}button,a{font:inherit;color:inherit}button{border:1px solid #9ba8b455;background:transparent;border-radius:24px;padding:7px 18px;cursor:pointer}a{margin-left:12px;text-decoration:none;border-bottom:1px solid #b2a17c}button:focus-visible,a:focus-visible{outline:2px solid #c99a3e;outline-offset:5px}.page-atmosphere{min-height:100vh;display:grid;place-items:center}.figure{width:min(560px,90vw,calc((100vh - 110px)*4/5));aspect-ratio:4/5;position:relative;margin:70px auto 15px;isolation:isolate}.ambient-presence{width:100%;height:100%;position:relative;isolation:isolate}.ambient-raster{width:100%;height:100%;object-fit:contain;position:relative;z-index:1}.seven-star-art{mask-image:linear-gradient(#000 0 86%,transparent 100%)}.seven-star-art canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}[data-thunder-back]{z-index:0}[data-thunder-front]{z-index:2}footer{position:fixed;bottom:14px;left:25px;color:#a18a55;font-size:11px;letter-spacing:.12em}@media(max-width:600px){header{top:15px;left:18px;right:18px}h1{font-size:19px}nav{gap:6px}button{padding:6px 10px;font-size:12px}nav a{font-size:12px;margin-left:0}header p{max-width:180px;font-size:10px}.figure{margin-top:90px}}
-</style><header><div><h1>七星 · 金雷</h1><p>第219集结尾 · 上半身形象重绘</p></div><nav><button id="motion" aria-pressed="true">动态</button><button id="theme">深色</button><a href="./?background=lotus&amp;artmotion=loop">回到火莲主页</a></nav></header><main class="page-atmosphere" data-background-current="lotus" data-art-scope="gallery" data-art-motion="loop"><div class="figure"><div class="ambient-presence seven-star-art" data-seven-star><canvas data-thunder-back aria-hidden="true"></canvas><img class="ambient-raster" data-imagery-src="assets/backgrounds/anime-v2/xiaoyan-seven-star-v3.png?v=4148f426b853" width="1122" height="1402" alt="" decoding="async" fetchpriority="low" draggable="false"><canvas data-thunder-front aria-hidden="true"></canvas></div></div></main><footer>GOLDEN THUNDER · LIVE</footer><script>
-const img=document.querySelector('img[data-imagery-src]');img.onload=()=>{img.setAttribute('data-art-ready','');window.JiaSevenStar?.wake()};img.src=img.dataset.imagerySrc;
-document.querySelector('#motion').onclick=e=>{const root=document.querySelector('.page-atmosphere'),on=root.dataset.artMotion==='still';root.dataset.artMotion=on?'loop':'still';e.target.textContent=on?'动态':'静态';e.target.setAttribute('aria-pressed',String(on))};document.querySelector('#theme').onclick=e=>{document.body.classList.toggle('dark');e.target.textContent=document.body.classList.contains('dark')?'浅色':'深色'};
-</script><script>"use strict";
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>炎武 · 人物动态</title><link rel="icon" href="assets/favicon.png"><style>*{box-sizing:border-box}body{margin:0;background:#f6f8fb;color:#2b3541;font:14px/1.6 system-ui,'Microsoft YaHei',sans-serif}body.dark{background:#0d1420;color:#e3e9f2}header{position:relative;z-index:3;padding:22px 30px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}h1{font:500 24px/1.4 Georgia,serif;margin:0 0 5px}p{font-size:12px;opacity:.65;margin:0}nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}button,a{font:inherit;color:inherit}button{border:1px solid #91a1b44a;border-radius:22px;background:transparent;padding:7px 13px;cursor:pointer}button[aria-pressed=true]{border-color:#c19b55;background:#c19b5514}a{text-decoration:none;border-bottom:1px solid #b6a17a;margin-left:8px}.page-atmosphere{display:flex;justify-content:center;min-height:calc(100vh - 145px);gap:0}.study{position:relative;width:min(590px,92vw,calc((100vh - 140px)*.86));height:calc(100vh - 145px);min-height:300px}.study[hidden]{display:none!important}.ambient-presence{position:relative;width:100%;height:100%;isolation:isolate;mask-image:linear-gradient(#000 0 88%,transparent 100%)}.ambient-raster{width:100%;height:100%;object-fit:contain;position:relative;z-index:1}.seven-star-art canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}[data-thunder-back]{z-index:0}[data-thunder-front]{z-index:2}[data-character-flow]{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:2;pointer-events:none}.character-energy[data-flow-active] img{opacity:0}.duo .study{width:min(46vw,540px)}footer{padding:0 30px 15px;color:#a38c64;font-size:11px;letter-spacing:.09em}button:focus-visible,a:focus-visible{outline:2px solid #ba9654;outline-offset:4px}@media(max-width:700px){header{padding:16px 18px;gap:12px}h1{font-size:21px}button{font-size:11px;padding:5px 9px}.study{height:calc(100svh - 220px);width:95vw}.page-atmosphere{min-height:calc(100svh - 230px)}footer{padding:0 18px 12px;font-size:9px}.duo .study{height:calc(100svh - 230px)}}</style><header><div><h1>炎武 · 人物动态</h1><p>萧炎与林动 · 独立人物重绘</p></div><nav><button data-view="seven-star" aria-pressed="true">七星斗圣 · 萧炎</button><button data-view="young-emperor" aria-pressed="false">初成帝 · 萧炎</button><button data-view="lindong-six" aria-pressed="false">林动 · 第六季</button><button data-view="lindong-seven" aria-pressed="false">林动 · 第七季</button><button data-view="duo" aria-pressed="false">双人</button><button id="motion" aria-pressed="true">动态</button><button id="theme">深色</button><a href="./?background=lotus&amp;artmotion=loop">主页</a></nav></header><main class="page-atmosphere" data-background-current="lotus" data-art-scope="gallery" data-art-motion="loop"><div class="study" data-study="seven-star"><div class="ambient-presence seven-star-art" data-seven-star><canvas data-thunder-back aria-hidden="true"></canvas><img class="ambient-raster" data-imagery-src="assets/backgrounds/anime-v2/xiaoyan-seven-star-v4-lossless.webp?v=b0e231d63b45" width="1122" height="1402" alt="" decoding="async" fetchpriority="low" draggable="false"><canvas data-thunder-front aria-hidden="true"></canvas></div></div><div class="study" data-study="young-emperor" hidden><div class="ambient-presence character-energy" data-character-energy="young-emperor"><img class="ambient-raster" data-imagery-src="assets/backgrounds/anime-v2/xiaoyan-young-emperor-v1-lossless.webp?v=89a3e283aee4" width="1199" height="1312" alt="" decoding="async" fetchpriority="low" draggable="false"><canvas data-character-flow aria-hidden="true"></canvas></div></div><div class="study" data-study="lindong-six" hidden><div class="ambient-presence character-energy" data-character-energy="lindong-six"><img class="ambient-raster" data-imagery-src="assets/backgrounds/anime-v2/lindong-six-v1-lossless.webp?v=58bf57e2375d" width="1154" height="1363" alt="" decoding="async" fetchpriority="low" draggable="false"><canvas data-character-flow aria-hidden="true"></canvas></div></div><div class="study" data-study="lindong-seven" hidden><div class="ambient-presence character-energy" data-character-energy="lindong-seven"><img class="ambient-raster" data-imagery-src="assets/backgrounds/anime-v2/lindong-seven-v1-lossless.webp?v=7008c9704934" width="1086" height="1448" alt="" decoding="async" fetchpriority="low" draggable="false"><canvas data-character-flow aria-hidden="true"></canvas></div></div></main><footer>GOLDEN THUNDER / EMPEROR FLAME / AZURE DRAGON</footer><script>"use strict";
 (() => {
   const root=document.querySelector('.page-atmosphere');
   const hosts=[...document.querySelectorAll('[data-seven-star]')];
@@ -14,27 +9,28 @@ document.querySelector('#motion').onclick=e=>{const root=document.querySelector(
   const random=n=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v);};
   const smooth=x=>{x=clamp(x);return x*x*(3-2*x);};
   let frame=0,last=0,clock=0,lastPaint=0;
-  // Routes curve around the silhouette. Shoulder/forearm endpoints are local
-  // anchors in the generated portrait, never rays through the eyes or face.
+  // Physical contact points on the armor. Each discharge rebuilds its channel;
+  // face and eyes stay outside the front-layer routes.
   const routes=[
-    [[.48,.07],[.26,.15],[.15,.28],[.23,.42]],
-    [[.56,.05],[.74,.12],[.85,.3],[.77,.43]],
-    [[.14,.37],[.1,.49],[.19,.62],[.23,.81]],
-    [[.85,.34],[.92,.51],[.81,.65],[.78,.87]],
-    [[.29,.24],[.15,.19],[.09,.1]],
-    [[.7,.22],[.85,.16],[.94,.06]],
-    [[.3,.58],[.2,.7],[.3,.87],[.44,.96]],
-    [[.71,.56],[.82,.73],[.72,.9],[.58,.97]]
+    [[.25,.33],[.13,.39],[.20,.54]],
+    [[.76,.29],[.94,.36],[.87,.52]],
+    [[.15,.49],[.07,.64],[.16,.81]],
+    [[.83,.48],[.95,.67],[.85,.86]],
+    [[.22,.39],[.10,.29],[.13,.19]],
+    [[.79,.34],[.94,.23],[.91,.13]],
+    [[.30,.67],[.22,.80],[.38,.94]],
+    [[.72,.67],[.84,.80],[.70,.96]]
   ];
   function pathPoints(route,seed){
     const points=[];
     for(let j=0;j<route.length-1;j++){
       const a=route[j],b=route[j+1],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
-      const count=Math.max(7,Math.ceil(len*70));
-      for(let k=0;k<count;k++){
-        const q=k/count,offset=(random(seed+j*71+k*11)-.5)*.048*Math.sin(Math.PI*q);
-        points.push([a[0]+dx*q-dy/len*offset,a[1]+dy*q+dx/len*offset]);
+      function split(p,q,depth,s){
+        if(!depth){points.push(p);return;}
+        const jitter=(random(s)-.5)*len*.36*Math.pow(.53,5-depth),mx=(p[0]+q[0])*.5-dy/len*jitter,my=(p[1]+q[1])*.5+dx/len*jitter;
+        split(p,[mx,my],depth-1,s*1.73+19);split([mx,my],q,depth-1,s*2.13+41);
       }
+      split(a,b,5,seed+j*71);
     }
     points.push(route.at(-1));return points;
   }
@@ -44,27 +40,29 @@ document.querySelector('#motion').onclick=e=>{const root=document.querySelector(
     ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);
     for(let i=1;i<count;i++)ctx.lineTo(points[i][0],points[i][1]);
     ctx.globalAlpha=alpha;ctx.lineCap='round';ctx.lineJoin='round';
-    ctx.strokeStyle='#c98716';ctx.lineWidth=width*4;ctx.globalAlpha=alpha*.18;ctx.stroke();
-    ctx.strokeStyle='#f7b528';ctx.lineWidth=width*7;ctx.globalAlpha=alpha*.13;ctx.stroke();
-    ctx.strokeStyle='#ffcd4f';ctx.lineWidth=width*2.8;ctx.globalAlpha=alpha*.52;ctx.stroke();
-    ctx.strokeStyle='#fff7c9';ctx.lineWidth=width;ctx.globalAlpha=alpha;ctx.stroke();
+    ctx.strokeStyle='#e99409';ctx.lineWidth=width*13;ctx.globalAlpha=alpha*.055;ctx.stroke();
+    ctx.strokeStyle='#ffb619';ctx.lineWidth=width*6;ctx.globalAlpha=alpha*.18;ctx.stroke();
+    ctx.strokeStyle='#ffdc66';ctx.lineWidth=width*2.9;ctx.globalAlpha=alpha*.66;ctx.stroke();
+    ctx.strokeStyle='#fffbe6';ctx.lineWidth=width;ctx.globalAlpha=alpha;ctx.stroke();
   }
   function bolt(ctx,route,index,t,foreground){
-    const period=1.17+random(index+8)*1.15;
+    const period=.72+random(index+8)*1.32;
     const tick=t/period+random(index+19)*3,cycle=Math.floor(tick),age=tick-cycle;
     // A channel has a finite strike, a short return stroke, then extinguishes.
-    const envelope=age<.1?smooth(age/.1):Math.exp(-(age-.1)*7.5)*(age<.72?1:0);
-    const flicker=.7+.3*Math.sin(age*83+index);
+    const seconds=age*period;
+    const envelope=seconds<.022?smooth(seconds/.022):
+      Math.exp(-(seconds-.022)*14)+.76*Math.exp(-Math.pow((seconds-.12)/.023,2))+.42*Math.exp(-Math.pow((seconds-.23)/.018,2));
+    const flicker=.84+.16*Math.sin(age*211+index);
     const seed=index*379+cycle*997;
-    const points=pathPoints(route,seed),alpha=envelope*flicker*(foreground?.8:1);
-    const reveal=Math.min(1,age/.12);
-    stroke(ctx,points,alpha,.0019,reveal);
-    for(let j=0;j<3;j++){
+    const points=pathPoints(route,seed),alpha=clamp(envelope*flicker)*(foreground?1:.88);
+    const reveal=Math.min(1,seconds/.026);
+    stroke(ctx,points,alpha,foreground?.0033:.0028,reveal);
+    for(let j=0;j<4;j++){
       const k=Math.floor(points.length*(.27+j*.2)),p=points[k],side=index%2?1:-1;
       const end=[p[0]+side*(.035+random(seed+j+4)*.07),p[1]-.035-random(seed+j+9)*.06];
-      stroke(ctx,pathPoints([p,[(p[0]+end[0])*.5+.016*side,(p[1]+end[1])*.5],end],seed+j*113),alpha*.52,.0008,reveal);
+      stroke(ctx,pathPoints([p,[(p[0]+end[0])*.5+.016*side,(p[1]+end[1])*.5],end],seed+j*113),alpha*.75,.00125,reveal);
     }
-    if(age>.18&&age<.42)stroke(ctx,points,.32*Math.sin((age-.18)/.24*Math.PI),.00065,1);
+    if(seconds>.06&&seconds<.32)stroke(ctx,points,.18*(1-(seconds-.06)/.26),.0008,1);
   }
   function resize(entry){
     const box=entry.host.getBoundingClientRect();
@@ -78,14 +76,14 @@ document.querySelector('#motion').onclick=e=>{const root=document.querySelector(
       if(staticPose)continue;
       ctx.save();ctx.scale(canvas.width,canvas.height);
       if(layer===0){
-        // A narrow warm rim stays outside the torso; no opaque yellow wash.
-        const glow=ctx.createRadialGradient(.5,.47,.14,.5,.47,.48);
-        glow.addColorStop(0,'#ffdf8a00');glow.addColorStop(.62,'#ffda7020');glow.addColorStop(1,'#f6b72700');
-        ctx.fillStyle=glow;ctx.fillRect(0,0,1,1);
         routes.forEach((route,i)=>bolt(ctx,route,i,t,false));
       }else{
-        // Short arcs follow the outside of the gauntlets and lower hem only.
-        const cuffs=[[[.28,.41],[.22,.46],[.27,.54]],[[.73,.4],[.79,.46],[.74,.54]],[[.42,.83],[.35,.9],[.46,.94]]];
+        const cuffs=[
+          [[.26,.39],[.37,.45],[.46,.52]],[[.74,.37],[.65,.45],[.58,.52]],
+          [[.44,.51],[.52,.59],[.43,.67]],[[.67,.48],[.72,.59],[.62,.67]],
+          [[.19,.60],[.23,.72],[.17,.84]],[[.83,.60],[.77,.72],[.83,.83]],
+          [[.34,.66],[.49,.70],[.62,.67]],[[.37,.75],[.47,.84],[.43,.91]]
+        ];
         cuffs.forEach((r,i)=>bolt(ctx,r,12+i,t,true));
         for(let i=0;i<22;i++){
           const a=(t*(.18+random(i)*.12)+random(i+40))%1;
@@ -99,7 +97,7 @@ document.querySelector('#motion').onclick=e=>{const root=document.querySelector(
     entry.paints++;
   }
   function selected(){return root.dataset.backgroundCurrent==='lotus'&&(wide.matches||root.dataset.artScope==='gallery');}
-  function eligible(e){return selected()&&e.inside&&e.image.complete&&e.image.naturalWidth>0&&e.image.hasAttribute('data-art-ready');}
+  function eligible(e){return selected()&&e.inside&&!e.host.closest('[hidden]')&&e.image.complete&&e.image.naturalWidth>0&&e.image.hasAttribute('data-art-ready');}
   function moving(){return !document.hidden&&!reduced.matches&&root.dataset.artMotion!=='still';}
   function tick(now){
     frame=0;if(!moving()||!entries.some(eligible)){last=0;return;}
@@ -120,4 +118,115 @@ document.querySelector('#motion').onclick=e=>{const root=document.querySelector(
   window.JiaSevenStar={inspect:()=>({running:!!frame,clock,selected:selected(),entries:entries.map(e=>({paints:e.paints,visible:e.inside,ready:e.image.complete&&e.image.naturalWidth>0,width:e.back.width,height:e.back.height}))}),renderAt:t=>{cancelAnimationFrame(frame);frame=0;entries.forEach(e=>paint(e,t));},wake};
   wake();
 })();
-</script></html>
+</script><script>"use strict";
+// Independent character paintings with local light transport, never video footage.
+(() => {
+  const root=document.querySelector('.page-atmosphere');
+  if(!root)return;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)'),wide=matchMedia('(min-width:1041px)');
+  const groups=[...root.querySelectorAll('[data-character-cycle]')].map((host,i)=>({host,forms:[...host.children],index:0,age:0,period:26+i*5}));
+  const entries=[...root.querySelectorAll('[data-character-energy]')].map(host=>({host,image:host.querySelector('img'),canvas:host.querySelector('canvas'),paints:0,inside:false}));
+  const selected=()=>root.dataset.backgroundCurrent==='lotus'&&(wide.matches||root.dataset.artScope==='gallery');
+  const moving=()=>selected()&&!document.hidden&&!reduced.matches&&root.dataset.artMotion!=='still';
+  const visible=e=>e.inside&&!e.host.closest('[hidden]')&&e.image.complete&&e.image.naturalWidth>0&&e.image.hasAttribute('data-art-ready');
+  let frame=0,last=0,clock=0,painted=0;
+  const vertex='attribute vec2 position;varying vec2 uv;void main(){uv=position*.5+.5;gl_Position=vec4(position,0.,1.);}';
+  const fragment=`precision highp float;
+    varying vec2 uv;uniform sampler2D picture;uniform sampler2D protection;uniform float time;uniform float kind;
+    float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+    float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1)),f.x),f.y);}
+    vec4 art(vec2 p){if(min(p.x,p.y)<0.||max(p.x,p.y)>1.)return vec4(0.);return texture2D(picture,p);}
+    float energy(vec4 c){
+      if(kind<.5)return smoothstep(.07,.23,c.r-c.b)*smoothstep(.32,.7,c.g);
+      return smoothstep(.10,.32,max(c.g,c.b)-c.r)*smoothstep(.38,.7,max(c.g,c.b));
+    }
+    void main(){
+      vec4 base=art(uv);float keep=texture2D(protection,uv).r;
+      float field=noise(vec2(uv.x*11.+time*.31,uv.y*9.-time*1.5));
+      float fine=noise(vec2(uv.x*27.-time*.83,uv.y*21.-time*2.7));
+      vec2 bend=vec2((field-.5)*.020+(fine-.5)*.006,(fine-.5)*.010);
+      vec4 bent=art(uv+bend*(1.-keep));
+      float painted=energy(base)*(1.-keep);
+      // Only the painted energy distorts. Face, cloth, metal and hands use exact source pixels.
+      vec4 color=mix(base,bent,painted*.88);
+      float light=painted*(.10+.18*pow(field,3.));
+      color.rgb+=color.rgb*light;
+      for(int i=0;i<2;i++){
+        float phase=fract(time*.72+float(i)*.5);
+        vec2 source=uv-vec2((field-.5)*.028,phase*.075);
+        vec4 trail=art(source);
+        float sourceKeep=texture2D(protection,clamp(source,0.,1.)).r;
+        float life=pow(sin(phase*3.14159265),1.6);
+        float a=energy(trail)*trail.a*(1.-sourceKeep)*(1.-keep)*life*.34;
+        a*=smoothstep(.30,.67,field+.24*fine);
+        // A short-lived rising continuation uses the original flame's colors and texture.
+        vec3 premul=color.rgb*color.a+trail.rgb*a*(1.-color.a*.65);
+        float alpha=color.a+a*(1.-color.a);
+        color=vec4(premul/max(alpha,.001),alpha);
+      }
+      gl_FragColor=color;
+    }`;
+  const masks={
+    'young-emperor':{polygon:[[.28,0],[.75,0],[.66,.17],[.60,.28],[.75,.33],[.79,.43],[.88,.47],[.81,.60],[.62,.62],[.72,1],[.17,1],[.23,.70],[.08,.94],[.04,.91],[.10,.70],[.22,.52],[.23,.32],[.27,.24]],face:[.39,.23,.17,.18]},
+    'lindong-six':{polygon:[[.35,.23],[.68,.22],[.78,.40],[.75,.64],[.92,.79],[.92,.85],[.80,.83],[.93,1],[.11,1],[.31,.66],[.28,.44]],face:[.52,.15,.14,.15]},
+    'lindong-seven':{polygon:[[.30,0],[.68,0],[.79,.18],[.82,.27],[.72,.34],[.88,.50],[.83,.69],[.90,.79],[.75,.86],[.57,.75],[.62,1],[.04,1],[.20,.74],[.03,.90],[.01,.84],[.12,.66],[.20,.44],[.27,.26]],face:[.39,.18,.17,.16]}
+  };
+  function prepare(e){
+    if(e.gl||e.failed)return !!e.gl;
+    try{
+      const gl=e.canvas.getContext('webgl',{alpha:true,premultipliedAlpha:false,antialias:false,preserveDrawingBuffer:true});
+      if(!gl)throw Error('WebGL unavailable');
+      const compile=(type,source)=>{const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;};
+      const program=gl.createProgram();gl.attachShader(program,compile(gl.VERTEX_SHADER,vertex));gl.attachShader(program,compile(gl.FRAGMENT_SHADER,fragment));gl.linkProgram(program);
+      if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));
+      gl.useProgram(program);const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+      const a=gl.getAttribLocation(program,'position');gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
+      const mask=document.createElement('canvas');mask.width=512;mask.height=512;const ctx=mask.getContext('2d'),shape=masks[e.host.dataset.characterEnergy];
+      ctx.fillStyle='black';ctx.fillRect(0,0,512,512);ctx.fillStyle='white';ctx.shadowColor='white';ctx.shadowBlur=9;
+      ctx.beginPath();shape.polygon.forEach(([x,y],i)=>ctx[i?'lineTo':'moveTo'](x*512,y*512));ctx.closePath();ctx.fill();
+      const [x,y,rx,ry]=shape.face;ctx.beginPath();ctx.ellipse(x*512,y*512,rx*512,ry*512,0,0,Math.PI*2);ctx.fill();
+      [e.image,mask].forEach((image,i)=>{gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,gl.createTexture());gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);});
+      gl.uniform1i(gl.getUniformLocation(program,'picture'),0);gl.uniform1i(gl.getUniformLocation(program,'protection'),1);
+      gl.uniform1f(gl.getUniformLocation(program,'kind'),e.host.dataset.characterEnergy==='young-emperor'?0:1);
+      e.gl=gl;e.program=program;e.time=gl.getUniformLocation(program,'time');e.canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();e.failed=true;e.host.removeAttribute('data-flow-active');});
+      return true;
+    }catch(error){e.failed=String(error);e.host.removeAttribute('data-flow-active');return false;}
+  }
+  function paint(e,t){
+    if(!prepare(e))return;
+    const displayHeight=Math.min(e.host.clientHeight,e.host.clientWidth*e.image.naturalHeight/e.image.naturalWidth);
+    const bottom=(e.host.clientHeight+displayHeight)/2;
+    const fade=`linear-gradient(#000 ${bottom-displayHeight*.13}px,transparent ${bottom}px)`;
+    e.canvas.style.maskImage=fade;e.image.style.maskImage=fade;
+    const w=Math.max(1,Math.min(e.image.naturalWidth,Math.ceil(e.host.clientWidth*Math.min(devicePixelRatio||1,2))));
+    const h=Math.ceil(w*e.image.naturalHeight/e.image.naturalWidth);
+    if(e.canvas.width!==w||e.canvas.height!==h){e.canvas.width=w;e.canvas.height=h;}
+    e.gl.viewport(0,0,w,h);e.gl.useProgram(e.program);e.gl.uniform1f(e.time,t);e.gl.drawArrays(e.gl.TRIANGLES,0,6);e.host.setAttribute('data-flow-active','');e.paints++;
+  }
+  function choose(group,index){
+    group.index=(index+group.forms.length)%group.forms.length;group.age=0;
+    group.forms.forEach((form,i)=>{form.hidden=i!==group.index;});
+    document.dispatchEvent(new Event('jia-character-change'));window.JiaSevenStar?.wake();wake();
+  }
+  function tick(now){
+    frame=0;if(!moving()){last=0;return;}
+    const dt=last?Math.min(now-last,100)/1000:0;clock+=dt;last=now;
+    groups.forEach(g=>{g.age+=dt;if(g.age>=g.period)choose(g,g.index+1);});
+    if(now-painted>1000/30){entries.filter(visible).forEach(e=>paint(e,clock));painted=now;}
+    if(!frame)frame=requestAnimationFrame(tick);
+  }
+  function wake(){
+    cancelAnimationFrame(frame);frame=0;last=0;
+    if(moving()&&(groups.length||entries.some(visible)))frame=requestAnimationFrame(tick);
+    else entries.forEach(e=>e.host.removeAttribute('data-flow-active'));
+  }
+  const io=new IntersectionObserver(changes=>{changes.forEach(c=>{const e=entries.find(e=>e.host===c.target);if(e)e.inside=c.isIntersecting;});wake();});
+  entries.forEach(e=>{io.observe(e.host);e.image.addEventListener('load',wake);new MutationObserver(wake).observe(e.image,{attributes:true,attributeFilter:['data-art-ready']});});
+  new MutationObserver(wake).observe(root,{attributes:true,subtree:true,attributeFilter:['data-background-current','data-art-motion','hidden']});
+  document.addEventListener('visibilitychange',wake);reduced.addEventListener('change',wake);wide.addEventListener('change',wake);window.addEventListener('resize',wake);
+  window.JiaCharacterArt={select:(side,name)=>{const g=groups.find(g=>g.host.dataset.characterCycle===side);if(g){const i=g.forms.findIndex(f=>f.dataset.characterForm===name);if(i>=0)choose(g,i);}},inspect:()=>({moving:moving(),running:!!frame,clock,source:'independent generated transparent art; no footage',groups:groups.map(g=>({side:g.host.dataset.characterCycle,form:g.forms[g.index].dataset.characterForm,age:g.age})),entries:entries.map(e=>({name:e.host.dataset.characterEnergy,visible:visible(e),paints:e.paints,failed:e.failed||false,width:e.canvas.width,height:e.canvas.height}))}),renderAt:t=>{cancelAnimationFrame(frame);frame=0;entries.filter(visible).forEach(e=>paint(e,t));},wake};
+  wake();
+})();
+</script><script>const root=document.querySelector('.page-atmosphere');
+function show(name){document.body.classList.toggle('duo',name==='duo');document.querySelectorAll('[data-study]').forEach(study=>{const visible=name==='duo'?['young-emperor','lindong-seven'].includes(study.dataset.study):study.dataset.study===name;study.hidden=!visible;if(visible){const img=study.querySelector('img');if(!img.src){img.onload=async()=>{await img.decode();img.setAttribute('data-art-ready','');window.JiaSevenStar?.wake();window.JiaCharacterArt?.wake()};img.src=img.dataset.imagerySrc;}}});document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===name)));window.JiaSevenStar?.wake();window.JiaCharacterArt?.wake();}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>show(b.dataset.view));document.querySelector('#theme').onclick=e=>{document.body.classList.toggle('dark');e.target.textContent=document.body.classList.contains('dark')?'浅色':'深色'};document.querySelector('#motion').onclick=e=>{const on=root.dataset.artMotion==='still';root.dataset.artMotion=on?'loop':'still';e.target.textContent=on?'动态':'静态';e.target.setAttribute('aria-pressed',String(on))};show('seven-star');</script></html>

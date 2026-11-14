@@ -183,3 +183,11 @@ python tools/package_site.py ../Jia-Li-homepage-publish.zip
 ### Grounded ruler clarity
 
 The grounded ruler now embeds the same episode still at its native 1024×555 resolution, replacing the 700×380 delivery variant. Original JPEG bytes are embedded directly without another lossy encode or artificial sharpening. The SVG keeps its existing logical crop, pose and fire flow; only the weapon-mask feather is reduced (2.5 to 0.6 pixels), and its natural drawing size increases to 418×440. This remains a public episode still, not a full-HD video extraction.
+
+### 萧炎与林动人物动态
+
+火莲陪景使用独立生成的透明人物：七星斗圣萧炎、初成帝萧炎、林动第六季与第七季。动漫正片、PV只用于核对脸型、衣甲和光效，没有作为新增人物的网页视频或截图直接播放。原有角色保留；左侧每31秒轮换，右侧每26秒轮换。默认线条模式、十四款火莲、歌单顺序及音乐默认关闭均沿用此前设置。
+
+`seven-star.js`沿肩甲、胸口、腰带和护臂生成分叉金雷，放电包含短促的主闪、回击和衰减。`character-art.js`按各人物绘制局部光焰：初成帝为金焰，林动为青龙光流。人物脸部、躯干和主要衣甲有保护区；这些是基于独立原画的二维实时效果，并非官方三维模型或原片视频。静态、减少动态、隐藏页面及离开火莲模式会停止相应绘制。
+
+四张原生透明PNG保留在素材目录，网页交付使用同尺寸无损WebP，经解码验证RGBA像素完全一致；未缩小人物或另做有损压缩。隐藏的轮换人物在被选择后加载。独立检查入口为[人物全景](https://li2ga.github.io/seven-star-preview.html)，可切换四种形象、双人构图、浅深背景与动静状态。作者素材映射在`tools/ambient_art.py`，预览生成器在`tools/character_gallery.py`。参考入口：[第219集](https://www.youtube.com/watch?v=Ckv638UDMLM&t=1250s)、[初成帝PV画面](https://www.youtube.com/watch?v=-A95Xg7F_Cs&t=18s)、[林动第六季PV](https://weibo.com/6310852010/5228112855436069)、[林动第七季PV](https://weibo.com/6310852010/R5hN8bIts)。
