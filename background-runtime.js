@@ -52,32 +52,8 @@
   const vertex = `attribute vec2 position; varying vec2 uv;
     void main(){uv=position*.5+.5;gl_Position=vec4(position,0.,1.);}`;
   const flameLayers = `
-    bool groundedRuler(){return variant>199.5&&variant<201.5;}
+    bool groundedRuler(){return variant>199.5&&variant<200.5;}
     float rulerMetal(vec2 uv){
-      if(variant>200.5){
-        // Native episode coordinates for the adjacent oblique camera view.
-        vec2 p=vec2(510.,105.)+vec2(uv.x,1.-uv.y)*vec2(500.,610.);
-        vec2 v[20];
-        v[0]=vec2(620.,139.);v[1]=vec2(633.,140.);v[2]=vec2(647.,178.);
-        v[3]=vec2(702.,160.);v[4]=vec2(714.,166.);v[5]=vec2(711.,180.);
-        v[6]=vec2(694.,193.);v[7]=vec2(719.,267.);v[8]=vec2(786.,447.);
-        v[9]=vec2(847.,578.);v[10]=vec2(866.,606.);v[11]=vec2(817.,630.);
-        v[12]=vec2(783.,607.);v[13]=vec2(744.,519.);v[14]=vec2(633.,229.);
-        v[15]=vec2(600.,237.);v[16]=vec2(585.,231.);v[17]=vec2(592.,218.);
-        v[18]=vec2(627.,187.);v[19]=vec2(620.,156.);
-        bool inside=false;float distance=1000.;vec2 a=v[19];
-        for(int i=0;i<20;i++){
-          vec2 b=v[i],edge=b-a;
-          float u=clamp(dot(p-a,edge)/max(dot(edge,edge),.001),0.,1.);
-          distance=min(distance,length(p-a-u*edge));
-          if((a.y>p.y)!=(b.y>p.y)){
-            float crossing=(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x;
-            if(p.x<crossing)inside=!inside;
-          }
-          a=b;
-        }
-        return max(inside?1.:1.-smoothstep(3.,8.,distance),smoothstep(590.,640.,p.y));
-      }
       // The outline follows weapon-body in the unchanged official-frame SVG.
       // Protect the guard, hilt and complete blade before transporting fire.
       vec2 p=vec2(275.,80.)+vec2(uv.x,1.-uv.y)*vec2(285.,300.);
@@ -255,24 +231,6 @@
       body.rgb=clamp(body.rgb*(1.+field*pulse*.17),0.,1.);
       return vec4(body.rgb*body.a,body.a);
     }
-    vec4 originalRulerFlow(vec2 p){
-      vec4 original=artwork(p);
-      float protect=rulerMetal(p);
-      if(protect>.995)return vec4(original.rgb*original.a,original.a);
-      float fuel=smoothstep(.025,.18,original.r-original.b)*smoothstep(.06,.24,original.r);
-      float field=(1.-protect)*fuel;
-      float t=flameClock;
-      float n=fireFbm(vec3(p.x*19.,p.y*15.-t*1.6,t*.19));
-      float fine=fireNoise(vec3(p*42.-vec2(0.,t*3.),t*.31));
-      float a=fract(t*.62),b=fract(t*.62+.5);
-      float wa=pow(sin(a*3.14159265),2.),wb=pow(sin(b*3.14159265),2.);
-      vec2 bend=vec2((n-.5)*.022+(fine-.5)*.004,0.);
-      vec4 first=artwork(p-vec2(0.,a*.075)+bend);
-      vec4 second=artwork(p-vec2(0.,b*.075)+bend);
-      vec4 flow=(first*wa+second*wb)/max(wa+wb,.001);
-      vec4 body=mix(original,flow,field*.84);
-      return vec4(body.rgb*body.a,body.a);
-    }
     vec4 emperorSample(vec2 p){
       vec4 color=artwork(p);
       // Generated atlas cells contain a few neighboring-tip specks at their
@@ -408,7 +366,6 @@
     void main(){
       if(mode>7.5){gl_FragColor=rulerDetail(uv);return;}
       if(mode>.5&&mode<1.5){
-        if(variant>200.5&&variant<201.5){gl_FragColor=originalRulerFlow(uv);return;}
         if(referenceFlow>.5){gl_FragColor=tuosheReference(uv);return;}
         if(variant>30.&&variant<60.&&motionProfile.y>0.)gl_FragColor=emperorFlameDetail(uv);
         else gl_FragColor=variant<100.?detailFlame(uv):livingFlame(uv);
@@ -687,7 +644,7 @@
         surface.width = width;
         surface.height = height;
       }
-      if(entry.mode===1&&entry.variant>=100&&entry.variant!==201)advanceFlow(entry,time,nativeProof);
+      if(entry.mode===1&&entry.variant>=100)advanceFlow(entry,time,nativeProof);
       gl.viewport(0, 0, surface.width, surface.height);
       bindQuad(program);
       gl.uniform4fv(locations.imageRect,entry.rect);
@@ -911,11 +868,11 @@
     imagery(image) {
       const object=image.closest('.imagery-object');
       if (object) install(image,image.parentElement,image,subjects[object.dataset.imageryObject]??0);
-      else if(image.currentSrc.includes('/ruler-emperor-v2.svg')||image.currentSrc.includes('/ruler-original-side-v1.svg')){
+      else if(image.currentSrc.includes('/ruler-emperor-v1.svg')){
         const host=image.parentElement;
         host.dataset.groundedRuler='';
-        host.dataset.flameMotion='原片尺身和接地实体保留；原色火焰向上流动';
-        install(image,host,image,1,image.currentSrc.includes('ruler-original-side-v1')?201:200);
+        host.dataset.flameMotion='原图火焰向上输运、冷却消散；尺身原样保留';
+        install(image,host,image,1,200);
       }
     },
     wake,
