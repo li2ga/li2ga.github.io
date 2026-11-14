@@ -17,7 +17,7 @@ LOTUS_STAGES = [
     ('gold', 'Golden bloom', '金焰'), ('emperor', 'Emperor flame', '帝炎'),
     ('destruction', 'Destruction lotus', '毁灭火莲'), ('radial', 'Metal structure', '金属结构'),
     ('formation', 'Formation', '凝聚形态'), ('refined', 'Reforged flame', '重铸流焰'),
-    ('branches', 'Golden branches', '金枝柔焰'),
+    ('branches', 'Golden veins', '金粉脉络'),
     ('tuoshe', 'Tuoshe lotus', '古帝火莲'),
 ]
 
@@ -27,6 +27,9 @@ def lotus_artworks():
         extension = 'svg' if slug == 'emperor' else 'png'
         source = f'assets/backgrounds/fire-lotus-{slug}-v1.{extension}'
         lossless = f'assets/backgrounds/fire-lotus-{slug}-v1-lossless.webp'
+        if slug == 'branches':
+            source = 'assets/backgrounds/fire-lotus-branches-v2.png'
+            lossless = 'assets/backgrounds/fire-lotus-branches-v2-lossless.webp'
         if (ROOT/lossless).exists():
             source = lossless
         version = hashlib.sha256((ROOT/source).read_bytes()).hexdigest()[:12]
@@ -157,7 +160,7 @@ def background_controls():
     return f'''<details class="background-switch" hidden><summary>{pair('Background','背景')}</summary>
       <div class="background-options"><div class="background-choices" role="group" aria-label="Background scene" data-label-en="Background scene" data-label-zh="背景图案">{buttons}</div><details class="background-archive"><summary>{pair('Previous studies','之前的方案')}</summary><div class="background-choices">{older}</div></details>
       <div class="lotus-options" hidden><div class="lotus-stage-buttons" role="group" aria-label="Lotus stages" data-label-en="Lotus stages" data-label-zh="火莲形态">{lotus_buttons}</div><button type="button" class="lotus-play-toggle" data-lotus-toggle aria-pressed="false">{pair('Pause evolution','暂停演变')}</button><p class="lotus-load-status" data-lotus-status role="status" aria-live="polite" hidden></p><button type="button" data-lotus-retry hidden>{pair('Try again','重新加载')}</button></div><p class="emperor-preview-link" hidden><a href="emperor-preview.html">{pair('View the Emperor scene','展开古帝全景')}</a></p>
-      <p class="seven-star-preview-link" hidden><a href="seven-star-preview.html">{pair('Xiao Yan & Lin Dong','萧炎与林动全景')}</a></p>
+      <p class="seven-star-preview-link" hidden><a href="seven-star-preview.html">{pair('Xiao Yan & Lin Dong','萧炎与林动全景')}</a><br><a href="pink-lotus-comparison.html">{pair('Golden veins · compare','金粉莲新旧对比')}</a></p>
       <div class="imagery-load-options" data-imagery-options hidden><p class="lotus-load-status" data-imagery-status role="status" aria-live="polite" hidden></p><button type="button" data-imagery-retry hidden>{pair('Reload missing artwork','重试未加载的形象')}</button></div>
       <div class="background-placement" role="group" aria-label="Background placement" data-label-en="Background placement" data-label-zh="背景位置">
       <button type="button" data-background-layout="fixed" aria-pressed="true">{pair('Stay in view','固定视窗')}</button>

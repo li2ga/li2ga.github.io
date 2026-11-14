@@ -191,3 +191,9 @@ The grounded ruler now embeds the same episode still at its native 1024×555 res
 `seven-star.js`沿肩甲、胸口、腰带和护臂生成分叉金雷，放电包含短促的主闪、回击和衰减。`character-art.js`按各人物绘制局部光焰：初成帝为金焰，林动为青龙光流。人物脸部、躯干和主要衣甲有保护区；这些是基于独立原画的二维实时效果，并非官方三维模型或原片视频。静态、减少动态、隐藏页面及离开火莲模式会停止相应绘制。
 
 四张原生透明PNG保留在素材目录，网页交付使用同尺寸无损WebP，经解码验证RGBA像素完全一致；未缩小人物或另做有损压缩。隐藏的轮换人物在被选择后加载。独立检查入口为[人物全景](https://li2ga.github.io/seven-star-preview.html)，可切换四种形象、双人构图、浅深背景与动静状态。作者素材映射在`tools/ambient_art.py`，预览生成器在`tools/character_gallery.py`。参考入口：[第219集](https://www.youtube.com/watch?v=Ckv638UDMLM&t=1250s)、[初成帝PV画面](https://www.youtube.com/watch?v=-A95Xg7F_Cs&t=18s)、[林动第六季PV](https://weibo.com/6310852010/5228112855436069)、[林动第七季PV](https://weibo.com/6310852010/R5hN8bIts)。
+
+### 金粉脉络火莲
+
+第13项 `branches` 由稀疏金枝版更新为分层金粉脉络莲，菜单名为「金粉脉络 / Golden veins」。参考[《守你所望》官方MV](https://weibo.com/5898310988/5365094215061300)约2:51.5–2:53与用户提供动图，独立重绘相连的金色肋架、粉色瓣面、菱形叶脉和附着火舌；原片与动图只作本地参考，不直接播放在主页。原有十四项顺序保持。
+
+作者源图为 `assets/backgrounds/fire-lotus-branches-v2.png`（1536×1024），网页使用相同尺寸的逐像素无损WebP。沿用原实时火焰渲染器，金色骨架保持、光焰局部流动，整朵不旋转。旧版源素材保留；[新旧动态对比](https://li2ga.github.io/pink-lotus-comparison.html)可看同尺寸浅深背景和静态效果。对比页由 `python tools/pink_lotus_preview.py` 生成。

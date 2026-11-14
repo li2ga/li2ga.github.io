@@ -67,6 +67,7 @@ PUBLIC_FILES = [
     "assets/backgrounds/fire-lotus-formation-v1.png",
     "assets/backgrounds/fire-lotus-refined-v1.png",
     "assets/backgrounds/fire-lotus-branches-v1.png",
+    "pink-lotus-comparison.html", "assets/backgrounds/fire-lotus-branches-v2-lossless.webp",
     *[f"assets/backgrounds/fire-lotus-{name}-v1-lossless.webp" for name in (
         'blue', 'cold', 'jade', 'fusion', 'pearl', 'rings', 'gold', 'destruction',
         'radial', 'formation', 'refined', 'branches')],
