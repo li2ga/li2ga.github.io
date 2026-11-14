@@ -200,6 +200,12 @@ The grounded ruler now embeds the same episode still at its native 1024×555 res
 
 作者源图为 `assets/backgrounds/fire-lotus-branches-v2.png`（1536×1024），网页使用相同尺寸的逐像素无损WebP。沿用原实时火焰渲染器，金色骨架保持、光焰局部流动，整朵不旋转。旧版源素材保留；[新旧动态对比](https://li2ga.github.io/pink-lotus-comparison.html)可看同尺寸浅深背景和静态效果。对比页由 `python tools/pink_lotus_preview.py` 生成。
 
+### 金枝火莲三版并存
+
+恢复两个独立选项：「金枝柔焰 · 原版」（`lotus=branches-original`）和「金粉脉络 · 中版」（`lotus=branches-middle`）。原版使用此前的细金枝原图；中版恢复透视修订前的宽幅粉金莲瓣原图，原生1672×941，不缩放重存。当前「金粉脉络」（`lotus=branches`）继续保留。两项追加在原有十四项之后，原选项编号与已保存选择保持，三版都进入自动演变。
+
+三版均使用原图实时动态，金色骨架受到同样的实体保护。中版源PNG字节完整保留，网页无损WebP与其解码RGBA逐像素相同；各画幅均以contain完整显示。可在[三版对比页](https://li2ga.github.io/pink-lotus-comparison.html)一起查看动态、静态和浅深背景。
+
 ### 古帝火莲左右两版
 
 「古帝火莲 / Tuoshe lotus」仍是第14项。主页左侧保留原版，右侧增加更贴近用户电影PV参考的紫白光焰版：中央莲体凝聚，银紫尖瓣围绕细长法相，外围光焰分叉并延展为白、紫、青、粉色长流条。原片只作绘制参考，没有在主页嵌入。两侧独立演变，选择古帝火莲时可同时比较；固定视窗与随页滚动均使用相同左右映射。

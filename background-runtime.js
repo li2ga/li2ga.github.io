@@ -696,7 +696,8 @@
       gl.uniform1f(locations.phase, ((time / period + entry.seed) % 1) * Math.PI * 2);
       gl.uniform1f(locations.flameClock,time/1000+entry.seed*13.7);
       gl.uniform1f(locations.mode, entry.mode);
-      gl.uniform1f(locations.variant, entry.variant);
+      // Restored paintings share the fine gold-branch material protection.
+      gl.uniform1f(locations.variant, entry.mode===1&&(entry.variant===14||entry.variant===15)?12:entry.variant);
       gl.uniform1f(locations.referenceFlow, entry.variant===13&&entry.image.currentSrc.includes('fire-lotus-tuoshe-v2')?1:0);
       const personality=entry.variant>30&&entry.variant<60?emperorProfiles[entry.variant-31]:null;
       gl.uniform4fv(locations.motionProfile,personality&&!classicEmperor
