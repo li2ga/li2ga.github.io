@@ -567,7 +567,7 @@
     if (choice === 'ganzhi') choice = 'ganzhi-cinematic';
     backgroundChoice = availableBackgrounds.includes(choice) || choice === "auto" ? choice : "trajectory";
     if (atmosphere) atmosphere.dataset.backgroundChoice = backgroundChoice;
-    showBackground(backgroundChoice === "auto" ? "lotus" : backgroundChoice);
+    showBackground(backgroundChoice === "auto" ? "trajectory" : backgroundChoice);
     document.querySelectorAll("[data-background]").forEach(button => {
       button.setAttribute("aria-pressed", String(button.dataset.background === backgroundChoice));
     });
