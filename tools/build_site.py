@@ -21,12 +21,13 @@ LOTUS_STAGES = [
     ('tuoshe', 'Tuoshe lotus', '古帝火莲'),
     ('branches-original', 'Golden branches · original', '金枝柔焰 · 原版'),
     ('branches-middle', 'Golden veins · intermediate', '金粉脉络 · 中版'),
+    ('tuoshe-streams', 'Myriad flame streams', '古帝万焰流光'),
 ]
 
 
 def lotus_artworks():
     # Keep saved stage IDs stable while placing the three gold versions together.
-    stages = sorted(enumerate(LOTUS_STAGES), key=lambda item: item[1][0] == 'tuoshe')
+    stages = sorted(enumerate(LOTUS_STAGES), key=lambda item: item[1][0].startswith('tuoshe'))
     for stage, (slug, en, zh) in stages:
         extension = 'svg' if slug == 'emperor' else 'png'
         source = f'assets/backgrounds/fire-lotus-{slug}-v1.{extension}'

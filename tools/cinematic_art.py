@@ -58,7 +58,7 @@ def definitions():
 def evolution_scene():
     motifs=[]
     for index,position in enumerate(['top-left','top-right','lower-left','lower-right']):
-        frames=''.join(f'<span class="lotus-frame" data-lotus-frame="{index}"></span>' for index in range(16))
+        frames=''.join(f'<span class="lotus-frame" data-lotus-frame="{index}"></span>' for index in range(17))
         energy='<svg class="lotus-energy" viewBox="0 0 400 400" focusable="false"><g class="lotus-evolving-rings"><ellipse cx="200" cy="255" rx="173" ry="38"/><ellipse cx="200" cy="249" rx="157" ry="34" transform="rotate(-18 200 249)"/></g><g class="lotus-evolving-sparks"><circle cx="85" cy="98" r="1.5"/><circle cx="291" cy="82" r="1.2"/><circle cx="342" cy="211" r="1.4"/><circle cx="73" cy="281" r="1.6"/></g></svg>'
         motifs.append(f'<div class="atmosphere-motif lotus-evolution motif-{position}" data-lotus-instance="{index}" data-lotus-stage=""><div class="lotus-float"><div class="lotus-hover">{frames}{energy}</div></div></div>')
     companions=runpy.run_path(str(Path(__file__).with_name('ambient_art.py')))['lotus_companions']()

@@ -654,7 +654,7 @@
       gl.uniform1f(locations.mode, entry.mode);
       // Restored paintings share the fine gold-branch material protection.
       gl.uniform1f(locations.variant, entry.mode===1&&(entry.variant===14||entry.variant===15)?12:entry.variant);
-      gl.uniform1f(locations.referenceFlow, entry.variant===13&&entry.image.currentSrc.includes('fire-lotus-tuoshe-v2')?1:0);
+      gl.uniform1f(locations.referenceFlow, entry.variant===16||(entry.variant===13&&entry.image.currentSrc.includes('fire-lotus-tuoshe-v2'))?1:0);
       const personality=entry.variant>30&&entry.variant<60?emperorProfiles[entry.variant-31]:null;
       gl.uniform4fv(locations.motionProfile,personality&&!classicEmperor
         ?[personality.family,personality.speed,personality.bend,personality.trail]:[0,0,0,0]);
