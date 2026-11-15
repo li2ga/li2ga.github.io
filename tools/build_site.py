@@ -451,7 +451,8 @@ def cv_entry(title,date,role,detail):
 
 
 def cv_page(number,content,first=False):
-    header='' if first else '<header class="cv-running-header">Jia Li <span>Curriculum Vitae · October 2026</span></header>'
+    updated=date.fromisoformat(DATA['updated'])
+    header='' if first else f'<header class="cv-running-header">Jia Li <span>Curriculum Vitae · {updated:%B %Y}</span></header>'
     return f'<section class="cv-page">{header}{content}<div class="cv-page-footer">Jia Li · Updated {esc(DATA["updated"])}<span>{number} / 3</span></div></section>'
 
 
