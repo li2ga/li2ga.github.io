@@ -731,7 +731,21 @@ main>section:not(.about){margin-top:29px}
 .music-panel label{display:grid;gap:4px;margin:12px 0;font-size:14px}
 .music-panel select{max-width:100%;padding:6px;font:inherit}
 .music-panel input[type=file]{max-width:100%}
-@media print{.music-tools,.music-panel{display:none!important}}
+.music-lyrics-settings{margin:18px 0 0;padding:12px;border:1px solid #e8dac5;border-radius:9px;min-width:0}
+.music-lyrics-settings legend{padding:0 5px;font-size:14px;font-weight:700}
+.music-panel .music-lyrics-switch{display:flex;align-items:center;gap:8px;margin:0;cursor:pointer}
+.music-lyrics-switch input{accent-color:#9b733c;width:17px;height:17px;flex-shrink:0}
+.music-panel .music-lyrics-help{color:#6b6053;font-size:12px;margin:10px 0}
+.music-lyrics-delay input{width:85px;padding:5px;font:inherit}
+.music-panel .music-lyrics-status{margin:8px 0 0;color:#685038;min-height:1.45em;font-size:12px}
+.music-captions{position:fixed;z-index:50;bottom:max(24px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:max-content;max-width:min(680px,calc(100% - 28px));box-sizing:border-box;padding:13px 39px 13px 21px;border:1px solid #cdb88f99;border-radius:12px;background:#fffdf5f2;color:#30281e;box-shadow:0 4px 24px #2b20151a;pointer-events:none;text-align:center}
+.music-captions[hidden]{display:none}
+.music-captions-line{display:block;font:500 clamp(15px,1.3vw,19px)/1.6 'Lato','Microsoft YaHei',sans-serif;letter-spacing:.03em;white-space:pre-line;overflow-wrap:anywhere}
+.music-captions button{position:absolute;right:3px;top:3px;min-width:32px;min-height:32px;padding:0;border:0;border-radius:8px;background:transparent;color:#786349;font-size:22px;line-height:1;cursor:pointer;pointer-events:auto}
+.music-captions button:hover{background:#eadcc56b}
+.music-captions button:focus-visible{outline:2px solid #9b733c;outline-offset:-2px}
+@media(max-width:600px){.music-captions{bottom:max(14px,env(safe-area-inset-bottom));padding:11px 35px 11px 16px}.music-panel{padding:18px}.music-lyrics-settings{padding:10px}}
+@media print{.music-tools,.music-panel,.music-captions{display:none!important}}
 
 /* A single intact figure; Emperor Flame grows behind it and along the cuffs. */
 .emperor-tableau{position:absolute;left:max(0px,calc((100vw - 1840px)/2));top:7vh;width:calc((100vw - 820px)/2);max-width:500px;height:min(84vh,900px);transform:translate3d(calc(var(--trace-x,0px)*.65),calc(var(--trace-y,0px)*.65),0);isolation:isolate}
@@ -1094,7 +1108,26 @@ main>section:not(.about){margin-top:29px}
       <div class="background-placement background-visibility" role="group" aria-label="Background visibility" data-label-en="Background visibility" data-label-zh="背景显淡">
       <button type="button" data-background-visibility="clear" aria-pressed="true"><span data-lang="en" lang="en">Clear</span><span data-lang="zh" lang="zh-CN" hidden>清晰</span></button>
       <button type="button" data-background-visibility="subtle" aria-pressed="false"><span data-lang="en" lang="en">Fade in/out</span><span data-lang="zh" lang="zh-CN" hidden>渐隐渐现</span></button></div>
-      <div class="background-placement" data-art-motion-options role="group" aria-label="Image motion" data-label-en="Image motion" data-label-zh="图案动效" hidden><button type="button" data-art-motion="loop" aria-pressed="true"><span data-lang="en" lang="en">Animated</span><span data-lang="zh" lang="zh-CN" hidden>动态图</span></button><button type="button" data-art-motion="still" aria-pressed="false"><span data-lang="en" lang="en">Still</span><span data-lang="zh" lang="zh-CN" hidden>静态图</span></button></div><a href="heavenly-flames.html"><span data-lang="en" lang="en">Twenty-three flames</span><span data-lang="zh" lang="zh-CN" hidden>二十三种异火图鉴</span></a></div></details><div class="music-tools"><button type="button" data-music-toggle aria-pressed="false" aria-label="Background music" data-label-en="Background music" data-label-zh="背景音乐">♪</button><button type="button" data-music-settings aria-label="Choose music" data-label-en="Choose music" data-label-zh="选择背景音乐">⌄</button></div><dialog class="music-panel" data-music-panel aria-labelledby="music-heading"><header><h2 id="music-heading"><span data-lang="en" lang="en">Background music</span><span data-lang="zh" lang="zh-CN" hidden>背景音乐</span></h2><form method="dialog"><button type="submit"><span data-lang="en" lang="en">Close</span><span data-lang="zh" lang="zh-CN" hidden>关闭</span></button></form></header><p><span data-lang="en" lang="en">Play a track from the playlist or add your own audio. Your files stay on this device.</span><span data-lang="zh" lang="zh-CN" hidden>可以播放内置歌单，也可以添加自己的音频。你选择的文件只在本机播放。</span></p><label><span data-lang="en" lang="en">Add your own audio</span><span data-lang="zh" lang="zh-CN" hidden>添加本机音频</span><input type="file" accept="audio/*,.flac,.opus" multiple></label><label><span data-lang="en" lang="en">Track</span><span data-lang="zh" lang="zh-CN" hidden>歌曲</span><select><optgroup label="内置歌单 / Built-in tracks"><option value="shou-ni-suo-wang" data-music-src="assets/audio/shou-ni-suo-wang-v1.flac?v=7904fd409d">守你所望 · 刘端端</option><option value="chi-nian" data-music-src="assets/audio/chi-nian-v1.mp3?v=8c74abc2d5">炽念 · 柯淳</option><option value="far-beyond-us-instrumental" data-music-src="assets/audio/far-beyond-us-instrumental-v1.flac?v=4bf731ba08">远不止你我 · 伴奏</option><option value="our-adventure-instrumental" data-music-src="assets/audio/our-adventure-instrumental-v1.flac?v=4c895b283b">我们的冒险 · 伴奏（AI分离）</option><option value="bu-mie-instrumental" data-music-src="assets/audio/bu-mie-instrumental-v1.mp3?v=889253159b">不灭 · 伴奏</option><option value="qian-hui" data-music-src="assets/audio/qian-hui-v1.flac?v=316827319b">千回 · 袁艺菲</option><option value="zhu-guang" data-music-src="assets/audio/zhu-guang-v1.flac?v=637102b1de">逐光 · 韩富Richard</option><option value="xian-zai-huan-wo" data-music-src="assets/audio/xian-zai-huan-wo-v1.flac?v=83e46486e7">现在换我 · 许哲</option><option value="wo-jiu-shi-wo" data-music-src="assets/audio/wo-jiu-shi-wo-v1.flac?v=143331263e">我就是我 · 墨绛</option><option value="xin-ji-instrumental" data-music-src="assets/audio/xin-ji-instrumental-v1.flac?v=18c720dcb8">心寄 · 伴奏</option><option value="wen-xing" data-music-src="assets/audio/wen-xing-v1.flac?v=7270c1fedd">问星 · Mr.mo</option><option value="rebirth-instrumental" data-music-src="assets/audio/rebirth-instrumental-v1.flac?v=3279feb315">重生 · 伴奏（AI分离）</option><option value="dominate-instrumental" data-music-src="assets/audio/dominate-instrumental-v2.mp3?v=dc27d36886">主宰 · 伴奏</option><option value="zhi-wo-instrumental" data-music-src="assets/audio/zhi-wo-instrumental-v1.flac?v=decb24ec8e">知我 · 伴奏</option><option value="zong-ma-ta-ge-xing" data-music-src="assets/audio/zong-ma-ta-ge-xing-v1.flac?v=b6491ebb23">纵马踏歌行 · 刘宇宁</option><option value="wu-yang" data-music-src="assets/audio/wu-yang-v1.flac?v=56943a9b51">无恙 · 徐均朔</option><option value="wen-ding" data-music-src="assets/audio/wen-ding-v1.flac?v=11a5231bcd">问鼎 · 黄子弘凡</option><option value="zhan-ge" data-music-src="assets/audio/zhan-ge-v1.flac?v=488a20e5cc">战歌 · CoCo李玟</option><option value="wen" data-music-src="assets/audio/wen-v1.flac?v=9c90fd3cb9">问 · 陈家淇</option><option value="our-adventure" data-music-src="assets/audio/our-adventure-v1.mp3?v=c0227f2acf">我们的冒险 · 曹寅</option></optgroup><optgroup label="本机音频 / Your files" data-local-tracks hidden></optgroup></select></label><label><span data-lang="en" lang="en">Volume</span><span data-lang="zh" lang="zh-CN" hidden>音量</span><input type="range" min="0" max="1" value="0.32" step="0.01"></label><button type="button" data-music-play aria-pressed="false"><span data-lang="en" lang="en">Play / pause</span><span data-lang="zh" lang="zh-CN" hidden>播放／暂停</span></button><p role="status"></p><audio preload="none"></audio></dialog><details class="name-font-switch" hidden><summary aria-label="English name font" data-label-en="English name font" data-label-zh="英文姓名字体">Aa</summary><div class="background-options name-font-options" role="group" aria-label="English name font" data-label-en="English name font" data-label-zh="英文姓名字体"><button type="button" data-name-font="classic" aria-pressed="true"><span class="name-font-preview name-font-classic" aria-hidden="true">Jia Li</span><span data-lang="en" lang="en">Reference</span><span data-lang="zh" lang="zh-CN" hidden>参考图</span></button><button type="button" data-name-font="termes" aria-pressed="false"><span class="name-font-preview name-font-termes" aria-hidden="true">Jia Li</span><span data-lang="en" lang="en">Previous</span><span data-lang="zh" lang="zh-CN" hidden>前版</span></button><button type="button" data-name-font="original" aria-pressed="false"><span class="name-font-preview name-font-original" aria-hidden="true">Jia Li</span><span data-lang="en" lang="en">Original</span><span data-lang="zh" lang="zh-CN" hidden>原版</span></button></div></details><div class="language-switch" role="group" aria-label="Page language" hidden><button type="button" data-set-lang="en" aria-pressed="true" lang="en">English</button><button type="button" data-set-lang="zh" aria-pressed="false" lang="zh-CN">中文</button></div></div>
+      <div class="background-placement" data-art-motion-options role="group" aria-label="Image motion" data-label-en="Image motion" data-label-zh="图案动效" hidden><button type="button" data-art-motion="loop" aria-pressed="true"><span data-lang="en" lang="en">Animated</span><span data-lang="zh" lang="zh-CN" hidden>动态图</span></button><button type="button" data-art-motion="still" aria-pressed="false"><span data-lang="en" lang="en">Still</span><span data-lang="zh" lang="zh-CN" hidden>静态图</span></button></div><a href="heavenly-flames.html"><span data-lang="en" lang="en">Twenty-three flames</span><span data-lang="zh" lang="zh-CN" hidden>二十三种异火图鉴</span></a></div></details><div class="music-tools"><button type="button" data-music-toggle aria-pressed="false" aria-label="Background music" data-label-en="Background music" data-label-zh="背景音乐">♪</button><button type="button" data-music-settings aria-label="Choose music" data-label-en="Choose music" data-label-zh="选择背景音乐">⌄</button></div>
+<dialog class="music-panel" data-music-panel aria-labelledby="music-heading">
+<header><h2 id="music-heading"><span data-lang="en" lang="en">Background music</span><span data-lang="zh" lang="zh-CN" hidden>背景音乐</span></h2><form method="dialog"><button type="submit"><span data-lang="en" lang="en">Close</span><span data-lang="zh" lang="zh-CN" hidden>关闭</span></button></form></header>
+<p><span data-lang="en" lang="en">Play a track from the playlist or add your own audio. Your files stay on this device.</span><span data-lang="zh" lang="zh-CN" hidden>可以播放内置歌单，也可以添加自己的音频。你选择的文件只在本机播放。</span></p>
+<label><span data-lang="en" lang="en">Add your own audio</span><span data-lang="zh" lang="zh-CN" hidden>添加本机音频</span><input data-music-upload type="file" accept="audio/*,.flac,.opus" multiple></label>
+<label><span data-lang="en" lang="en">Track</span><span data-lang="zh" lang="zh-CN" hidden>歌曲</span><select><optgroup label="内置歌单 / Built-in tracks"><option value="shou-ni-suo-wang" data-music-src="assets/audio/shou-ni-suo-wang-v1.flac?v=7904fd409d">守你所望 · 刘端端</option><option value="chi-nian" data-music-src="assets/audio/chi-nian-v1.mp3?v=8c74abc2d5">炽念 · 柯淳</option><option value="far-beyond-us-instrumental" data-music-src="assets/audio/far-beyond-us-instrumental-v1.flac?v=4bf731ba08">远不止你我 · 伴奏</option><option value="our-adventure-instrumental" data-music-src="assets/audio/our-adventure-instrumental-v1.flac?v=4c895b283b">我们的冒险 · 伴奏（AI分离）</option><option value="bu-mie-instrumental" data-music-src="assets/audio/bu-mie-instrumental-v1.mp3?v=889253159b" data-lyrics-src="assets/lyrics/bu-mie-instrumental-v1.lrc?v=5ab25cf094">不灭 · 伴奏</option><option value="qian-hui" data-music-src="assets/audio/qian-hui-v1.flac?v=316827319b">千回 · 袁艺菲</option><option value="zhu-guang" data-music-src="assets/audio/zhu-guang-v1.flac?v=637102b1de">逐光 · 韩富Richard</option><option value="xian-zai-huan-wo" data-music-src="assets/audio/xian-zai-huan-wo-v1.flac?v=83e46486e7">现在换我 · 许哲</option><option value="wo-jiu-shi-wo" data-music-src="assets/audio/wo-jiu-shi-wo-v1.flac?v=143331263e">我就是我 · 墨绛</option><option value="xin-ji-instrumental" data-music-src="assets/audio/xin-ji-instrumental-v1.flac?v=18c720dcb8">心寄 · 伴奏</option><option value="wen-xing" data-music-src="assets/audio/wen-xing-v1.flac?v=7270c1fedd">问星 · Mr.mo</option><option value="rebirth-instrumental" data-music-src="assets/audio/rebirth-instrumental-v1.flac?v=3279feb315">重生 · 伴奏（AI分离）</option><option value="dominate-instrumental" data-music-src="assets/audio/dominate-instrumental-v2.mp3?v=dc27d36886">主宰 · 伴奏</option><option value="zhi-wo-instrumental" data-music-src="assets/audio/zhi-wo-instrumental-v1.flac?v=decb24ec8e">知我 · 伴奏</option><option value="zong-ma-ta-ge-xing" data-music-src="assets/audio/zong-ma-ta-ge-xing-v1.flac?v=b6491ebb23">纵马踏歌行 · 刘宇宁</option><option value="wu-yang" data-music-src="assets/audio/wu-yang-v1.flac?v=56943a9b51">无恙 · 徐均朔</option><option value="wen-ding" data-music-src="assets/audio/wen-ding-v1.flac?v=11a5231bcd" data-lyrics-src="assets/lyrics/wen-ding-v1.lrc?v=0656251f96">问鼎 · 黄子弘凡</option><option value="zhan-ge" data-music-src="assets/audio/zhan-ge-v1.flac?v=488a20e5cc">战歌 · CoCo李玟</option><option value="wen" data-music-src="assets/audio/wen-v1.flac?v=9c90fd3cb9">问 · 陈家淇</option><option value="our-adventure" data-music-src="assets/audio/our-adventure-v1.mp3?v=c0227f2acf">我们的冒险 · 曹寅</option></optgroup><optgroup label="本机音频 / Your files" data-local-tracks hidden></optgroup></select></label>
+<label><span data-lang="en" lang="en">Volume</span><span data-lang="zh" lang="zh-CN" hidden>音量</span><input type="range" min="0" max="1" value="0.32" step="0.01"></label>
+<button type="button" data-music-play aria-pressed="false"><span data-lang="en" lang="en">Play / pause</span><span data-lang="zh" lang="zh-CN" hidden>播放／暂停</span></button>
+<fieldset class="music-lyrics-settings"><legend><span data-lang="en" lang="en">Lyrics subtitles</span><span data-lang="zh" lang="zh-CN" hidden>歌词字幕</span></legend>
+<label class="music-lyrics-switch"><input data-lyrics-toggle type="checkbox" aria-controls="music-captions"><span data-lang="en" lang="en">Show lyrics · off by default</span><span data-lang="zh" lang="zh-CN" hidden>显示歌词字幕 · 默认关闭</span></label>
+<p class="music-lyrics-help"><span data-lang="en" lang="en">Timed lyrics are available for Bu Mie and Wen Ding. For other tracks, import a subtitle file below.</span><span data-lang="zh" lang="zh-CN" hidden>《不灭》《问鼎》已内置时间轴歌词，其他歌曲可在下方导入字幕。</span></p>
+<label><span data-lang="en" lang="en">Import subtitles for the selected track</span><span data-lang="zh" lang="zh-CN" hidden>为当前歌曲导入字幕</span><input data-lyrics-upload type="file" accept=".lrc,.srt,.vtt"></label>
+<label class="music-lyrics-delay"><span data-lang="en" lang="en">Subtitle delay (seconds; negative = earlier)</span><span data-lang="zh" lang="zh-CN" hidden>字幕延迟（秒，负数提前）</span><input data-lyrics-delay type="number" min="-30" max="30" step="0.1" value="0" inputmode="decimal"></label>
+<p class="music-lyrics-status" data-lyrics-status role="status"></p>
+</fieldset>
+<p data-music-status role="status"></p><audio preload="none"></audio></dialog>
+<div class="music-captions" id="music-captions" data-music-captions hidden>
+<span class="music-captions-line" data-caption-line></span>
+<button type="button" data-lyrics-close aria-label="Hide lyrics" data-label-en="Hide lyrics" data-label-zh="关闭歌词字幕">×</button>
+</div><details class="name-font-switch" hidden><summary aria-label="English name font" data-label-en="English name font" data-label-zh="英文姓名字体">Aa</summary><div class="background-options name-font-options" role="group" aria-label="English name font" data-label-en="English name font" data-label-zh="英文姓名字体"><button type="button" data-name-font="classic" aria-pressed="true"><span class="name-font-preview name-font-classic" aria-hidden="true">Jia Li</span><span data-lang="en" lang="en">Reference</span><span data-lang="zh" lang="zh-CN" hidden>参考图</span></button><button type="button" data-name-font="termes" aria-pressed="false"><span class="name-font-preview name-font-termes" aria-hidden="true">Jia Li</span><span data-lang="en" lang="en">Previous</span><span data-lang="zh" lang="zh-CN" hidden>前版</span></button><button type="button" data-name-font="original" aria-pressed="false"><span class="name-font-preview name-font-original" aria-hidden="true">Jia Li</span><span data-lang="en" lang="en">Original</span><span data-lang="zh" lang="zh-CN" hidden>原版</span></button></div></details><div class="language-switch" role="group" aria-label="Page language" hidden><button type="button" data-set-lang="en" aria-pressed="true" lang="en">English</button><button type="button" data-set-lang="zh" aria-pressed="false" lang="zh-CN">中文</button></div></div>
     <section class="about" id="about" aria-labelledby="name"><div class="bio"><h1 id="name"><span class="name-latin">Jia Li</span> <span aria-hidden="true">|</span> <span lang="zh-CN">李嘉</span></h1><p><span data-lang="en" lang="en">I am an undergraduate studying Data Science and Big Data Technology at <a href="https://www.hust.edu.cn/">Huazhong University of Science and Technology</a> (HUST). My research interests are in <strong>robot learning and reinforcement learning</strong>, with a focus on whole-body control and humanoid loco-manipulation.</span><span data-lang="zh" lang="zh-CN" hidden>我是<a href="https://www.hust.edu.cn/">华中科技大学</a>数据科学与大数据技术专业本科生，研究兴趣是<strong>机器人学习与强化学习</strong>，关注全身控制和人形机器人移动操作。</span></p><p><span data-lang="en" lang="en">I am particularly interested in learning <strong>reusable behavioral representations and skills</strong> from motion and interaction data. My recent work spans humanoid motion tracking, unsupervised skill learning and learning loco-manipulation from human videos. I hope to build robots that acquire diverse skills and use them flexibly in new tasks.</span><span data-lang="zh" lang="zh-CN" hidden>我尤其关注如何从运动与交互数据中学习<strong>可复用的行为表征与技能</strong>。近期研究涉及人形机器人动作跟踪、无监督技能学习，以及从人类视频中学习移动操作。我希望机器人能够掌握多样的技能，并在新的任务中灵活运用。</span></p>
       <p class="contact-links"><a href="mailto:li2ga@hust.edu.cn"><span data-lang="en" lang="en">Email</span><span data-lang="zh" lang="zh-CN" hidden>邮件</span></a> <span aria-hidden="true"> / </span> <a href="https://scholar.google.com/citations?user=kRmcGgcAAAAJ&amp;hl=en" target="_blank" rel="noopener noreferrer">Google Scholar</a> <span aria-hidden="true"> / </span> <a href="https://github.com/Huster-LiShuangJia" target="_blank" rel="noopener noreferrer">Github</a> <span aria-hidden="true"> / </span> <a href="assets/profile/wechat-qr.jpg" target="_blank" rel="noopener noreferrer"><span data-lang="en" lang="en">WeChat</span><span data-lang="zh" lang="zh-CN" hidden>微信</span></a> <span aria-hidden="true"> / </span> <a href="assets/documents/Jia-Li-CV.pdf" target="_blank" rel="noopener"><span data-lang="en" lang="en">CV</span><span data-lang="zh" lang="zh-CN" hidden>简历</span></a></p>
     </div><figure class="portrait"><div class="portrait-frame">
@@ -2196,16 +2229,115 @@ main>section:not(.about){margin-top:29px}
   const panel=document.querySelector('[data-music-panel]');
   if(!panel)return;
   const toggle=document.querySelector('[data-music-toggle]'), audio=panel.querySelector('audio');
-  const input=panel.querySelector('input[type=file]'), list=panel.querySelector('select');
-  const localGroup=list.querySelector('[data-local-tracks]'), status=panel.querySelector('[role=status]');
+  const input=panel.querySelector('[data-music-upload]'), list=panel.querySelector('select');
+  const localGroup=list.querySelector('[data-local-tracks]'), status=panel.querySelector('[data-music-status]');
+  const lyricsToggle=panel.querySelector('[data-lyrics-toggle]');
+  const lyricsInput=panel.querySelector('[data-lyrics-upload]');
+  const lyricsDelay=panel.querySelector('[data-lyrics-delay]');
+  const lyricsStatus=panel.querySelector('[data-lyrics-status]');
+  const captions=document.querySelector('[data-music-captions]');
+  const captionLine=captions.querySelector('[data-caption-line]');
   const files=new Map();
+  const lyricsCache=new Map(), delays=new Map();
   let loaded='', objectUrl='', nextLocal=0;
+  let cues=[], cueTrack='', lyricsRequest=0, animationFrame=0;
+  let musicMessage=['',''], lyricsMessage=['',''];
   const zh=()=>document.documentElement.lang.startsWith('zh');
-  const say=(en,cn)=>status.textContent=zh()?cn:en;
+  const say=(en,cn)=>{musicMessage=[en,cn];status.textContent=zh()?cn:en;};
+  const sayLyrics=(en,cn)=>{lyricsMessage=[en,cn];lyricsStatus.textContent=zh()?cn:en;};
+
+  function parseLyrics(text, format){
+    const rows=[];
+    text=text.replace(/^\uFEFF/,'').replace(/\r\n?/g,'\n');
+    const seconds=value=>value.replace(',','.').split(':').reduce((total,part)=>total*60+Number(part),0);
+    if(format==='lrc'){
+      const offset=Number(text.match(/^\[offset:\s*([+-]?\d+)\s*\]/mi)?.[1]||0)/1000;
+      for(const line of text.split('\n')){
+        const stamps=[...line.matchAll(/\[(\d{1,3}:\d{2}(?:\.\d{1,3})?)\]/g)];
+        const content=line.replace(/\[[^\]]*\]/g,'').trim();
+        for(const stamp of stamps)rows.push({start:Math.max(0,seconds(stamp[1])-offset),text:content});
+      }
+    }else{
+      for(const block of text.split(/\n\s*\n/)){
+        const lines=block.split('\n');
+        const at=lines.findIndex(line=>line.includes('-->'));
+        if(at<0)continue;
+        const times=lines[at].match(/((?:\d+:)?\d{1,2}:\d{2}(?:[.,]\d{1,3})?)\s*-->\s*((?:\d+:)?\d{1,2}:\d{2}(?:[.,]\d{1,3})?)/);
+        if(times)rows.push({start:seconds(times[1]),end:seconds(times[2]),text:lines.slice(at+1).join('\n').trim()});
+      }
+    }
+    rows.sort((a,b)=>a.start-b.start);
+    const merged=[];
+    for(const row of rows){
+      if(!Number.isFinite(row.start)||row.start<0)continue;
+      // Subtitles are plain text, including imported files; never render markup.
+      row.text=row.text.replace(/<[^>]*>/g,'').replace(/&(?:amp|lt|gt|quot|apos|nbsp);/g,entity=>({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&apos;':"'",'&nbsp;':' '})[entity]).slice(0,500);
+      const previous=merged[merged.length-1];
+      if(previous?.start===row.start){
+        if(row.text&&!previous.text.split('\n').includes(row.text))previous.text=[previous.text,row.text].filter(Boolean).join('\n');
+        if(row.end)previous.end=Math.max(previous.end||0,row.end);
+      }else merged.push(row);
+    }
+    for(let i=0;i<merged.length;i++){
+      // LRC has no end times. Clear long instrumental gaps instead of leaving a stale line.
+      merged[i].end??=Math.min(merged[i+1]?.start??Infinity,merged[i].start+12);
+    }
+    return merged.filter(row=>row.end>row.start).slice(0,20000);
+  }
+
+  function renderCaptions(){
+    let text='';
+    if(lyricsToggle.checked&&cueTrack===loaded&&loaded===list.value&&!audio.ended&&!audio.error){
+      const time=audio.currentTime-(delays.get(list.value)||0);
+      let low=0,high=cues.length;
+      while(low<high){const mid=(low+high)>>1;if(cues[mid].start<=time)low=mid+1;else high=mid;}
+      const cue=cues[low-1];
+      if(cue&&time<cue.end)text=cue.text;
+    }
+    if(captionLine.textContent!==text)captionLine.textContent=text;
+    captions.hidden=!text;
+  }
+
+  function updateClock(){
+    renderCaptions();
+    const running=lyricsToggle.checked&&cues.length&&!audio.paused&&!audio.ended&&!document.hidden;
+    if(running&&!animationFrame)animationFrame=requestAnimationFrame(()=>{animationFrame=0;updateClock();});
+    if(!running&&animationFrame){cancelAnimationFrame(animationFrame);animationFrame=0;}
+  }
+
+  async function refreshLyrics(){
+    const request=++lyricsRequest, key=list.value, option=list.selectedOptions[0];
+    cues=[];cueTrack='';updateClock();
+    if(!lyricsToggle.checked){sayLyrics('Subtitles are off.','字幕已关闭。');return;}
+    if(!lyricsCache.has(key)){
+      if(!option?.dataset.lyricsSrc){
+        sayLyrics('No timed lyrics for this track yet. Import an LRC, SRT or VTT file.','这首歌暂未配字幕，可导入 LRC、SRT 或 VTT 文件。');return;
+      }
+      const pending=fetch(option.dataset.lyricsSrc).then(response=>{
+        if(!response.ok)throw new Error('Lyrics request failed');
+        return response.text();
+      }).then(text=>parseLyrics(text,'lrc'));
+      lyricsCache.set(key,pending);
+      pending.catch(()=>{if(lyricsCache.get(key)===pending)lyricsCache.delete(key);});
+    }
+    sayLyrics('Loading subtitles…','正在载入字幕…');
+    try{
+      const result=await lyricsCache.get(key);
+      if(request!==lyricsRequest)return;
+      if(!result.some(cue=>cue.text))throw new Error('No timed lyrics');
+      cues=result;cueTrack=key;
+      sayLyrics('Subtitles ready. They follow playback.','字幕已就绪，会跟随播放进度。');
+      updateClock();
+    }catch{
+      if(request===lyricsRequest)sayLyrics('Could not load subtitles. Try switching them off and on, or import a file.','字幕载入失败，可关闭后重开，或导入文件。');
+    }
+  }
+
   function sync(){
     const pressed=String(!audio.paused);
     toggle.setAttribute('aria-pressed',pressed);
     panel.querySelector('[data-music-play]').setAttribute('aria-pressed',pressed);
+    updateClock();
   }
   function loadSelection(){
     const option=list.selectedOptions[0];
@@ -2214,6 +2346,7 @@ main>section:not(.about){margin-top:29px}
     if(files.has(option.value))objectUrl=URL.createObjectURL(files.get(option.value));
     audio.src=objectUrl||option.dataset.musicSrc;
     loaded=option.value;
+    updateClock();
   }
   async function play(){
     try{loadSelection();await audio.play();say('Playing.','正在播放。');}
@@ -2222,6 +2355,8 @@ main>section:not(.about){margin-top:29px}
   function togglePlay(){if(audio.paused)void play();else{audio.pause();say('Paused.','已暂停。')}}
   function selectionChanged(){
     // Changing the selection while paused must not request any music bytes.
+    lyricsDelay.value=String(delays.get(list.value)||0);
+    void refreshLyrics();
     if(!audio.paused)void play();else say('Ready to play.','已选曲，点击播放即可。');
   }
   toggle.addEventListener('click',togglePlay);
@@ -2241,16 +2376,58 @@ main>section:not(.about){margin-top:29px}
     input.value='';
   });
   list.addEventListener('change',selectionChanged);
+  lyricsToggle.addEventListener('change',()=>void refreshLyrics());
+  document.querySelector('[data-lyrics-close]').addEventListener('click',()=>{
+    lyricsToggle.checked=false;void refreshLyrics();
+  });
+  lyricsInput.addEventListener('change',async()=>{
+    const file=lyricsInput.files[0],key=list.value;
+    lyricsInput.value='';
+    if(!file)return;
+    const format=file.name.split('.').pop().toLowerCase();
+    if(!['lrc','srt','vtt'].includes(format)||file.size>2*1024*1024){
+      sayLyrics('Choose an LRC, SRT or VTT file under 2 MB.','请选择 2 MB 以内的 LRC、SRT 或 VTT 文件。');return;
+    }
+    try{
+      const bytes=await file.arrayBuffer();
+      let text;
+      try{text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);}
+      catch{text=new TextDecoder('gb18030').decode(bytes);}
+      const parsed=parseLyrics(text,format);
+      if(!parsed.some(cue=>cue.text))throw new Error('No timed lines');
+      lyricsCache.set(key,Promise.resolve(parsed));
+      if(key!==list.value)return;
+      if(lyricsToggle.checked)void refreshLyrics();
+      else sayLyrics('Subtitles imported. Turn on “Show lyrics” to display them.','字幕已导入，勾选“显示歌词字幕”即可显示。');
+    }catch{if(key===list.value)sayLyrics('No valid timed lines found. Check the subtitle file.','未找到有效的时间轴，请检查字幕文件。');}
+  });
+  lyricsDelay.addEventListener('input',()=>{
+    const delay=Math.max(-30,Math.min(30,Number(lyricsDelay.value)||0));
+    delays.set(list.value,delay);updateClock();
+  });
   audio.addEventListener('ended',()=>{
     const options=[...list.options],at=options.findIndex(option=>option.value===loaded);
-    if(at>=0){list.value=options[(at+1)%options.length].value;void play();}
+    if(at>=0){
+      list.value=options[(at+1)%options.length].value;
+      lyricsDelay.value=String(delays.get(list.value)||0);
+      void refreshLyrics();void play();
+    }
   });
   for(const event of ['play','pause','ended','emptied','error'])audio.addEventListener(event,sync);
+  for(const event of ['timeupdate','seeking','seeked','loadedmetadata'])audio.addEventListener(event,updateClock);
+  document.addEventListener('visibilitychange',updateClock);
+  new MutationObserver(()=>{
+    status.textContent=musicMessage[zh()?1:0];
+    lyricsStatus.textContent=lyricsMessage[zh()?1:0];
+  }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
   audio.volume=.32;
   panel.querySelector('input[type=range]').addEventListener('input',e=>audio.volume=Number(e.target.value));
   window.addEventListener('pagehide',()=>audio.pause());
-  sync();
+  // Keep music and captions off on every page load, even if a browser restores form state.
+  lyricsToggle.checked=false;
+  void refreshLyrics();sync();
 })();
+
 ;
 /* Source: emperor-scene.js */
 "use strict";

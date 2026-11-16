@@ -721,4 +721,18 @@ main>section:not(.about){margin-top:29px}
 .music-panel label{display:grid;gap:4px;margin:12px 0;font-size:14px}
 .music-panel select{max-width:100%;padding:6px;font:inherit}
 .music-panel input[type=file]{max-width:100%}
-@media print{.music-tools,.music-panel{display:none!important}}
+.music-lyrics-settings{margin:18px 0 0;padding:12px;border:1px solid #e8dac5;border-radius:9px;min-width:0}
+.music-lyrics-settings legend{padding:0 5px;font-size:14px;font-weight:700}
+.music-panel .music-lyrics-switch{display:flex;align-items:center;gap:8px;margin:0;cursor:pointer}
+.music-lyrics-switch input{accent-color:#9b733c;width:17px;height:17px;flex-shrink:0}
+.music-panel .music-lyrics-help{color:#6b6053;font-size:12px;margin:10px 0}
+.music-lyrics-delay input{width:85px;padding:5px;font:inherit}
+.music-panel .music-lyrics-status{margin:8px 0 0;color:#685038;min-height:1.45em;font-size:12px}
+.music-captions{position:fixed;z-index:50;bottom:max(24px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:max-content;max-width:min(680px,calc(100% - 28px));box-sizing:border-box;padding:13px 39px 13px 21px;border:1px solid #cdb88f99;border-radius:12px;background:#fffdf5f2;color:#30281e;box-shadow:0 4px 24px #2b20151a;pointer-events:none;text-align:center}
+.music-captions[hidden]{display:none}
+.music-captions-line{display:block;font:500 clamp(15px,1.3vw,19px)/1.6 'Lato','Microsoft YaHei',sans-serif;letter-spacing:.03em;white-space:pre-line;overflow-wrap:anywhere}
+.music-captions button{position:absolute;right:3px;top:3px;min-width:32px;min-height:32px;padding:0;border:0;border-radius:8px;background:transparent;color:#786349;font-size:22px;line-height:1;cursor:pointer;pointer-events:auto}
+.music-captions button:hover{background:#eadcc56b}
+.music-captions button:focus-visible{outline:2px solid #9b733c;outline-offset:-2px}
+@media(max-width:600px){.music-captions{bottom:max(14px,env(safe-area-inset-bottom));padding:11px 35px 11px 16px}.music-panel{padding:18px}.music-lyrics-settings{padding:10px}}
+@media print{.music-tools,.music-panel,.music-captions{display:none!important}}

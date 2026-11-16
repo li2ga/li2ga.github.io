@@ -313,11 +313,35 @@ def music_control():
         ('wen', '问 · 陈家淇', 'wen-v1.flac'),
         ('our-adventure', '我们的冒险 · 曹寅', 'our-adventure-v1.mp3'),
     )
-    choices = ''.join(
-        f'<option value="{key}" data-music-src="assets/audio/{file}?v={hashlib.sha256((ROOT / "assets/audio" / file).read_bytes()).hexdigest()[:10]}">{esc(title)}</option>'
-        for key, title, file in tracks
-    )
-    return f'''<div class="music-tools"><button type="button" data-music-toggle aria-pressed="false" aria-label="Background music" data-label-en="Background music" data-label-zh="背景音乐">♪</button><button type="button" data-music-settings aria-label="Choose music" data-label-en="Choose music" data-label-zh="选择背景音乐">⌄</button></div><dialog class="music-panel" data-music-panel aria-labelledby="music-heading"><header><h2 id="music-heading">{pair('Background music','背景音乐')}</h2><form method="dialog"><button type="submit">{pair('Close','关闭')}</button></form></header><p>{pair('Play a track from the playlist or add your own audio. Your files stay on this device.','可以播放内置歌单，也可以添加自己的音频。你选择的文件只在本机播放。')}</p><label>{pair('Add your own audio','添加本机音频')}<input type="file" accept="audio/*,.flac,.opus" multiple></label><label>{pair('Track','歌曲')}<select><optgroup label="内置歌单 / Built-in tracks">{choices}</optgroup><optgroup label="本机音频 / Your files" data-local-tracks hidden></optgroup></select></label><label>{pair('Volume','音量')}<input type="range" min="0" max="1" value="0.32" step="0.01"></label><button type="button" data-music-play aria-pressed="false">{pair('Play / pause','播放／暂停')}</button><p role="status"></p><audio preload="none"></audio></dialog>'''
+    choices = []
+    for key, title, file in tracks:
+        music_hash = hashlib.sha256((ROOT / 'assets/audio' / file).read_bytes()).hexdigest()[:10]
+        lyrics = ROOT / 'assets/lyrics' / (Path(file).stem + '.lrc')
+        subtitle_attr = ''
+        if lyrics.is_file():
+            lyric_hash = hashlib.sha256(lyrics.read_bytes()).hexdigest()[:10]
+            subtitle_attr = f' data-lyrics-src="assets/lyrics/{lyrics.name}?v={lyric_hash}"'
+        choices.append(f'<option value="{key}" data-music-src="assets/audio/{file}?v={music_hash}"{subtitle_attr}>{esc(title)}</option>')
+    return f'''<div class="music-tools"><button type="button" data-music-toggle aria-pressed="false" aria-label="Background music" data-label-en="Background music" data-label-zh="背景音乐">♪</button><button type="button" data-music-settings aria-label="Choose music" data-label-en="Choose music" data-label-zh="选择背景音乐">⌄</button></div>
+<dialog class="music-panel" data-music-panel aria-labelledby="music-heading">
+<header><h2 id="music-heading">{pair('Background music','背景音乐')}</h2><form method="dialog"><button type="submit">{pair('Close','关闭')}</button></form></header>
+<p>{pair('Play a track from the playlist or add your own audio. Your files stay on this device.','可以播放内置歌单，也可以添加自己的音频。你选择的文件只在本机播放。')}</p>
+<label>{pair('Add your own audio','添加本机音频')}<input data-music-upload type="file" accept="audio/*,.flac,.opus" multiple></label>
+<label>{pair('Track','歌曲')}<select><optgroup label="内置歌单 / Built-in tracks">{''.join(choices)}</optgroup><optgroup label="本机音频 / Your files" data-local-tracks hidden></optgroup></select></label>
+<label>{pair('Volume','音量')}<input type="range" min="0" max="1" value="0.32" step="0.01"></label>
+<button type="button" data-music-play aria-pressed="false">{pair('Play / pause','播放／暂停')}</button>
+<fieldset class="music-lyrics-settings"><legend>{pair('Lyrics subtitles','歌词字幕')}</legend>
+<label class="music-lyrics-switch"><input data-lyrics-toggle type="checkbox" aria-controls="music-captions">{pair('Show lyrics · off by default','显示歌词字幕 · 默认关闭')}</label>
+<p class="music-lyrics-help">{pair('Timed lyrics are available for Bu Mie and Wen Ding. For other tracks, import a subtitle file below.','《不灭》《问鼎》已内置时间轴歌词，其他歌曲可在下方导入字幕。')}</p>
+<label>{pair('Import subtitles for the selected track','为当前歌曲导入字幕')}<input data-lyrics-upload type="file" accept=".lrc,.srt,.vtt"></label>
+<label class="music-lyrics-delay">{pair('Subtitle delay (seconds; negative = earlier)','字幕延迟（秒，负数提前）')}<input data-lyrics-delay type="number" min="-30" max="30" step="0.1" value="0" inputmode="decimal"></label>
+<p class="music-lyrics-status" data-lyrics-status role="status"></p>
+</fieldset>
+<p data-music-status role="status"></p><audio preload="none"></audio></dialog>
+<div class="music-captions" id="music-captions" data-music-captions hidden>
+<span class="music-captions-line" data-caption-line></span>
+<button type="button" data-lyrics-close aria-label="Hide lyrics" data-label-en="Hide lyrics" data-label-zh="关闭歌词字幕">×</button>
+</div>'''
 
 
 def runtime_bundle(name, modules):

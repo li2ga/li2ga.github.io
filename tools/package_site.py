@@ -38,6 +38,7 @@ PUBLIC_FILES = [
     "assets/audio/wen-v1.flac",
     "assets/audio/wen-xing-v1.flac",
     "assets/audio/shou-ni-suo-wang-v1.flac",
+    "assets/lyrics/bu-mie-instrumental-v1.lrc", "assets/lyrics/wen-ding-v1.lrc",
     "emperor-scene.js", "emperor-scene.css", "emperor-preview.html", "emperor-flames.html",
     "assets/backgrounds/tuoshe-emperor-v1.png",
     "assets/backgrounds/heavenly-flame-ruler-v1.png",
