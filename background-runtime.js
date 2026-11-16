@@ -231,6 +231,54 @@
       body.rgb=clamp(body.rgb*(1.+field*pulse*.17),0.,1.);
       return vec4(body.rgb*body.a,body.a);
     }
+    float soulEnergy(vec2 p){
+      vec4 c=artwork(p);
+      return dot(c.rgb,vec3(.27,.54,.19))*c.a;
+    }
+    vec4 emperorSoul(vec2 p){
+      vec4 original=artwork(p);
+      vec2 hub=vec2(.5,.46),delta=p-hub;
+      // The small human stays anatomically rigid. The surrounding enclosure is flame.
+      float prior=step(2.5,referenceFlow);
+      vec2 humanCenter=mix(vec2(.493,.459),vec2(.494,.486),prior);
+      vec2 humanSize=mix(vec2(.016,.046),vec2(.019,.061),prior);
+      float human=1.-smoothstep(.88,1.12,length((p-humanCenter)/humanSize));
+      if(human>.995)return vec4(original.rgb*original.a,original.a);
+      float t=flameClock;
+      vec2 radial=normalize(delta+vec2(.00001,.00002));
+      // Follow the source filaments' local tangent, rather than zooming the image.
+      vec2 e=vec2(.0012,.0028);
+      vec2 gradient=vec2(soulEnergy(p+vec2(e.x,0.))-soulEnergy(p-vec2(e.x,0.)),
+                         soulEnergy(p+vec2(0.,e.y))-soulEnergy(p-vec2(0.,e.y)));
+      vec2 tangent=normalize(vec2(-gradient.y,gradient.x)+radial*.014);
+      if(dot(tangent,radial)<0.)tangent=-tangent;
+      float band=smoothstep(.19,.34,abs(delta.x));
+      vec2 direction=normalize(mix(radial,tangent,.62*band));
+      float n=fireFbm(vec3(p*vec2(24.,15.)-direction*t*.39,t*.24));
+      float grain=fireNoise(vec3(p*vec2(67.,43.)-direction*t*1.1,t*.31));
+      float cyan=smoothstep(.90,1.05,original.b/max(original.r,.015));
+      float gold=smoothstep(.15,.42,original.r-original.b)*band;
+      float enclosure=(1.-smoothstep(.035,.083,abs(delta.x)))*smoothstep(.51,.70,p.y);
+      direction=normalize(mix(direction,vec2(.16*sin(p.y*16.-t*1.8),1.),enclosure*.85));
+      // Fine colored streams travel quickly; larger gold scrolls roll more slowly.
+      float speed=mix(.54,.25,gold),distance=mix(.019,.010,gold);
+      distance*=1.-human;
+      float a=fract(t*speed),b=fract(t*speed+.5);
+      vec2 curl=vec2(-direction.y,direction.x)*(n-.5)*(.008+cyan*.003);
+      curl+=vec2(0.,sin(p.x*15.+t*.72)*.0035)*band;
+      vec4 first=artwork(p-direction*(a-.5)*distance+curl*(1.-human));
+      vec4 second=artwork(p-direction*(b-.5)*distance+curl*(1.-human));
+      float wa=pow(sin(a*3.14159265),2.),wb=pow(sin(b*3.14159265),2.);
+      vec4 flow=(first*wa+second*wb)/max(wa+wb,.001);
+      float amount=(1.-human)*mix(.85,.62,gold);
+      vec3 color=mix(original.rgb,flow.rgb,amount);
+      // Keep the complete original structure and its alpha while material moves.
+      float alpha=max(original.a,mix(original.a,flow.a,amount));
+      float along=length(delta*vec2(1.,.66))*58.-t*(4.8+cyan*1.3)+n*3.;
+      float streak=pow(max(0.,sin(along)),14.);
+      color*=1.+(1.-human)*(streak*.17+(grain-.5)*.035);
+      return vec4(clamp(color,0.,1.)*alpha,alpha);
+    }
     vec4 emperorSample(vec2 p){
       vec4 color=artwork(p);
       // Generated atlas cells contain a few neighboring-tip specks at their
@@ -366,6 +414,7 @@
     void main(){
       if(mode>7.5){gl_FragColor=rulerDetail(uv);return;}
       if(mode>.5&&mode<1.5){
+        if(referenceFlow>1.5){gl_FragColor=emperorSoul(uv);return;}
         if(referenceFlow>.5){gl_FragColor=tuosheReference(uv);return;}
         if(variant>30.&&variant<60.&&motionProfile.y>0.)gl_FragColor=emperorFlameDetail(uv);
         else gl_FragColor=variant<100.?detailFlame(uv):livingFlame(uv);
@@ -655,7 +704,7 @@
       gl.uniform1f(locations.mode, entry.mode);
       // Restored paintings share the fine gold-branch material protection.
       gl.uniform1f(locations.variant, entry.mode===1&&(entry.variant===14||entry.variant===15)?12:entry.variant);
-      gl.uniform1f(locations.referenceFlow, entry.variant===16||(entry.variant===13&&entry.image.currentSrc.includes('fire-lotus-tuoshe-v2'))?1:0);
+      gl.uniform1f(locations.referenceFlow, entry.variant===16?(entry.image.currentSrc.includes('fire-lotus-tuoshe-streams')?3:2):(entry.variant===13&&entry.image.currentSrc.includes('fire-lotus-tuoshe-v2')?1:0));
       const personality=entry.variant>30&&entry.variant<60?emperorProfiles[entry.variant-31]:null;
       gl.uniform4fv(locations.motionProfile,personality&&!classicEmperor
         ?[personality.family,personality.speed,personality.bend,personality.trail]:[0,0,0,0]);
@@ -670,7 +719,7 @@
       entry.context.drawImage(surface,0,0);
       if(coldSnowEnabled&&entry.mode===1&&entry.variant===1)drawColdSnow(entry,time);
       if(!classicEmperor&&entry.mode===1&&entry.variant===41)drawBoneCold(entry,time);
-      if (entry.key.matches('img') && !entry.fullyRevealed) {
+      if ((entry.key.matches('img') || entry.key.hasAttribute('data-emperor-soul-host')) && !entry.fullyRevealed) {
         const opacity=getComputedStyle(entry.image).opacity;
         entry.canvas.style.opacity=opacity;
         entry.fullyRevealed=Number(opacity)>=.999;
@@ -866,6 +915,11 @@
       if (host && image) install(element,host,image,1,stage);
     },
     imagery(image) {
+      if (image.hasAttribute('data-emperor-soul')) {
+        if (!image.isConnected || !image.parentElement) return;
+        install(image.parentElement,image.parentElement,image,1,16);
+        return;
+      }
       const object=image.closest('.imagery-object');
       if (object) install(image,image.parentElement,image,subjects[object.dataset.imageryObject]??0);
       // The grounded ruler keeps its original still artwork, without a flame overlay.

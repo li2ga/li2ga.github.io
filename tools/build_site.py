@@ -21,13 +21,12 @@ LOTUS_STAGES = [
     ('tuoshe', 'Tuoshe lotus', '古帝火莲'),
     ('branches-original', 'Golden branches · original', '金枝柔焰 · 原版'),
     ('branches-middle', 'Golden veins · intermediate', '金粉脉络 · 中版'),
-    ('tuoshe-streams', 'Myriad flame streams', '古帝万焰流光'),
 ]
 
 
 def lotus_artworks():
     # Keep saved stage IDs stable while placing the three gold versions together.
-    stages = sorted(enumerate(LOTUS_STAGES), key=lambda item: item[1][0].startswith('tuoshe'))
+    stages = sorted(enumerate(LOTUS_STAGES), key=lambda item: item[1][0] == 'tuoshe')
     for stage, (slug, en, zh) in stages:
         extension = 'svg' if slug == 'emperor' else 'png'
         source = f'assets/backgrounds/fire-lotus-{slug}-v1.{extension}'
@@ -156,7 +155,7 @@ def background_art():
 
 def background_controls():
     choices=[('trajectory','Trajectories','轨迹'),('ziwei-cinematic','Celestial procession','斗数意象'),('ganzhi-cinematic','Living elements','八字意象'),
-             ('lotus','Lotus evolution','火莲演变'),('emperor','Emperor & 23 flames','古帝 · 二十三异火'),('auto','Auto rotate','自动轮换')]
+             ('lotus','Lotus evolution','火莲演变'),('xiaoyan-soul','Xiao Yan · Emperor Soul','萧炎 · 帝境灵魂'),('emperor','Emperor & 23 flames','古帝 · 二十三异火'),('auto','Auto rotate','自动轮换')]
     buttons=''.join(f'<button type="button" data-background="{key}" aria-pressed="{str(key=="auto").lower()}">{pair(en,zh)}</button>' for key,en,zh in choices)
     older=''.join(f'<button type="button" data-background="{key}" aria-pressed="false">{pair(en,zh)}</button>' for key,en,zh in [('lotus-still','Pearl lotus study','粉白莲原版'),('lotus-classic','First lotus','初版火莲')])
     lotus_buttons=[]
@@ -174,6 +173,8 @@ def background_controls():
       <div class="background-options"><div class="background-choices" role="group" aria-label="Background scene" data-label-en="Background scene" data-label-zh="背景图案">{buttons}</div><details class="background-archive"><summary>{pair('Previous studies','之前的方案')}</summary><div class="background-choices">{older}</div></details>
       <div class="lotus-options" hidden><div class="lotus-stage-buttons" role="group" aria-label="Lotus stages" data-label-en="Lotus stages" data-label-zh="火莲形态">{lotus_buttons}</div><button type="button" class="lotus-play-toggle" data-lotus-toggle aria-pressed="false">{pair('Pause evolution','暂停演变')}</button><p class="lotus-load-status" data-lotus-status role="status" aria-live="polite" hidden></p><button type="button" data-lotus-retry hidden>{pair('Try again','重新加载')}</button></div><p class="emperor-preview-link" hidden><a href="emperor-preview.html">{pair('View the Emperor scene','展开古帝全景')}</a></p>
       <p class="seven-star-preview-link" hidden><a href="seven-star-preview.html">{pair('Xiao Yan & Lin Dong','萧炎与林动全景')}</a><br><a href="pink-lotus-comparison.html">{pair('Golden lotus · three versions','金枝火莲三版对比')}</a><br><a href="tuoshe-lotus-comparison.html">{pair('Tuoshe lotus · compare','古帝莲左右对比')}</a></p>
+      <p class="soul-preview-link" hidden><a href="xiaoyan-soul-preview.html">{pair('View the Emperor Soul panorama','展开帝境灵魂全景')}</a></p>
+      <div class="background-placement soul-options" role="group" aria-label="Emperor Soul artwork" hidden><button type="button" data-soul-version="original" aria-pressed="false">{pair('Original painting','原画')}</button><button type="button" data-soul-version="corrected" aria-pressed="true">{pair('Xiao Yan revision','萧炎修正版')}</button></div>
       <div class="imagery-load-options" data-imagery-options hidden><p class="lotus-load-status" data-imagery-status role="status" aria-live="polite" hidden></p><button type="button" data-imagery-retry hidden>{pair('Reload missing artwork','重试未加载的形象')}</button></div>
       <div class="background-placement" role="group" aria-label="Background placement" data-label-en="Background placement" data-label-zh="背景位置">
       <button type="button" data-background-layout="fixed" aria-pressed="true">{pair('Stay in view','固定视窗')}</button>
@@ -443,6 +444,7 @@ def build_homepage():
     (ROOT/'index.html').write_text(page,encoding='utf-8',newline='\n')
     (ROOT/'emperor-preview.html').write_text(runpy.run_path(str(ROOT/'tools/emperor_art.py'))['preview'](),encoding='utf-8',newline='\n')
     (ROOT/'emperor-flames.html').write_text(runpy.run_path(str(ROOT/'tools/emperor_art.py'))['motion_preview'](),encoding='utf-8',newline='\n')
+    (ROOT/'xiaoyan-soul-preview.html').write_text(runpy.run_path(str(ROOT/'tools/soul_art.py'))['preview'](),encoding='utf-8',newline='\n')
     refresh_motion_preview()
     refresh_flame_gallery()
 

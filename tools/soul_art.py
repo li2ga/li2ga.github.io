@@ -1,0 +1,30 @@
+"""Xiao Yan's Emperor Soul, studied from EP217 07:20–07:24."""
+import hashlib
+from pathlib import Path
+
+ROOT=Path(__file__).resolve().parents[1]
+ASSET='assets/backgrounds/xiaoyan-emperor-soul-v2-lossless.webp'
+ORIGINAL='assets/backgrounds/fire-lotus-tuoshe-streams-v1-lossless.webp'
+
+def version(name):
+    return name+'?v='+hashlib.sha256((ROOT/name).read_bytes()).hexdigest()[:12]
+
+def scene():
+    motifs=''.join(f'<div class="soul-composition" data-soul-placement="{side}"><div class="soul-render" data-emperor-soul-host>'
+                   f'<img data-emperor-soul data-imagery-src="{version(ASSET)}" alt="" decoding="async">'
+                   '</div></div>' for side in ('left','right'))
+    return (f'<div class="atmosphere-theme soul-scene has-raster-art" data-background-scene="xiaoyan-soul" data-soul-original-src="{version(ORIGINAL)}" data-soul-corrected-src="{version(ASSET)}">'
+            '<div class="background-presence">'+motifs+'</div></div>')
+
+def preview():
+    return '''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><title>萧炎 · 帝境灵魂 | Jia Li</title><link rel="icon" href="assets/favicon.png"><style>
+*{box-sizing:border-box}body{margin:0;background:#0b1019;color:#e8edf4;font:15px/1.7 Georgia,'Microsoft YaHei',serif}body.light{background:#faf9f7;color:#26303a}header,footer{padding:22px 30px;max-width:1740px;margin:auto}header{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}h1{font-size:clamp(25px,3vw,40px);font-weight:400;letter-spacing:.12em;margin:0}p{margin:5px 0;opacity:.68}nav{display:flex;gap:12px;flex-wrap:wrap;align-items:center}a,button{color:inherit}a{text-decoration:none;border-bottom:1px solid #ab956a}button{font:inherit;cursor:pointer;padding:7px 15px;border:1px solid #8796a455;border-radius:20px;background:none}.page-atmosphere{position:relative;max-width:1920px;margin:auto;overflow:hidden}.stage{position:relative;aspect-ratio:1919/820;min-height:220px}.soul-render{position:absolute;inset:0}.soul-render img,.art-loop-canvas{width:100%;height:100%;object-fit:contain;display:block}.soul-render.has-art-loop>img{visibility:hidden}.art-loop-canvas{position:absolute;inset:0}.art-loop-canvas[hidden]{display:none!important}footer{font-size:13px}.focus .stage{aspect-ratio:16/9}.focus .soul-render{inset:-35% -65%;transform:translateY(1%)}button:focus-visible,a:focus-visible{outline:2px solid #d1b879;outline-offset:4px}@media(max-width:700px){header,footer{padding:18px}.stage{min-height:0}nav{gap:9px}button{padding:6px 11px}}@media(prefers-reduced-motion:reduce){.art-loop-canvas{display:none!important}.soul-render.has-art-loop>img{visibility:visible}}
+</style><header><div><h1>萧炎 · 帝境灵魂</h1><p>人立焰心 · 万流向外</p></div><nav><a href="./?background=xiaoyan-soul">个人主页</a><a href="tuoshe-lotus-comparison.html">陀舍古帝火莲</a><button id="painting" data-original-src="'''+version(ORIGINAL)+'''">原画动态</button><button id="tone">浅色背景</button><button id="focus" aria-pressed="false">细看人物</button><button id="motion" aria-pressed="true">暂停动态</button></nav></header><main class="page-atmosphere" data-art-scope="gallery" data-art-motion="loop" data-background-current="xiaoyan-soul"><div class="stage" data-background-scene="xiaoyan-soul" data-active><div class="soul-render" data-emperor-soul-host><img id="soul" data-emperor-soul src="'''+version(ASSET)+'''" alt="萧炎位于青白光焰中央，彩色细流与金色卷纹向两翼延展"></div></div></main><footer><p id="status" role="status">正在加载全景…</p><p>人物比例保持原镜头的小尺度；“细看人物”仅放大查看。<a href="https://www.youtube.com/watch?v=TJywssCbxN8&amp;t=440" target="_blank" rel="noopener">第 217 集参考段 ↗</a></p></footer><script src="'''+version('art-loops.js')+'''"></script><script>
+const root=document.querySelector('.page-atmosphere'),initial=document.querySelector('#soul'),host=initial.parentElement,painting=document.querySelector('#painting');
+const pictures=new Map([['corrected',initial]]);let selected='corrected',sequence=0;
+async function choosePainting(kind){const token=++sequence;let im=pictures.get(kind);if(!im){im=new Image();im.alt=initial.alt;im.id='soul';im.setAttribute('data-emperor-soul','');im.src=painting.dataset.originalSrc;pictures.set(kind,im)}try{await im.decode();if(token!==sequence)return;const current=host.querySelector('img');if(current!==im)current.replaceWith(im);im.setAttribute('data-art-ready','');JiaArtLoops.imagery(im);selected=kind;painting.textContent=kind==='corrected'?'原画动态':'萧炎修正版';document.querySelector('#status').textContent=(kind==='original'?'原画保留 · ':'小比例萧炎 · ')+'青白光焰上行 · 彩流奔涌 · 金纹翻卷'}catch(_){document.querySelector('#status').textContent='图片加载失败，请刷新重试'}}
+choosePainting('corrected');painting.onclick=()=>choosePainting(selected==='corrected'?'original':'corrected');
+document.querySelector('#tone').onclick=e=>{const light=document.body.classList.toggle('light');e.currentTarget.textContent=light?'深色背景':'浅色背景'};
+document.querySelector('#focus').onclick=e=>{const focus=document.body.classList.toggle('focus');e.currentTarget.textContent=focus?'完整全景':'细看人物';e.currentTarget.setAttribute('aria-pressed',String(focus));JiaArtLoops.wake()};
+document.querySelector('#motion').onclick=e=>{const play=root.dataset.artMotion==='still';root.dataset.artMotion=play?'loop':'still';e.currentTarget.textContent=play?'暂停动态':'播放动态';e.currentTarget.setAttribute('aria-pressed',String(play));JiaArtLoops.wake()};
+</script></html>'''

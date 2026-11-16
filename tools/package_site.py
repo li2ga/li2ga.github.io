@@ -65,6 +65,7 @@ PUBLIC_FILES = [
     "assets/backgrounds/fire-lotus-emperor-v1.svg",
     "assets/backgrounds/fire-lotus-tuoshe-v1.png",
     "assets/backgrounds/fire-lotus-tuoshe-v2-lossless.webp", "tuoshe-lotus-comparison.html",
+    "xiaoyan-soul-preview.html", "assets/backgrounds/xiaoyan-emperor-soul-v2-lossless.webp",
     "assets/backgrounds/fire-lotus-tuoshe-streams-v1-lossless.webp",
     "assets/backgrounds/fire-lotus-destruction-v1.png",
     "assets/backgrounds/fire-lotus-radial-v1.png",

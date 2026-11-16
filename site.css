@@ -28,6 +28,17 @@ strong,h3{font-weight:700}
 .atmosphere-definitions{position:absolute;width:0;height:0;overflow:hidden}
 .atmosphere-theme{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity 1.4s ease,visibility 0s 1.4s}
 .atmosphere-theme[data-active]{opacity:1;visibility:visible;transition:opacity 1.4s ease,visibility 0s}
+.soul-composition{position:absolute;left:calc((100vw - 800px)/4);top:35vh;width:clamp(220px,calc((100vw - 800px)/2 + 28px),550px);aspect-ratio:1919/820;opacity:.56;transform:translate(-50%,-50%);animation:soul-drift 27s ease-in-out infinite alternate;animation-play-state:var(--scene-motion,paused)}
+.soul-composition[data-soul-placement=right]{left:calc(100vw - (100vw - 800px)/4);top:70vh;opacity:.46;animation-duration:34s;animation-delay:-13s}
+.soul-render{position:absolute;inset:0;transform:translate3d(calc(var(--trace-x,0px)*.6),calc(var(--trace-y,0px)*.6),0)}
+.soul-render>img,.soul-render>.art-loop-canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:saturate(.82)}
+.soul-render>img{opacity:0;transition:opacity 1.8s ease}
+.soul-render>img[data-art-ready]{opacity:1}
+.soul-render.has-art-loop>img{visibility:hidden}
+.page-atmosphere[data-background-layout=page] .soul-composition{top:18%}
+.page-atmosphere[data-background-layout=page] .soul-composition[data-soul-placement=right]{top:64%}
+@keyframes soul-drift{from{transform:translate(-50%,-50%) translateY(-9px)}to{transform:translate(-50%,-50%) translateY(12px)}}
+@media(prefers-reduced-motion:reduce){.soul-composition{animation:none}.soul-render{transform:none}.soul-render.has-art-loop>img{visibility:visible}.soul-render>img{transition:none}}
 .atmosphere-motif{position:absolute;width:clamp(110px,calc((100vw - 880px)/2),280px);height:auto;overflow:visible;transform:translate3d(var(--trace-x,0px),var(--trace-y,0px),0);animation:motif-breathe 18s ease-in-out infinite alternate;animation-play-state:paused}
 .page-atmosphere.is-moving .atmosphere-theme[data-active] .atmosphere-motif{animation-play-state:running}
 .motif-top-left,.motif-lower-left{left:max(8px,calc((100vw - 1400px)/2))}
@@ -263,8 +274,7 @@ strong,h3{font-weight:700}
 .lotus-evolution[data-lotus-stage="12"]>.lotus-float>.lotus-hover>.lotus-frame[data-lotus-frame="12"],
 .lotus-evolution[data-lotus-stage="13"]>.lotus-float>.lotus-hover>.lotus-frame[data-lotus-frame="13"],
 .lotus-evolution[data-lotus-stage="14"]>.lotus-float>.lotus-hover>.lotus-frame[data-lotus-frame="14"],
-.lotus-evolution[data-lotus-stage="15"]>.lotus-float>.lotus-hover>.lotus-frame[data-lotus-frame="15"],
-.lotus-evolution[data-lotus-stage="16"]>.lotus-float>.lotus-hover>.lotus-frame[data-lotus-frame="16"]{opacity:var(--lotus-frame-peak,1);transform:scale(1)}
+.lotus-evolution[data-lotus-stage="15"]>.lotus-float>.lotus-hover>.lotus-frame[data-lotus-frame="15"]{opacity:var(--lotus-frame-peak,1);transform:scale(1)}
 .lotus-load-status{margin:7px 0 0;color:#755d49;font-size:11px;line-height:1.5}
 .lotus-stage-buttons button[aria-busy=true]{border-style:dashed;opacity:.65}
 .lotus-energy{position:absolute;inset:0;width:100%;height:100%;overflow:visible;opacity:.55}

@@ -174,7 +174,7 @@
   }
 
   const backgroundSwitch = document.querySelector(".background-switch");
-  const backgroundScenes = ["trajectory", "ziwei-cinematic", "ganzhi-cinematic", "lotus", "emperor"];
+  const backgroundScenes = ["trajectory", "ziwei-cinematic", "ganzhi-cinematic", "lotus", "xiaoyan-soul", "emperor"];
   const availableBackgrounds = [...backgroundScenes, "lotus-still", "lotus-classic"];
   const wideBackground = window.matchMedia("(min-width: 1041px)");
   const autoBackgroundButton = document.querySelector('[data-background="auto"]');
@@ -182,6 +182,8 @@
   let backgroundVisibility = "clear";
   let backgroundTimer = 0;
   const lotusScene = atmosphere?.querySelector('[data-background-scene="lotus"]');
+  const soulScene = atmosphere?.querySelector('[data-background-scene="xiaoyan-soul"]');
+  const soulImages = new Map([['corrected',[...(soulScene?.querySelectorAll('img[data-emperor-soul]') || [])]]]);
   const lotusOptions = document.querySelector('.lotus-options');
   const lotusToggle = document.querySelector('[data-lotus-toggle]');
   const lotusButtons = [...document.querySelectorAll('button[data-lotus-stage]')];
@@ -197,7 +199,7 @@
     fixed: { offsets: [0, 4, 2, 6], holds: [5600, 8300, 6500, 9700] },
     page: { offsets: [0, 1, 3, 5], holds: [4300, 6100, 7600, 5200] }
   };
-  const lotusStageHolds = [1, 1.18, .91, 1.11, 1.26, 1.14, .95, 1.22, 1.24, 1.18, 1.20, 1.5, 1.6, 1.55, 1.6, 1.6, 1.8];
+  const lotusStageHolds = [1, 1.18, .91, 1.11, 1.26, 1.14, .95, 1.22, 1.24, 1.18, 1.20, 1.5, 1.6, 1.55, 1.6, 1.6];
   const lotusItems = [...(lotusScene?.querySelectorAll('[data-lotus-instance]') || [])].map((element, index) => ({
     element, index, stage: null, desiredStage: null, pending: false, error: false,
     timer: 0, dueAt: 0, remaining: null, request: 0
@@ -508,15 +510,42 @@
     }
   }
   document.addEventListener('jia-character-change', syncImagery);
+  document.querySelectorAll('button[data-soul-version]').forEach(button => {
+    button.addEventListener('click', () => {
+      if (!soulScene) return;
+      const version=button.dataset.soulVersion;
+      let next=soulImages.get(version);
+      if (!next) {
+        next=[...soulScene.querySelectorAll('[data-emperor-soul-host]')].map(() => {
+          const image=new Image();image.alt='';image.decoding='async';
+          image.setAttribute('data-emperor-soul','');
+          image.dataset.imagerySrc=version==='original'?soulScene.dataset.soulOriginalSrc:soulScene.dataset.soulCorrectedSrc;
+          return image;
+        });
+        soulImages.set(version,next);
+      }
+      soulScene.querySelectorAll('[data-emperor-soul-host]').forEach((host,index) => {
+        const current=host.querySelector('img[data-emperor-soul]'),image=next[index];
+        if (current!==image) current.replaceWith(image);
+        if (image.hasAttribute('data-art-ready')) window.JiaArtLoops?.imagery(image);
+      });
+      document.querySelectorAll('button[data-soul-version]').forEach(option => option.setAttribute('aria-pressed',String(option===button)));
+      syncImagery();
+    });
+  });
   function updateBackgroundLabels() {
     updateLotusLabels();
     updateImageryStatus();
     const motionOptions = document.querySelector('[data-art-motion-options]');
-    if (motionOptions) motionOptions.hidden = !['lotus','emperor','ziwei-cinematic','ganzhi-cinematic'].includes(atmosphere?.dataset.backgroundCurrent);
+    if (motionOptions) motionOptions.hidden = !['lotus','emperor','xiaoyan-soul','ziwei-cinematic','ganzhi-cinematic'].includes(atmosphere?.dataset.backgroundCurrent);
     const emperorLink = document.querySelector('.emperor-preview-link');
     if (emperorLink) emperorLink.hidden = atmosphere?.dataset.backgroundCurrent !== 'emperor';
     const sevenStarLink = document.querySelector('.seven-star-preview-link');
     if (sevenStarLink) sevenStarLink.hidden = atmosphere?.dataset.backgroundCurrent !== 'lotus';
+    const soulLink = document.querySelector('.soul-preview-link');
+    if (soulLink) soulLink.hidden = atmosphere?.dataset.backgroundCurrent !== 'xiaoyan-soul';
+    const soulOptions = document.querySelector('.soul-options');
+    if (soulOptions) soulOptions.hidden = atmosphere?.dataset.backgroundCurrent !== 'xiaoyan-soul';
     if (!autoBackgroundButton) return;
     autoBackgroundButton.disabled = reducedMotion.matches;
     autoBackgroundButton.title = reducedMotion.matches
@@ -629,6 +658,9 @@
       savedArtMotion = localStorage.getItem('jia-li-art-motion') || savedArtMotion;
     } catch (_) { /* Default rotation and fading also work without storage. */ }
     const comparison = new URLSearchParams(location.search);
+    // Keep links from the earlier misnamed study pointed at the correct scene.
+    if (comparison.get('lotus') === 'tuoshe-streams') comparison.set('background','xiaoyan-soul');
+    if (comparison.get('background') === 'xiaoyan-soul') backgroundUserInitiated = true;
     const requestedLotus = lotusButtons.find(button => button.dataset.lotusName === comparison.get('lotus'));
     if (requestedLotus) {
       lotusPaused = true;
