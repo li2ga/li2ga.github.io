@@ -1,0 +1,390 @@
+{
+  "updated": "2026-11-16T12:02:53.146881-06:00",
+  "tracks": [
+    {
+      "key": "shou-ni-suo-wang",
+      "title": "守你所望 · 刘端端",
+      "audio": "assets/audio/shou-ni-suo-wang-v1.flac",
+      "subtitle": "assets/lyrics/shou-ni-suo-wang-v1.lrc",
+      "audio_duration_seconds": 197.419375,
+      "timed_lines": 97,
+      "last_timestamp_seconds": 180.84,
+      "subtitle_sha256": "213163f7c2fbc91b981aed819753a6b1806b9e7de7e9a361358024028d7bfa3b",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/0032sUU30Z6o96",
+      "source_title": "守你所望",
+      "source_artists": [
+        "刘端端"
+      ],
+      "source_album": "守你所望 (《斗破苍穹年番4》动画插曲&片尾曲)",
+      "source_duration_seconds": 198,
+      "source_duration_delta_seconds": 0.581,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "chi-nian",
+      "title": "炽念 · 柯淳",
+      "audio": "assets/audio/chi-nian-v1.mp3",
+      "subtitle": "assets/lyrics/chi-nian-v1.lrc",
+      "audio_duration_seconds": 257.424,
+      "timed_lines": 49,
+      "last_timestamp_seconds": 234.81,
+      "subtitle_sha256": "576203e5b87d9277bdaee15d2ef646e44d4807f5335ee185b0b2b98e3a4fa6a1",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/003gIaNn2faTzU",
+      "source_title": "炽念",
+      "source_artists": [
+        "柯淳"
+      ],
+      "source_album": "炽念 (《斗破苍穹年番4》动画插曲)",
+      "source_duration_seconds": 257,
+      "source_duration_delta_seconds": -0.424,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "far-beyond-us-instrumental",
+      "title": "远不止你我 · 伴奏",
+      "audio": "assets/audio/far-beyond-us-instrumental-v1.flac",
+      "subtitle": "assets/lyrics/far-beyond-us-instrumental-v1.lrc",
+      "audio_duration_seconds": 220.143646,
+      "timed_lines": 57,
+      "last_timestamp_seconds": 202.77,
+      "subtitle_sha256": "5a32198242c1ba63477375eb66483d079ca71f1fed01d182d3321a7fef63c964",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/002YMdd93lQlOY",
+      "source_title": "远不止你我",
+      "source_artists": [
+        "刘宇"
+      ],
+      "source_album": "远不止你我 (《斗破苍穹年番4》动画片尾曲&推广曲)",
+      "source_duration_seconds": 220,
+      "source_duration_delta_seconds": -0.144,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "our-adventure-instrumental",
+      "title": "我们的冒险 · 伴奏（AI分离）",
+      "audio": "assets/audio/our-adventure-instrumental-v1.flac",
+      "subtitle": "assets/lyrics/our-adventure-instrumental-v1.lrc",
+      "audio_duration_seconds": 223.384625,
+      "timed_lines": 55,
+      "last_timestamp_seconds": 194.11,
+      "subtitle_sha256": "74a43c4213eec41bea1094c7db7684bc1f9316a9b98f361c5a7ef5809226fffb",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/001YSe8G4DQlJj",
+      "source_title": "我们的冒险",
+      "source_artists": [
+        "曹寅"
+      ],
+      "source_album": "棋魂 影视原声专辑",
+      "source_duration_seconds": 223,
+      "source_duration_delta_seconds": -0.385,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "bu-mie-instrumental",
+      "title": "不灭 · 伴奏",
+      "audio": "assets/audio/bu-mie-instrumental-v1.mp3",
+      "subtitle": "assets/lyrics/bu-mie-instrumental-v1.lrc",
+      "audio_duration_seconds": 300.000023,
+      "timed_lines": 79,
+      "last_timestamp_seconds": 276.77,
+      "subtitle_sha256": "5ab25cf0945c619475eb1772fc68e4b72c353eab666a7b64eafa57ebfe7f7a9c",
+      "source_platform": "embedded",
+      "source_type": "Timed lyric metadata in the user-supplied audio"
+    },
+    {
+      "key": "qian-hui",
+      "title": "千回 · 袁艺菲",
+      "audio": "assets/audio/qian-hui-v1.flac",
+      "subtitle": "assets/lyrics/qian-hui-v1.lrc",
+      "audio_duration_seconds": 230.666667,
+      "timed_lines": 47,
+      "last_timestamp_seconds": 210.41,
+      "subtitle_sha256": "afaaf50c05af668085d76ffc78e61246f79aff20d2f77450f213bf1b988f3638",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/000UaMMc2WgT8V",
+      "source_title": "千回",
+      "source_artists": [
+        "袁艺菲"
+      ],
+      "source_album": "千回",
+      "source_duration_seconds": 230,
+      "source_duration_delta_seconds": -0.667,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "zhu-guang",
+      "title": "逐光 · 韩富Richard",
+      "audio": "assets/audio/zhu-guang-v1.flac",
+      "subtitle": "assets/lyrics/zhu-guang-v1.lrc",
+      "audio_duration_seconds": 222.439021,
+      "timed_lines": 85,
+      "last_timestamp_seconds": 222.148,
+      "subtitle_sha256": "040d93d0ffe472413c98042ac04681e032147652b33690db5c8729aaf2d3c56d",
+      "source_platform": "netease",
+      "source_url": "https://music.163.com/song?id=2083174704",
+      "source_title": "逐光",
+      "source_artists": [
+        "韩富RicH"
+      ],
+      "source_album": "逐光",
+      "source_duration_seconds": 222.439,
+      "source_duration_delta_seconds": -0.0,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "xian-zai-huan-wo",
+      "title": "现在换我 · 许哲",
+      "audio": "assets/audio/xian-zai-huan-wo-v1.flac",
+      "subtitle": "assets/lyrics/xian-zai-huan-wo-v1.lrc",
+      "audio_duration_seconds": 217.6,
+      "timed_lines": 53,
+      "last_timestamp_seconds": 188.27,
+      "subtitle_sha256": "1dfac1dc05b8aae5a9ae2368bfaa412c697a6b8f25122c1d7ce5ff502bc38c8a",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/002BYNaK2mnMOR",
+      "source_title": "现在换我",
+      "source_artists": [
+        "许哲"
+      ],
+      "source_album": "现在换我",
+      "source_duration_seconds": 217,
+      "source_duration_delta_seconds": -0.6,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "wo-jiu-shi-wo",
+      "title": "我就是我 · 墨绛",
+      "audio": "assets/audio/wo-jiu-shi-wo-v1.flac",
+      "subtitle": "assets/lyrics/wo-jiu-shi-wo-v1.lrc",
+      "audio_duration_seconds": 220.536979,
+      "timed_lines": 61,
+      "last_timestamp_seconds": 197.97,
+      "subtitle_sha256": "a7d534be56555c07c116121f938d5c68d15d7cd2d0a533062dcccbd104664c75",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/003l6bC24fLCzq",
+      "source_title": "我就是我",
+      "source_artists": [
+        "墨绛"
+      ],
+      "source_album": "我就是我 (《斗破苍穹年番4》动画片尾曲)",
+      "source_duration_seconds": 220,
+      "source_duration_delta_seconds": -0.537,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "xin-ji-instrumental",
+      "title": "心寄 · 伴奏",
+      "audio": "assets/audio/xin-ji-instrumental-v1.flac",
+      "subtitle": "assets/lyrics/xin-ji-instrumental-v1.lrc",
+      "audio_duration_seconds": 227.684438,
+      "timed_lines": 58,
+      "last_timestamp_seconds": 218.91,
+      "subtitle_sha256": "5be0f7aeca5981abe3c6ce9c347e23a0e3a0dacb764ea6701c4de6714f4c1e79",
+      "source_platform": "netease",
+      "source_url": "https://music.163.com/song?id=2743145914",
+      "source_title": "心寄",
+      "source_artists": [
+        "Angela Tang"
+      ],
+      "source_album": "逆天邪神 动漫原声带",
+      "source_duration_seconds": 227.684,
+      "source_duration_delta_seconds": -0.0,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "wen-xing",
+      "title": "问星 · Mr.mo",
+      "audio": "assets/audio/wen-xing-v1.flac",
+      "subtitle": "assets/lyrics/wen-xing-v1.lrc",
+      "audio_duration_seconds": 224.994271,
+      "timed_lines": 53,
+      "last_timestamp_seconds": 205.66,
+      "subtitle_sha256": "e78c9cb2e19082ed262ba7b853405426ce019c7a2b57077cdac7716fab39a2d6",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/0033pgzG1IvwnY",
+      "source_title": "问星",
+      "source_artists": [
+        "Mr.mo"
+      ],
+      "source_album": "《沧元图》动画第二季插曲",
+      "source_duration_seconds": 224,
+      "source_duration_delta_seconds": -0.994,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "rebirth-instrumental",
+      "title": "重生 · 伴奏（AI分离）",
+      "audio": "assets/audio/rebirth-instrumental-v1.flac",
+      "subtitle": "assets/lyrics/rebirth-instrumental-v1.lrc",
+      "audio_duration_seconds": 271.427875,
+      "timed_lines": 57,
+      "last_timestamp_seconds": 251.31,
+      "subtitle_sha256": "ea330fa034152abe1328df1d35347a56118139676a5dc0158ea5604e83622516",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/001GGtpN1F5Kmp",
+      "source_title": "重生",
+      "source_artists": [
+        "耿斯汉"
+      ],
+      "source_album": "棋魂 影视原声专辑",
+      "source_duration_seconds": 271,
+      "source_duration_delta_seconds": -0.428,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "dominate-instrumental",
+      "title": "主宰 · 伴奏",
+      "audio": "assets/audio/dominate-instrumental-v2.mp3",
+      "subtitle": "assets/lyrics/dominate-instrumental-v2.lrc",
+      "audio_duration_seconds": 175.896,
+      "timed_lines": 24,
+      "last_timestamp_seconds": 151.204,
+      "subtitle_sha256": "fefc3e8e86ae7696a53e50af755233ed1ec10964364c5aaa02fd39f15f1e22af",
+      "source_platform": "netease",
+      "source_url": "https://music.163.com/song?id=2060747574",
+      "source_title": "主宰",
+      "source_artists": [
+        "刘宇宁"
+      ],
+      "source_album": "大主宰 年番动画原声带",
+      "source_duration_seconds": 175.858,
+      "source_duration_delta_seconds": -0.038,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "zhi-wo-instrumental",
+      "title": "知我 · 伴奏",
+      "audio": "assets/audio/zhi-wo-instrumental-v1.flac",
+      "subtitle": "assets/lyrics/zhi-wo-instrumental-v1.lrc",
+      "audio_duration_seconds": 292.857146,
+      "timed_lines": 55,
+      "last_timestamp_seconds": 228.98,
+      "subtitle_sha256": "bbc15f75d1f461e1eff69c88498ebef47f362328037cef9aa2e7486117baba90",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/0033MBDd3UR4Uc",
+      "source_title": "知我",
+      "source_artists": [
+        "国风堂",
+        "哦漏"
+      ],
+      "source_album": "知我",
+      "source_duration_seconds": 292,
+      "source_duration_delta_seconds": -0.857,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "zong-ma-ta-ge-xing",
+      "title": "纵马踏歌行 · 刘宇宁",
+      "audio": "assets/audio/zong-ma-ta-ge-xing-v1.flac",
+      "subtitle": "assets/lyrics/zong-ma-ta-ge-xing-v1.lrc",
+      "audio_duration_seconds": 176.0,
+      "timed_lines": 59,
+      "last_timestamp_seconds": 155.19,
+      "subtitle_sha256": "e80ca63273ce5fd85b5f933b38381867a6ec741c47fa34f24145049313678ae8",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/0029blSZ16tCiJ",
+      "source_title": "纵马踏歌行",
+      "source_artists": [
+        "刘宇宁"
+      ],
+      "source_album": "纵马踏歌行",
+      "source_duration_seconds": 176,
+      "source_duration_delta_seconds": 0.0,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "wu-yang",
+      "title": "无恙 · 徐均朔",
+      "audio": "assets/audio/wu-yang-v1.flac",
+      "subtitle": "assets/lyrics/wu-yang-v1.lrc",
+      "audio_duration_seconds": 229.0,
+      "timed_lines": 48,
+      "last_timestamp_seconds": 212.53,
+      "subtitle_sha256": "c1c256ef805f11ca7dd950b3ff7cbf553f72f725eddc73cf093cf8eaf69c5267",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/002vRele4Rv7cZ",
+      "source_title": "无恙",
+      "source_artists": [
+        "徐均朔"
+      ],
+      "source_album": "无恙",
+      "source_duration_seconds": 229,
+      "source_duration_delta_seconds": 0.0,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "wen-ding",
+      "title": "问鼎 · 黄子弘凡",
+      "audio": "assets/audio/wen-ding-v1.flac",
+      "subtitle": "assets/lyrics/wen-ding-v1.lrc",
+      "audio_duration_seconds": 208.317625,
+      "timed_lines": 42,
+      "last_timestamp_seconds": 182.28,
+      "subtitle_sha256": "0656251f96dadb405f0fd9b7775a8c8a141984f8b2d5dd5d2b353d5d2a1148cc",
+      "source_platform": "embedded",
+      "source_type": "Timed lyric metadata in the user-supplied audio"
+    },
+    {
+      "key": "zhan-ge",
+      "title": "战歌 · CoCo李玟",
+      "audio": "assets/audio/zhan-ge-v1.flac",
+      "subtitle": "assets/lyrics/zhan-ge-v1.lrc",
+      "audio_duration_seconds": 240.0,
+      "timed_lines": 46,
+      "last_timestamp_seconds": 210.43,
+      "subtitle_sha256": "a1895e677d1350109ba3efe86ba165dce71d6bf97f13d05cc27300be6e543a19",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/0004saKm02GsWS",
+      "source_title": "战歌",
+      "source_artists": [
+        "CoCo李玟"
+      ],
+      "source_album": "战歌",
+      "source_duration_seconds": 240,
+      "source_duration_delta_seconds": 0.0,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "wen",
+      "title": "问 · 陈家淇",
+      "audio": "assets/audio/wen-v1.flac",
+      "subtitle": "assets/lyrics/wen-v1.lrc",
+      "audio_duration_seconds": 230.4,
+      "timed_lines": 43,
+      "last_timestamp_seconds": 205.3,
+      "subtitle_sha256": "9894533e93808f2ca86e7b61a660a57c2d1129b5f6efeacf5e08350d464172b5",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/003xSWZ43oC0H0",
+      "source_title": "问",
+      "source_artists": [
+        "陈家淇"
+      ],
+      "source_album": "斗破苍穹·缘起 动画原声带",
+      "source_duration_seconds": 230,
+      "source_duration_delta_seconds": -0.4,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "our-adventure",
+      "title": "我们的冒险 · 曹寅",
+      "audio": "assets/audio/our-adventure-v1.mp3",
+      "subtitle": "assets/lyrics/our-adventure-v1.lrc",
+      "audio_duration_seconds": 223.416,
+      "timed_lines": 55,
+      "last_timestamp_seconds": 194.11,
+      "subtitle_sha256": "74a43c4213eec41bea1094c7db7684bc1f9316a9b98f361c5a7ef5809226fffb",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/001YSe8G4DQlJj",
+      "source_title": "我们的冒险",
+      "source_artists": [
+        "曹寅"
+      ],
+      "source_album": "棋魂 影视原声专辑",
+      "source_duration_seconds": 223,
+      "source_duration_delta_seconds": -0.416,
+      "source_type": "Public platform timing matched to the recording supplied by the user"
+    }
+  ]
+}

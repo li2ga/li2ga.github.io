@@ -332,7 +332,7 @@ def music_control():
 <button type="button" data-music-play aria-pressed="false">{pair('Play / pause','播放／暂停')}</button>
 <fieldset class="music-lyrics-settings"><legend>{pair('Lyrics subtitles','歌词字幕')}</legend>
 <label class="music-lyrics-switch"><input data-lyrics-toggle type="checkbox" aria-controls="music-captions">{pair('Show lyrics · off by default','显示歌词字幕 · 默认关闭')}</label>
-<p class="music-lyrics-help">{pair('Timed lyrics are available for Bu Mie and Wen Ding. For other tracks, import a subtitle file below.','《不灭》《问鼎》已内置时间轴歌词，其他歌曲可在下方导入字幕。')}</p>
+<p class="music-lyrics-help">{pair('Timed lyrics are included for all 20 tracks. You can also import your own subtitles below.','内置 20 首均已配时间轴歌词，也可以在下方导入自己的字幕。')}</p>
 <label>{pair('Import subtitles for the selected track','为当前歌曲导入字幕')}<input data-lyrics-upload type="file" accept=".lrc,.srt,.vtt"></label>
 <label class="music-lyrics-delay">{pair('Subtitle delay (seconds; negative = earlier)','字幕延迟（秒，负数提前）')}<input data-lyrics-delay type="number" min="-30" max="30" step="0.1" value="0" inputmode="decimal"></label>
 <p class="music-lyrics-status" data-lyrics-status role="status"></p>
