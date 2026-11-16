@@ -124,12 +124,19 @@
     let seed=0;
     for(const character of key)seed=(Math.imul(seed,31)+character.codePointAt(0))>>>0;
     const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
-    captionLine.style.setProperty('--phrase-scale',(0.92+random()*.16).toFixed(3));
+    const phraseSize=random();
+    captionLine.style.setProperty('--phrase-scale',(0.96+phraseSize*.15).toFixed(3));
+    captionLine.style.setProperty('--phrase-scale-mobile',(0.92+phraseSize*.16).toFixed(3));
     const characters=typeof Intl.Segmenter==='function'?[...new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(text)].map(item=>item.segment):Array.from(text);
+    const eligible=characters.map((character,index)=>/[\p{L}\p{N}]/u.test(character)?index:-1).filter(index=>index>=0);
+    const featured=eligible.length>1&&eligible.length<=32&&!/(?:作词|作曲|编曲|制作|录音|监制|发行|母带|OP|SP)\s*[:：]/i.test(text);
+    captionLine.dataset.lyricAccent=featured&&random()<.42?'strong':'normal';
+    const spotlight=featured?eligible[Math.floor(random()*eligible.length)]:-1;
     const fragment=document.createDocumentFragment();
     characters.forEach((character,index)=>{
       if(/\s/.test(character)){fragment.append(document.createTextNode(character));return;}
       const glyph=document.createElement('span');glyph.className='music-lyric-glyph';glyph.textContent=character;
+      if(index===spotlight)glyph.dataset.lyricEmphasis='';
       glyph.style.setProperty('--glyph-delay',Math.min(.36,index*.018).toFixed(3)+'s');
       glyph.style.setProperty('--glyph-size',(0.92+random()*.18).toFixed(3));
       glyph.style.setProperty('--glyph-rise',(1+random()*4).toFixed(2));

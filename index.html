@@ -743,16 +743,19 @@ main>section:not(.about){margin-top:29px}
 .music-panel .music-lyrics-help{color:#6b6053;font-size:12px;margin:10px 0}
 .music-lyrics-delay input{width:85px;padding:5px;font:inherit}
 .music-panel .music-lyrics-status{margin:8px 0 0;color:#685038;min-height:1.45em;font-size:12px}
-.music-captions{--lyric-energy:0;--lyric-beat:0;position:fixed;z-index:50;bottom:max(26px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:max-content;max-width:min(780px,calc(100% - 28px));box-sizing:border-box;padding:4px 32px 4px 10px;border:0;border-radius:0;background:transparent;color:#403025;box-shadow:none;pointer-events:none;text-align:center}
+.music-captions{--lyric-energy:0;--lyric-beat:0;position:fixed;z-index:50;bottom:max(26px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:max-content;max-width:min(780px,calc((100vw - 48px)/1.42 + 42px));box-sizing:border-box;padding:4px 32px 4px 10px;border:0;border-radius:0;background:transparent;color:#403025;box-shadow:none;pointer-events:none;text-align:center}
 .music-captions[hidden]{display:none}
-.music-captions-line{display:block;font:400 clamp(25px,2.3vw,34px)/1.6 LyricsArt,'STKaiti','KaiTi','Kaiti SC',serif;letter-spacing:.055em;white-space:pre-wrap;overflow-wrap:anywhere;text-shadow:0 1px 2px #fffcf2,0 0 5px #fff,0 0 13px #fff9;transform:translateY(calc(var(--lyric-energy)*-5px)) scale(calc(var(--phrase-scale,1) + var(--lyric-beat)*.055));transform-origin:center bottom;transition:transform 95ms ease-out}
-.music-lyric-glyph{display:inline-block;animation:lyric-arrive .72s cubic-bezier(.18,.72,.3,1) both;animation-delay:var(--glyph-delay);vertical-align:baseline}
-@keyframes lyric-arrive{from{opacity:0;transform:translate3d(0,.48em,0) rotate(-6deg) scale(.78)}to{opacity:1;transform:translateY(calc(var(--lyric-energy)*var(--glyph-rise)*-1px)) rotate(var(--glyph-tilt)) scale(calc(var(--glyph-size) + var(--lyric-beat)*.11))}}
+.music-captions-line{--phrase-hit:.13;display:block;font:400 clamp(25px,2.3vw,34px)/1.6 LyricsArt,'STKaiti','KaiTi','Kaiti SC',serif;letter-spacing:.055em;white-space:pre-wrap;overflow-wrap:anywhere;text-shadow:0 1px 2px #fffcf2,0 0 5px #fff,0 0 13px #fff9;transform:translateY(calc(var(--lyric-energy)*-7px - var(--lyric-beat)*3px)) scale(calc(var(--phrase-scale,1) + var(--lyric-beat)*var(--phrase-hit)));transform-origin:center bottom;transition:transform 65ms cubic-bezier(.12,.8,.25,1)}
+.music-captions-line[data-lyric-accent=strong]{--phrase-hit:.25}
+.music-lyric-glyph{--glyph-hit:.11;display:inline-block;animation:lyric-arrive .72s cubic-bezier(.18,.72,.3,1) both;animation-delay:var(--glyph-delay);vertical-align:baseline}
+.music-lyric-glyph[data-lyric-emphasis]{--glyph-hit:.16;font-size:1.18em;margin-inline:.045em}
+@keyframes lyric-arrive{from{opacity:0;transform:translate3d(0,.48em,0) rotate(-6deg) scale(.78)}to{opacity:1;transform:translateY(calc(var(--lyric-energy)*var(--glyph-rise)*-1px)) rotate(var(--glyph-tilt)) scale(calc(var(--glyph-size) + var(--lyric-beat)*var(--glyph-hit)))}}
 .music-captions button{position:absolute;right:0;top:1px;min-width:32px;min-height:32px;padding:0;border:0;background:transparent;color:#786349;font-size:21px;line-height:1;cursor:pointer;pointer-events:auto;opacity:.55;text-shadow:0 0 4px #fff}
 .music-captions button:hover{opacity:1}
 .music-captions button:focus-visible{outline:2px solid #9b733c;outline-offset:-2px}
-@media(max-width:600px){.music-captions{bottom:max(17px,env(safe-area-inset-bottom));padding:4px 29px 4px 5px;max-width:calc(100% - 26px)}.music-captions-line{font-size:25px;letter-spacing:.025em}.music-panel{padding:18px}.music-lyrics-settings{padding:10px}}
-@media(prefers-reduced-motion:reduce){.music-captions-line{transform:none;transition:none}.music-lyric-glyph{animation:none;opacity:1;transform:none}}
+@media(max-width:600px){.music-captions{bottom:max(17px,env(safe-area-inset-bottom));padding:4px 29px 4px 5px;max-width:calc(100% - 26px)}.music-captions-line,.music-captions-line[data-lyric-accent=strong]{--phrase-hit:.055;font-size:25px;letter-spacing:.025em;transform:translateY(calc(var(--lyric-energy)*-5px)) scale(calc(var(--phrase-scale-mobile,1) + var(--lyric-beat)*var(--phrase-hit)));transition:transform 95ms ease-out}.music-lyric-glyph[data-lyric-emphasis]{--glyph-hit:.11;font-size:1em;margin-inline:0}.music-panel{padding:18px}.music-lyrics-settings{padding:10px}}
+@media(min-width:601px) and (hover:none) and (pointer:coarse){.music-captions{max-width:min(780px,calc(100% - 28px))}.music-captions-line,.music-captions-line[data-lyric-accent=strong]{--phrase-hit:.055;transform:translateY(calc(var(--lyric-energy)*-5px)) scale(calc(var(--phrase-scale-mobile,1) + var(--lyric-beat)*var(--phrase-hit)));transition:transform 95ms ease-out}.music-lyric-glyph[data-lyric-emphasis]{--glyph-hit:.11;font-size:1em;margin-inline:0}}
+@media(prefers-reduced-motion:reduce){.music-captions-line,.music-captions-line[data-lyric-accent=strong]{transform:none;transition:none}.music-lyric-glyph{animation:none;opacity:1;transform:none}}
 @media print{.music-tools,.music-panel,.music-captions{display:none!important}}
 
 /* A single intact figure; Emperor Flame grows behind it and along the cuffs. */
@@ -2365,12 +2368,19 @@ main>section:not(.about){margin-top:29px}
     let seed=0;
     for(const character of key)seed=(Math.imul(seed,31)+character.codePointAt(0))>>>0;
     const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
-    captionLine.style.setProperty('--phrase-scale',(0.92+random()*.16).toFixed(3));
+    const phraseSize=random();
+    captionLine.style.setProperty('--phrase-scale',(0.96+phraseSize*.15).toFixed(3));
+    captionLine.style.setProperty('--phrase-scale-mobile',(0.92+phraseSize*.16).toFixed(3));
     const characters=typeof Intl.Segmenter==='function'?[...new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(text)].map(item=>item.segment):Array.from(text);
+    const eligible=characters.map((character,index)=>/[\p{L}\p{N}]/u.test(character)?index:-1).filter(index=>index>=0);
+    const featured=eligible.length>1&&eligible.length<=32&&!/(?:作词|作曲|编曲|制作|录音|监制|发行|母带|OP|SP)\s*[:：]/i.test(text);
+    captionLine.dataset.lyricAccent=featured&&random()<.42?'strong':'normal';
+    const spotlight=featured?eligible[Math.floor(random()*eligible.length)]:-1;
     const fragment=document.createDocumentFragment();
     characters.forEach((character,index)=>{
       if(/\s/.test(character)){fragment.append(document.createTextNode(character));return;}
       const glyph=document.createElement('span');glyph.className='music-lyric-glyph';glyph.textContent=character;
+      if(index===spotlight)glyph.dataset.lyricEmphasis='';
       glyph.style.setProperty('--glyph-delay',Math.min(.36,index*.018).toFixed(3)+'s');
       glyph.style.setProperty('--glyph-size',(0.92+random()*.18).toFixed(3));
       glyph.style.setProperty('--glyph-rise',(1+random()*4).toFixed(2));
