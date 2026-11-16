@@ -103,6 +103,7 @@ PUBLIC_FILES = [
     "assets/documents/Jia-Li-CV.pdf",
     "assets/fonts/lato-regular.woff2", "assets/fonts/lato-bold.woff2",
     "assets/fonts/lato-italic.woff2", "assets/fonts/lato-bold-italic.woff2", "assets/fonts/OFL.txt",
+    "assets/fonts/lyrics-art-v1.woff2", "assets/fonts/LyricsArt-OFL.txt",
     "assets/institutions/roboparty.png", "assets/institutions/pku.png", "assets/institutions/hust-seal.svg",
     "assets/fonts/name-latin.ttf", "assets/fonts/name-chinese.ttf",
     "assets/fonts/name-classic.otf", "assets/fonts/GUST-FONT-LICENSE.txt",

@@ -2,7 +2,10 @@
   const panel=document.querySelector('[data-music-panel]');
   if(!panel)return;
   const toggle=document.querySelector('[data-music-toggle]'), audio=panel.querySelector('audio');
-  const input=panel.querySelector('[data-music-upload]'), list=panel.querySelector('select');
+  const input=panel.querySelector('[data-music-upload]'), list=panel.querySelector('[data-music-tracks]');
+  const mode=panel.querySelector('[data-music-mode]');
+  const previousButton=panel.querySelector('[data-music-previous]');
+  const nextButton=panel.querySelector('[data-music-next]');
   const localGroup=list.querySelector('[data-local-tracks]'), status=panel.querySelector('[data-music-status]');
   const lyricsToggle=panel.querySelector('[data-lyrics-toggle]');
   const lyricsInput=panel.querySelector('[data-lyrics-upload]');
@@ -14,10 +17,127 @@
   const lyricsCache=new Map(), delays=new Map();
   let loaded='', objectUrl='', nextLocal=0;
   let cues=[], cueTrack='', lyricsRequest=0, animationFrame=0;
+  let captionKey='', history=[list.value], historyIndex=0, shuffleQueue=[];
+  let audioContext=null, analyser=null, spectrum=null, waveform=null, analysisPending=null;
+  let energy=0, beat=0, bassAverage=0, lastBeat=0, lastAnalysis=0;
+  const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const modeDescriptions={
+    'list-loop':['Play in order, then start the playlist again.','按歌单顺序播放，播完后从头循环。'],
+    'sequence':['Play in order and stop after the last track.','按歌单顺序播放，最后一首结束后停止。'],
+    'shuffle':['Shuffle without repeats; Previous retraces your listening history.','随机不重复播放；上一首可回到刚刚听过的歌。'],
+    'repeat-one':['Repeat this track. Previous and Next still switch tracks.','当前歌曲循环播放，仍可手动切换上下首。']
+  };
   let musicMessage=['',''], lyricsMessage=['',''];
   const zh=()=>document.documentElement.lang.startsWith('zh');
   const say=(en,cn)=>{musicMessage=[en,cn];status.textContent=zh()?cn:en;};
   const sayLyrics=(en,cn)=>{lyricsMessage=[en,cn];lyricsStatus.textContent=zh()?cn:en;};
+
+  function updateModeLabels(){
+    for(const option of mode.options)option.textContent=zh()?option.dataset.modeZh:option.dataset.modeEn;
+    panel.querySelector('[data-music-mode-description]').textContent=modeDescriptions[mode.value][zh()?1:0];
+    previousButton.disabled=mode.value==='shuffle'&&historyIndex===0;
+  }
+
+  function rememberTrack(key){
+    if(history[historyIndex]!==key){
+      history=history.slice(0,historyIndex+1);history.push(key);historyIndex=history.length-1;
+    }
+    shuffleQueue=shuffleQueue.filter(value=>value!==key);
+    updateModeLabels();
+  }
+
+  function randomNext(){
+    if(!shuffleQueue.length){
+      shuffleQueue=[...list.options].map(option=>option.value).filter(key=>key!==list.value);
+      for(let i=shuffleQueue.length-1;i>0;i--){
+        const at=Math.floor(Math.random()*(i+1));
+        [shuffleQueue[i],shuffleQueue[at]]=[shuffleQueue[at],shuffleQueue[i]];
+      }
+    }
+    return shuffleQueue.shift()||list.value;
+  }
+
+  function navigate(direction,automatic=false){
+    const options=[...list.options],at=options.findIndex(option=>option.value===list.value);
+    const autoplay=automatic||!audio.paused;
+    let key,remember=true;
+    if(automatic&&mode.value==='repeat-one')key=list.value;
+    else if(automatic&&mode.value==='sequence'&&at===options.length-1){
+      audio.pause();say('Playlist finished.','歌单已播放完毕。');updateClock();return;
+    }else if(mode.value==='shuffle'){
+      if(direction<0){
+        if(historyIndex===0)return;
+        key=history[--historyIndex];remember=false;
+      }else if(historyIndex<history.length-1){key=history[++historyIndex];remember=false;}
+      else key=randomNext();
+    }else key=options[(at+direction+options.length)%options.length].value;
+    list.value=key;
+    if(key===loaded&&autoplay)audio.currentTime=0;
+    selectionChanged({autoplay,remember});
+  }
+
+  async function enableAudioAnalysis(){
+    if(analysisPending)return analysisPending;
+    try{
+      // A running graph must stay connected even when captions are switched off.
+      if(audioContext?.state==='suspended')await audioContext.resume();
+      if(!lyricsToggle.checked||reducedMotion.matches||analyser)return;
+      const Context=window.AudioContext||window.webkitAudioContext;
+      if(!Context)return;
+      analysisPending=(async()=>{
+        audioContext??=new Context();
+        if(audioContext.state!=='running')await audioContext.resume();
+        if(audioContext.state!=='running')return;
+        const node=audioContext.createAnalyser();node.fftSize=512;node.smoothingTimeConstant=.55;
+        const source=audioContext.createMediaElementSource(audio);
+        source.connect(node);node.connect(audioContext.destination);
+        analyser=node;spectrum=new Uint8Array(node.frequencyBinCount);waveform=new Float32Array(node.fftSize);
+        captions.dataset.musicReactive='active';
+      })();
+      await analysisPending;
+    }catch{/* Captions and native playback remain usable without audio analysis. */}
+    finally{analysisPending=null;}
+  }
+
+  function animateLyrics(){
+    if(!analyser||reducedMotion.matches||captions.hidden)return;
+    const now=performance.now();
+    if(now-lastAnalysis<30)return;
+    lastAnalysis=now;
+    analyser.getByteFrequencyData(spectrum);
+    analyser.getFloatTimeDomainData(waveform);
+    const bins=Math.max(2,Math.ceil(220*analyser.fftSize/audioContext.sampleRate));
+    let bass=0,level=0;
+    for(let i=1;i<=bins;i++)bass+=spectrum[i];
+    for(const sample of waveform)level+=sample*sample;
+    bass/=255*bins;level=Math.sqrt(level/waveform.length);
+    bassAverage=bassAverage*.93+bass*.07;
+    if(bass>.12&&bass>bassAverage*1.14&&now-lastBeat>210){beat=Math.min(1,.3+(bass-bassAverage)*3);lastBeat=now;}
+    beat*=.88;energy=energy*.78+Math.min(1,level*5)*.22;
+    captions.style.setProperty('--lyric-energy',energy.toFixed(3));
+    captions.style.setProperty('--lyric-beat',beat.toFixed(3));
+  }
+
+  function drawLyricPhrase(text,key){
+    captionKey=key;
+    captionLine.replaceChildren();
+    let seed=0;
+    for(const character of key)seed=(Math.imul(seed,31)+character.codePointAt(0))>>>0;
+    const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+    captionLine.style.setProperty('--phrase-scale',(0.92+random()*.16).toFixed(3));
+    const characters=typeof Intl.Segmenter==='function'?[...new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(text)].map(item=>item.segment):Array.from(text);
+    const fragment=document.createDocumentFragment();
+    characters.forEach((character,index)=>{
+      if(/\s/.test(character)){fragment.append(document.createTextNode(character));return;}
+      const glyph=document.createElement('span');glyph.className='music-lyric-glyph';glyph.textContent=character;
+      glyph.style.setProperty('--glyph-delay',Math.min(.36,index*.018).toFixed(3)+'s');
+      glyph.style.setProperty('--glyph-size',(0.92+random()*.18).toFixed(3));
+      glyph.style.setProperty('--glyph-rise',(1+random()*4).toFixed(2));
+      glyph.style.setProperty('--glyph-tilt',((random()-.5)*3).toFixed(2)+'deg');
+      fragment.append(glyph);
+    });
+    captionLine.append(fragment);
+  }
 
   function parseLyrics(text, format){
     const rows=[];
@@ -59,21 +179,26 @@
   }
 
   function renderCaptions(){
-    let text='';
+    let text='',key='';
     if(lyricsToggle.checked&&cueTrack===loaded&&loaded===list.value&&!audio.ended&&!audio.error){
       const time=audio.currentTime-(delays.get(list.value)||0);
       let low=0,high=cues.length;
       while(low<high){const mid=(low+high)>>1;if(cues[mid].start<=time)low=mid+1;else high=mid;}
       const cue=cues[low-1];
-      if(cue&&time<cue.end)text=cue.text;
+      if(cue&&time<cue.end){text=cue.text;key=loaded+':'+cue.start;}
     }
-    if(captionLine.textContent!==text)captionLine.textContent=text;
+    if(captionKey!==key||captionLine.textContent!==text)drawLyricPhrase(text,key);
     captions.hidden=!text;
   }
 
   function updateClock(){
     renderCaptions();
     const running=lyricsToggle.checked&&cues.length&&!audio.paused&&!audio.ended&&!document.hidden;
+    if(running)animateLyrics();
+    else{
+      energy=0;beat=0;bassAverage=0;
+      captions.style.setProperty('--lyric-energy','0');captions.style.setProperty('--lyric-beat','0');
+    }
     if(running&&!animationFrame)animationFrame=requestAnimationFrame(()=>{animationFrame=0;updateClock();});
     if(!running&&animationFrame){cancelAnimationFrame(animationFrame);animationFrame=0;}
   }
@@ -122,18 +247,25 @@
     updateClock();
   }
   async function play(){
-    try{loadSelection();await audio.play();say('Playing.','正在播放。');}
+    try{void enableAudioAnalysis();loadSelection();await audio.play();say('Playing.','正在播放。');}
     catch(e){if(e.name!=='AbortError')say('Could not play this track. Choose another and try again.','无法播放这首歌，请换一首重试。');}
   }
   function togglePlay(){if(audio.paused)void play();else{audio.pause();say('Paused.','已暂停。')}}
-  function selectionChanged(){
+  function selectionChanged({autoplay=!audio.paused,remember=true}={}){
     // Changing the selection while paused must not request any music bytes.
+    if(remember)rememberTrack(list.value);else updateModeLabels();
     lyricsDelay.value=String(delays.get(list.value)||0);
     void refreshLyrics();
-    if(!audio.paused)void play();else say('Ready to play.','已选曲，点击播放即可。');
+    if(autoplay)void play();else say('Ready to play.','已选曲，点击播放即可。');
   }
   toggle.addEventListener('click',togglePlay);
   panel.querySelector('[data-music-play]').addEventListener('click',togglePlay);
+  previousButton.addEventListener('click',()=>navigate(-1));
+  nextButton.addEventListener('click',()=>navigate(1));
+  mode.addEventListener('change',()=>{
+    shuffleQueue=[];history=[list.value];historyIndex=0;updateModeLabels();
+    try{localStorage.setItem('jia-li-music-playback-mode',mode.value);}catch{}
+  });
   document.querySelector('[data-music-settings]').addEventListener('click',()=>panel.showModal());
   input.addEventListener('change',()=>{
     if(!input.files.length)return;
@@ -144,12 +276,13 @@
       localGroup.append(new Option(file.name.replace(/\.[^.]+$/,''),key));
     }
     localGroup.hidden=false;
+    shuffleQueue=[];
     list.value=first;
     selectionChanged();
     input.value='';
   });
-  list.addEventListener('change',selectionChanged);
-  lyricsToggle.addEventListener('change',()=>void refreshLyrics());
+  list.addEventListener('change',()=>selectionChanged());
+  lyricsToggle.addEventListener('change',()=>{if(!audio.paused)void enableAudioAnalysis();void refreshLyrics();});
   document.querySelector('[data-lyrics-close]').addEventListener('click',()=>{
     lyricsToggle.checked=false;void refreshLyrics();
   });
@@ -178,25 +311,21 @@
     const delay=Math.max(-30,Math.min(30,Number(lyricsDelay.value)||0));
     delays.set(list.value,delay);updateClock();
   });
-  audio.addEventListener('ended',()=>{
-    const options=[...list.options],at=options.findIndex(option=>option.value===loaded);
-    if(at>=0){
-      list.value=options[(at+1)%options.length].value;
-      lyricsDelay.value=String(delays.get(list.value)||0);
-      void refreshLyrics();void play();
-    }
-  });
+  audio.addEventListener('ended',()=>navigate(1,true));
   for(const event of ['play','pause','ended','emptied','error'])audio.addEventListener(event,sync);
   for(const event of ['timeupdate','seeking','seeked','loadedmetadata'])audio.addEventListener(event,updateClock);
   document.addEventListener('visibilitychange',updateClock);
+  reducedMotion.addEventListener('change',()=>{if(!audio.paused)void enableAudioAnalysis();updateClock();});
   new MutationObserver(()=>{
     status.textContent=musicMessage[zh()?1:0];
     lyricsStatus.textContent=lyricsMessage[zh()?1:0];
+    updateModeLabels();
   }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
   audio.volume=.32;
   panel.querySelector('input[type=range]').addEventListener('input',e=>audio.volume=Number(e.target.value));
   window.addEventListener('pagehide',()=>audio.pause());
   // Keep music and captions off on every page load, even if a browser restores form state.
   lyricsToggle.checked=false;
-  void refreshLyrics();sync();
+  try{const saved=localStorage.getItem('jia-li-music-playback-mode');if(Object.hasOwn(modeDescriptions,saved))mode.value=saved;}catch{}
+  updateModeLabels();void refreshLyrics();sync();
 })();

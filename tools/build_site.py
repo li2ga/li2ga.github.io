@@ -327,9 +327,15 @@ def music_control():
 <header><h2 id="music-heading">{pair('Background music','背景音乐')}</h2><form method="dialog"><button type="submit">{pair('Close','关闭')}</button></form></header>
 <p>{pair('Play a track from the playlist or add your own audio. Your files stay on this device.','可以播放内置歌单，也可以添加自己的音频。你选择的文件只在本机播放。')}</p>
 <label>{pair('Add your own audio','添加本机音频')}<input data-music-upload type="file" accept="audio/*,.flac,.opus" multiple></label>
-<label>{pair('Track','歌曲')}<select><optgroup label="内置歌单 / Built-in tracks">{''.join(choices)}</optgroup><optgroup label="本机音频 / Your files" data-local-tracks hidden></optgroup></select></label>
+<label>{pair('Track','歌曲')}<select data-music-tracks><optgroup label="内置歌单 / Built-in tracks">{''.join(choices)}</optgroup><optgroup label="本机音频 / Your files" data-local-tracks hidden></optgroup></select></label>
+<label>{pair('Playback mode','播放方式')}<select data-music-mode>
+<option value="list-loop" data-mode-en="Loop playlist" data-mode-zh="列表循环">Loop playlist</option>
+<option value="sequence" data-mode-en="In order" data-mode-zh="顺序播放">In order</option>
+<option value="shuffle" data-mode-en="Shuffle" data-mode-zh="随机播放">Shuffle</option>
+<option value="repeat-one" data-mode-en="Repeat track" data-mode-zh="单曲循环">Repeat track</option>
+</select></label><p class="music-mode-description" data-music-mode-description></p>
 <label>{pair('Volume','音量')}<input type="range" min="0" max="1" value="0.32" step="0.01"></label>
-<button type="button" data-music-play aria-pressed="false">{pair('Play / pause','播放／暂停')}</button>
+<div class="music-transport"><button type="button" data-music-previous>{pair('‹ Previous','‹ 上一首')}</button><button type="button" data-music-play aria-pressed="false">{pair('Play / pause','播放／暂停')}</button><button type="button" data-music-next>{pair('Next ›','下一首 ›')}</button></div>
 <fieldset class="music-lyrics-settings"><legend>{pair('Lyrics subtitles','歌词字幕')}</legend>
 <label class="music-lyrics-switch"><input data-lyrics-toggle type="checkbox" aria-controls="music-captions">{pair('Show lyrics · off by default','显示歌词字幕 · 默认关闭')}</label>
 <p class="music-lyrics-help">{pair('Timed lyrics are included for all 20 tracks. You can also import your own subtitles below.','内置 20 首均已配时间轴歌词，也可以在下方导入自己的字幕。')}</p>
