@@ -132,16 +132,38 @@
     const featured=eligible.length>1&&eligible.length<=32&&!/(?:作词|作曲|编曲|制作|录音|监制|发行|母带|OP|SP)\s*[:：]/i.test(text);
     captionLine.dataset.lyricAccent=featured&&random()<.42?'strong':'normal';
     const spotlight=featured?eligible[Math.floor(random()*eligible.length)]:-1;
+    // Only compact Chinese phrases use the side composition. Imported long/Latin lines stay horizontal.
+    const vertical=featured&&eligible.length<=18&&/^[\p{Script=Han}\p{P}\s]+$/u.test(text);
+    captions.dataset.lyricLayout=vertical?'vertical':'horizontal';
+    captionLine.dataset.lyricLength=eligible.length<=5?'short':'long';
+    let split=characters.length;
+    if(vertical&&eligible.length>5){
+      const middle=characters.length/2;
+      const balanced=index=>{
+        const left=eligible.filter(at=>at<index).length,right=eligible.length-left;
+        return Math.min(left,right)>=2&&Math.max(left,right)<=Math.min(left,right)*2.5;
+      };
+      const pauses=characters.map((character,index)=>/[，、；。！？\s]/u.test(character)?index+1:-1)
+        .filter(index=>index>=2&&index<=characters.length-2&&balanced(index));
+      // Prefer actual punctuation, then the nearest word boundary; no fabricated lyric timing.
+      const words=typeof Intl.Segmenter==='function'?[...new Intl.Segmenter('zh',{granularity:'word'}).segment(text)]
+        .map(item=>Array.from(text.slice(0,item.index)).length).filter(index=>index>=2&&index<=characters.length-2&&balanced(index)):[];
+      split=(pauses.length?pauses:words.length?words:[Math.ceil(middle)])
+        .reduce((best,index)=>Math.abs(index-middle)<Math.abs(best-middle)?index:best);
+    }
     const fragment=document.createDocumentFragment();
+    let run=document.createElement('span');run.className='music-lyric-run';fragment.append(run);
     characters.forEach((character,index)=>{
-      if(/\s/.test(character)){fragment.append(document.createTextNode(character));return;}
+      if(index===split){run=document.createElement('span');run.className='music-lyric-run';fragment.append(run);}
+      if(/\s/.test(character)){run.append(document.createTextNode(character));return;}
       const glyph=document.createElement('span');glyph.className='music-lyric-glyph';glyph.textContent=character;
+      if(/^\p{P}+$/u.test(character))glyph.dataset.lyricPunctuation='';
       if(index===spotlight)glyph.dataset.lyricEmphasis='';
       glyph.style.setProperty('--glyph-delay',Math.min(.36,index*.018).toFixed(3)+'s');
       glyph.style.setProperty('--glyph-size',(0.92+random()*.18).toFixed(3));
       glyph.style.setProperty('--glyph-rise',(1+random()*4).toFixed(2));
       glyph.style.setProperty('--glyph-tilt',((random()-.5)*3).toFixed(2)+'deg');
-      fragment.append(glyph);
+      run.append(glyph);
     });
     captionLine.append(fragment);
   }
@@ -186,15 +208,20 @@
   }
 
   function renderCaptions(){
-    let text='',key='';
+    let text='',key='',opacity=1;
     if(lyricsToggle.checked&&cueTrack===loaded&&loaded===list.value&&!audio.ended&&!audio.error){
       const time=audio.currentTime-(delays.get(list.value)||0);
       let low=0,high=cues.length;
       while(low<high){const mid=(low+high)>>1;if(cues[mid].start<=time)low=mid+1;else high=mid;}
       const cue=cues[low-1];
-      if(cue&&time<cue.end){text=cue.text;key=loaded+':'+cue.start;}
+      if(cue&&time<cue.end){
+        text=cue.text;key=loaded+':'+cue.start;
+        const fade=Math.min(.38,(cue.end-cue.start)*.15);
+        opacity=Math.min(1,Math.max(0,(cue.end-time)/fade));
+      }
     }
     if(captionKey!==key||captionLine.textContent!==text)drawLyricPhrase(text,key);
+    captions.style.setProperty('--cue-opacity',opacity.toFixed(3));
     captions.hidden=!text;
   }
 
