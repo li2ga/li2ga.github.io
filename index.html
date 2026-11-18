@@ -3362,7 +3362,7 @@ main>section:not(.about){margin-top:29px}
       e.key=key;e.host.dataset.trailerArt=key;e.host.removeAttribute('data-flow-active');e.host.setAttribute('data-ready','');
       if(e.gl)upload(e);
       const note=document.querySelector('#load-note');if(note)note.textContent=reduce.matches?'系统减少动态已开启 · 显示清晰原画':'原画纹理已加载 · 实时光焰';
-      document.querySelectorAll('[data-trailer-select]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.trailerSelect===key)));
+      if(gallery||e.host.closest('[data-trailer-side=right]'))document.querySelectorAll('[data-trailer-select]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.trailerSelect===key)));
     }catch(err){if(token===e.token){e.host.setAttribute('data-error','');const note=document.querySelector('#load-note');if(note)note.textContent='图片加载失败，可点击重试';document.querySelectorAll('[data-trailer-retry]').forEach(b=>b.hidden=false);}}
     finally{if(token===e.token){e.loading=false;wake();}}
   }
