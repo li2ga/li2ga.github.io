@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-17T22:55:18.699898+00:00",
+  "generated_at": "2026-11-18T04:25:02.125324+00:00",
   "source": "https://jia-li-website-analytics.yrweexnfqa.chatgpt.site",
   "data": {
-    "pageviews": 131,
-    "visitors": 34,
+    "pageviews": 132,
+    "visitors": 35,
     "countries": [
       {
         "country": "US",
@@ -44,6 +44,10 @@
       {
         "country": "BR",
         "views": 1
+      },
+      {
+        "country": "JP",
+        "views": 1
       }
     ],
     "days": [
@@ -82,6 +86,10 @@
       {
         "day": "2026-11-17",
         "views": 5
+      },
+      {
+        "day": "2026-11-18",
+        "views": 1
       }
     ]
   }
