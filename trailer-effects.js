@@ -1,12 +1,12 @@
 "use strict";
-// Source-colored advection for three independently rendered effects, without characters.
+// Source-colored flow for independently rendered energy effects, without characters.
 (() => {
   const root=document.querySelector('.page-atmosphere');
   const config=document.querySelector('#trailer-art-sources');
   if(!root||!config)return;
   const sources=JSON.parse(config.textContent),gallery=root.dataset.artScope==='gallery';
   const reduce=matchMedia('(prefers-reduced-motion:reduce)'),wide=matchMedia('(min-width:1041px)');
-  const cache=new Map(),cycle=['vortex','suns','filaments'];
+  const cache=new Map(),cycle=Object.keys(sources);
   const entries=[...root.querySelectorAll('[data-trailer-art]')].map(host=>({host,img:host.querySelector('img'),canvas:host.querySelector('canvas'),key:host.dataset.trailerArt,inside:false,paints:0,token:0}));
   const selected=()=>root.dataset.backgroundCurrent==='trailer'&&(gallery||wide.matches);
   const moving=()=>selected()&&!document.hidden&&!reduce.matches&&root.dataset.artMotion!=='still';
@@ -29,7 +29,9 @@
     vec2 flow;
     if(kind<.5){flow=tangent*.21-d*.035;}
     else if(kind<1.5){flow=-tangent*.17-d*.04;}
-    else{flow=vec2(sign(d.x)*(.026+abs(d.x)*.06),.015+abs(d.x)*.02)+vec2(n-.5,0.)*.014;}
+    else if(kind<2.5){flow=vec2(sign(d.x)*(.026+abs(d.x)*.06),.015+abs(d.x)*.02)+vec2(n-.5,0.)*.014;}
+    else if(kind<3.5){flow=vec2(-.025,.048)+tangent*.06+vec2(n-.5,0.)*.025;}
+    else{flow=vec2(.035,.027)+vec2(-1.,1.)*(n-.5)*.006;}
     float phase=fract(time*(kind>1.5?.67:.52));
     float other=fract(phase+.5);float blend=abs(phase-.5)*2.;
     vec4 a=advect(uv,flow,phase),b=advect(uv,flow,other);
@@ -39,13 +41,19 @@
     float influence=(1.-keep)*energy;
     vec4 result=mix(base,fire,influence*.86);
     result.rgb*=1.+influence*.16*noise(vec2(uv.x*30.+time*.8,uv.y*21.-time*2.));
-    result.a=max(result.a,base.a*mix(.65,1.,keep));
+    // The vortex has a painted plasma interior; flow must not punch page-colored holes into it.
+    if(kind<.5&&radius<.2)result.a=max(result.a,base.a);
+    if(kind>3.5){float wave=.5+.5*sin((uv.x+uv.y)*32.-time*6.);result.rgb*=1.+wave*.2*influence;}
     // Painted solid regions, including sun discs, use byte-stable original RGBA.
     result=mix(result,base,keep);
-    gl_FragColor=result;
+    // Filter and blend premultiplied samples, then return straight alpha to this canvas.
+    // Transparent black texels otherwise leave gray trails on the white homepage.
+    gl_FragColor=vec4(result.rgb/max(result.a,.00001),result.a);
   }`;
   const masks={
     vortex:{polygon:[],ellipses:[]},
+    dragon:{polygon:[],ellipses:[[.30,.32,.13,.13]]},
+    strings:{polygon:[],ellipses:[]},
     filaments:{polygon:[],ellipses:[[.5,.685,.025,.032]]},
     suns:{polygon:[],ellipses:[[.148,.335,.063,.055],[.377,.316,.035,.035],[.534,.351,.029,.028],[.837,.312,.061,.063],[.303,.479,.034,.038],[.678,.511,.035,.033],[.363,.661,.036,.032],[.533,.683,.034,.032],[.171,.754,.056,.05],[.791,.805,.052,.052]]}
   };
@@ -58,8 +66,9 @@
   }
   function upload(e){
     const gl=e.gl;gl.useProgram(e.program);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);
     [e.img,protection(e)].forEach((im,i)=>{gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,e.textures[i]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,im);});
-    gl.uniform1f(gl.getUniformLocation(e.program,'kind'),['vortex','suns','filaments'].indexOf(e.key));
+    gl.uniform1f(gl.getUniformLocation(e.program,'kind'),cycle.indexOf(e.key));
   }
   function prepare(e){
     if(e.failed)return false;

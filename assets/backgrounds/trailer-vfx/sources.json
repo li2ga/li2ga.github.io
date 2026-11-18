@@ -1,16 +1,19 @@
 {
-  "method": "Independent reference-guided reconstruction with built-in image_gen. Native RGBA detail preserved in lossless WebP; real-time 2D advection, no embedded source footage or character paintings.",
+  "method": "Independent reference-guided reconstruction with built-in image_gen. Native RGBA retained in pixel-identical lossless WebP; real-time 2D flow, not a complete 3D simulation. No source footage embedded.",
   "references": [
     {
       "url": "https://www.youtube.com/watch?v=3dBEJgBg_fc",
       "uploader": "Yuewen Animation",
       "upload_date": "2026-11-12",
       "observed_times_seconds": [
+        5.7,
+        13.1,
+        29.1,
         31,
         47,
         67
       ],
-      "use": "Gold/red multi-sun spiral; golden branching filaments with character removed; violet flame vortex."
+      "use": "Cyan dragon energy; scarlet zither-string fields; gold/red multi-sun spiral; golden branching filaments with character removed; violet vortex with continuous violet interior."
     }
   ],
   "assets": {
@@ -19,11 +22,19 @@
         1254,
         1254
       ],
-      "web": "assets/backgrounds/trailer-vfx/violet-vortex-v1-lossless.webp",
-      "bytes": 1438940,
-      "sha256": "b615d44847771c6cddc5db4ddb0630656227af02ab54cc4af185f33e0f368351",
+      "web": "assets/backgrounds/trailer-vfx/violet-vortex-v2-lossless.webp",
+      "bytes": 1387598,
+      "sha256": "aade62375ffebf43e911e3cf096e37f743106368e6da41b3a82dac19db3177d7",
       "identical_rgba": true,
-      "native_png_sha256": "0554a77136bbf4866a63734829e4dfde8bc7bd10d3b57e903385436f5c74562f"
+      "native_png_sha256": "eb630d0be807cde163e21a9d1eef914e35729ab7e1ed3cdb28bc8d789b4954d6",
+      "center_alpha_probes": [
+        252,
+        253,
+        253,
+        252,
+        252
+      ],
+      "outside_alpha": 0
     },
     "golden-suns": {
       "size": [
@@ -46,6 +57,29 @@
       "sha256": "5d7e6d60e518668e82ec9780cedecc0a676038858b0a033f3f99a68a3cd0e714",
       "identical_rgba": true,
       "native_png_sha256": "b1eca992fbc4601dd5157ff84dac7215bb4b05c7b25ad374c23305753003adae"
+    },
+    "cyan-dragon": {
+      "size": [
+        1254,
+        1254
+      ],
+      "web": "assets/backgrounds/trailer-vfx/cyan-dragon-v1-lossless.webp",
+      "bytes": 1965638,
+      "sha256": "787c2a591035611dd9c31b37df3391a82d561329d439683a7d1ee3476f58647f",
+      "identical_rgba": true,
+      "native_png_sha256": "4eda68e44e5ad6c64c15431764408c7f4f63ca1812216f43d09ecd28ceca8400"
+    },
+    "scarlet-strings": {
+      "size": [
+        1254,
+        1254
+      ],
+      "web": "assets/backgrounds/trailer-vfx/scarlet-strings-v1-lossless.webp",
+      "bytes": 1755928,
+      "sha256": "7a860a1a2b421b98bf6c14bae966227c3cdf1d928fa64389ebef916db62df82d",
+      "identical_rgba": true,
+      "native_png_sha256": "436997d2b4c281c69ec3b8eb73ff5341e27301d3d4d0005437e350cb2a63da5d"
     }
-  }
+  },
+  "vortex_correction": "The central opening is filled with painted indigo plasma and branching electricity; transparency remains outside the flame silhouette. Static and moving versions share this corrected source."
 }

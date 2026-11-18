@@ -8,8 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_FILES = [
     "trailer-effects.js", "trailer-effects.css", "trailer-effects-preview.html",
     "assets/backgrounds/trailer-vfx/sources.json",
-    *[f"assets/backgrounds/trailer-vfx/{name}-v1-lossless.webp" for name in (
-        'violet-vortex', 'golden-suns', 'golden-filaments')],
+    *[f"assets/backgrounds/trailer-vfx/{name}-lossless.webp" for name in (
+        'violet-vortex-v2', 'golden-suns-v1', 'golden-filaments-v1',
+        'cyan-dragon-v1', 'scarlet-strings-v1')],
     "README.md", "index.html", "site.css", "script.js", "background-runtime.js", "art-loops.js", "lotus-videos.js", "analytics.js", "cv.html", "cv.css", ".nojekyll",
     "assets/backgrounds/motion/manifest.json",
     *[str(path.relative_to(ROOT)).replace('\\', '/') for path in sorted((ROOT/'assets/backgrounds/motion').glob('*.webm'))],
