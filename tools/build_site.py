@@ -155,7 +155,7 @@ def background_art():
 
 def background_controls():
     choices=[('trajectory','Trajectories','轨迹'),('ziwei-cinematic','Celestial procession','斗数意象'),('ganzhi-cinematic','Living elements','八字意象'),
-             ('lotus','Lotus evolution','火莲演变'),('xiaoyan-soul','Xiao Yan · Emperor Soul','萧炎 · 帝境灵魂'),('emperor','Emperor & 23 flames','古帝 · 二十三异火'),('auto','Auto rotate','自动轮换')]
+             ('lotus','Lotus evolution','火莲演变'),('trailer','Martial Universe · Light & Flame','武动 · 光焰'),('xiaoyan-soul','Xiao Yan · Emperor Soul','萧炎 · 帝境灵魂'),('emperor','Emperor & 23 flames','古帝 · 二十三异火'),('auto','Auto rotate','自动轮换')]
     buttons=''.join(f'<button type="button" data-background="{key}" aria-pressed="{str(key=="auto").lower()}">{pair(en,zh)}</button>' for key,en,zh in choices)
     older=''.join(f'<button type="button" data-background="{key}" aria-pressed="false">{pair(en,zh)}</button>' for key,en,zh in [('lotus-still','Pearl lotus study','粉白莲原版'),('lotus-classic','First lotus','初版火莲')])
     lotus_buttons=[]
@@ -174,6 +174,7 @@ def background_controls():
       <div class="lotus-options" hidden><div class="lotus-stage-buttons" role="group" aria-label="Lotus stages" data-label-en="Lotus stages" data-label-zh="火莲形态">{lotus_buttons}</div><button type="button" class="lotus-play-toggle" data-lotus-toggle aria-pressed="false">{pair('Pause evolution','暂停演变')}</button><p class="lotus-load-status" data-lotus-status role="status" aria-live="polite" hidden></p><button type="button" data-lotus-retry hidden>{pair('Try again','重新加载')}</button></div><p class="emperor-preview-link" hidden><a href="emperor-preview.html">{pair('View the Emperor scene','展开古帝全景')}</a></p>
       <p class="seven-star-preview-link" hidden><a href="seven-star-preview.html">{pair('Xiao Yan & Lin Dong','萧炎与林动全景')}</a><br><a href="pink-lotus-comparison.html">{pair('Golden lotus · three versions','金枝火莲三版对比')}</a><br><a href="tuoshe-lotus-comparison.html">{pair('Tuoshe lotus · compare','古帝莲左右对比')}</a></p>
       <p class="soul-preview-link" hidden><a href="xiaoyan-soul-preview.html">{pair('View the Emperor Soul panorama','展开帝境灵魂全景')}</a></p>
+      <div class="trailer-options" hidden><p><a href="trailer-effects-preview.html">{pair('View trailer effects','展开预告特效')}</a></p><div class="background-placement" role="group" aria-label="Martial Universe effects"><button data-trailer-select="vortex" aria-pressed="false">{pair('Violet vortex','紫焰旋涡')}</button><button data-trailer-select="suns" aria-pressed="true">{pair('Golden suns','赤金多日阵')}</button><button data-trailer-select="filaments" aria-pressed="false">{pair('Golden filaments','金色万丝')}</button></div><button data-trailer-retry hidden>{pair('Retry artwork','重试加载')}</button></div>
       <div class="background-placement soul-options" role="group" aria-label="Emperor Soul artwork" hidden><button type="button" data-soul-version="original" aria-pressed="false">{pair('Original painting','原画')}</button><button type="button" data-soul-version="corrected" aria-pressed="true">{pair('Xiao Yan revision','萧炎修正版')}</button></div>
       <div class="imagery-load-options" data-imagery-options hidden><p class="lotus-load-status" data-imagery-status role="status" aria-live="polite" hidden></p><button type="button" data-imagery-retry hidden>{pair('Reload missing artwork','重试未加载的形象')}</button></div>
       <div class="background-placement" role="group" aria-label="Background placement" data-label-en="Background placement" data-label-zh="背景位置">
@@ -378,7 +379,7 @@ def build_homepage():
     person, education = DATA['person'], DATA['education']
     critical_runtime = '\n;\n'.join(
         f'/* Source: {name} */\n'+(ROOT/name).read_text(encoding='utf-8')
-        for name in ('script.js', 'background-music.js', 'emperor-scene.js', 'seven-star.js', 'character-art.js')
+        for name in ('script.js', 'background-music.js', 'emperor-scene.js', 'seven-star.js', 'character-art.js', 'trailer-effects.js')
     ).replace('</script', '<\\/script')
     art_runtime = runtime_bundle('background-runtime.js', ('art-loops.js', 'lotus-duel-light.js',
         'lotus-cold-core.js', 'lotus-review-effects.js', 'lotus-review-composite.js', 'lotus-atmosphere.js'))
@@ -386,7 +387,7 @@ def build_homepage():
     if not (ROOT/portrait).exists():
         portrait = person['portrait']
     portrait += '?v='+hashlib.sha256((ROOT/portrait).read_bytes()).hexdigest()[:12]
-    critical_styles=(ROOT/'site.css').read_text(encoding='utf-8')+'\n'+(ROOT/'emperor-scene.css').read_text(encoding='utf-8')
+    critical_styles=(ROOT/'site.css').read_text(encoding='utf-8')+'\n'+(ROOT/'emperor-scene.css').read_text(encoding='utf-8')+'\n'+(ROOT/'trailer-effects.css').read_text(encoding='utf-8')
     analytics_version=hashlib.sha256((ROOT/'analytics.js').read_bytes()).hexdigest()[:10]
     biography = ''.join(
         '<p>' + bilingual(item, rich=True) + '</p>'
@@ -475,6 +476,7 @@ def build_homepage():
     (ROOT/'emperor-preview.html').write_text(runpy.run_path(str(ROOT/'tools/emperor_art.py'))['preview'](),encoding='utf-8',newline='\n')
     (ROOT/'emperor-flames.html').write_text(runpy.run_path(str(ROOT/'tools/emperor_art.py'))['motion_preview'](),encoding='utf-8',newline='\n')
     (ROOT/'xiaoyan-soul-preview.html').write_text(runpy.run_path(str(ROOT/'tools/soul_art.py'))['preview'](),encoding='utf-8',newline='\n')
+    (ROOT/'trailer-effects-preview.html').write_text(runpy.run_path(str(ROOT/'tools/trailer_art.py'))['preview'](),encoding='utf-8',newline='\n')
     refresh_motion_preview()
     refresh_flame_gallery()
 

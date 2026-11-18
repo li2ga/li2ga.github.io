@@ -1,0 +1,51 @@
+{
+  "method": "Independent reference-guided reconstruction with built-in image_gen. Native RGBA detail preserved in lossless WebP; real-time 2D advection, no embedded source footage or character paintings.",
+  "references": [
+    {
+      "url": "https://www.youtube.com/watch?v=3dBEJgBg_fc",
+      "uploader": "Yuewen Animation",
+      "upload_date": "2026-11-12",
+      "observed_times_seconds": [
+        31,
+        47,
+        67
+      ],
+      "use": "Gold/red multi-sun spiral; golden branching filaments with character removed; violet flame vortex."
+    }
+  ],
+  "assets": {
+    "violet-vortex": {
+      "size": [
+        1254,
+        1254
+      ],
+      "web": "assets/backgrounds/trailer-vfx/violet-vortex-v1-lossless.webp",
+      "bytes": 1438940,
+      "sha256": "b615d44847771c6cddc5db4ddb0630656227af02ab54cc4af185f33e0f368351",
+      "identical_rgba": true,
+      "native_png_sha256": "0554a77136bbf4866a63734829e4dfde8bc7bd10d3b57e903385436f5c74562f"
+    },
+    "golden-suns": {
+      "size": [
+        1254,
+        1254
+      ],
+      "web": "assets/backgrounds/trailer-vfx/golden-suns-v1-lossless.webp",
+      "bytes": 1900484,
+      "sha256": "ab881b0355f21a16c3af09de2847bcec35973198e76f1f55418ef52598f624b6",
+      "identical_rgba": true,
+      "native_png_sha256": "fc46203da34c4315924de8def884df7187dfdb32d8a3a400c3a61210401c7985"
+    },
+    "golden-filaments": {
+      "size": [
+        1536,
+        1024
+      ],
+      "web": "assets/backgrounds/trailer-vfx/golden-filaments-v1-lossless.webp",
+      "bytes": 1770330,
+      "sha256": "5d7e6d60e518668e82ec9780cedecc0a676038858b0a033f3f99a68a3cd0e714",
+      "identical_rgba": true,
+      "native_png_sha256": "b1eca992fbc4601dd5157ff84dac7215bb4b05c7b25ad374c23305753003adae"
+    }
+  }
+}

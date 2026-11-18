@@ -174,7 +174,7 @@
   }
 
   const backgroundSwitch = document.querySelector(".background-switch");
-  const backgroundScenes = ["trajectory", "ziwei-cinematic", "ganzhi-cinematic", "lotus", "xiaoyan-soul", "emperor"];
+  const backgroundScenes = ["trajectory", "ziwei-cinematic", "ganzhi-cinematic", "lotus", "trailer", "xiaoyan-soul", "emperor"];
   const availableBackgrounds = [...backgroundScenes, "lotus-still", "lotus-classic"];
   const wideBackground = window.matchMedia("(min-width: 1041px)");
   const autoBackgroundButton = document.querySelector('[data-background="auto"]');
@@ -537,7 +537,9 @@
     updateLotusLabels();
     updateImageryStatus();
     const motionOptions = document.querySelector('[data-art-motion-options]');
-    if (motionOptions) motionOptions.hidden = !['lotus','emperor','xiaoyan-soul','ziwei-cinematic','ganzhi-cinematic'].includes(atmosphere?.dataset.backgroundCurrent);
+    if (motionOptions) motionOptions.hidden = !['lotus','trailer','emperor','xiaoyan-soul','ziwei-cinematic','ganzhi-cinematic'].includes(atmosphere?.dataset.backgroundCurrent);
+    const trailerOptions = document.querySelector('.trailer-options');
+    if (trailerOptions) trailerOptions.hidden = atmosphere?.dataset.backgroundCurrent !== 'trailer';
     const emperorLink = document.querySelector('.emperor-preview-link');
     if (emperorLink) emperorLink.hidden = atmosphere?.dataset.backgroundCurrent !== 'emperor';
     const sevenStarLink = document.querySelector('.seven-star-preview-link');

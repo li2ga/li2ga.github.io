@@ -133,8 +133,7 @@
     captionLine.dataset.lyricAccent=featured&&random()<.42?'strong':'normal';
     const spotlight=featured?eligible[Math.floor(random()*eligible.length)]:-1;
     // Only compact Chinese phrases use the side composition. Imported long/Latin lines stay horizontal.
-    // Zhu Guang's official MV keeps lyrics horizontal below the action.
-    const vertical=loaded!=='zhu-guang'&&featured&&eligible.length<=18&&/^[\p{Script=Han}\p{P}\s]+$/u.test(text);
+    const vertical=featured&&eligible.length<=18&&/^[\p{Script=Han}\p{P}\s]+$/u.test(text);
     captions.dataset.lyricLayout=vertical?'vertical':'horizontal';
     captionLine.dataset.lyricLength=eligible.length<=5?'short':'long';
     let split=characters.length;

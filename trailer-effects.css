@@ -1,0 +1,16 @@
+/* Native transparent paintings stay outside the readable document column. */
+.trailer-placement{position:absolute;top:25vh;width:clamp(140px,calc((100vw - 860px)/2),430px);aspect-ratio:1;left:max(6px,calc((100vw - 1740px)/2));animation:trailer-drift 17s ease-in-out infinite alternate;animation-play-state:var(--scene-motion,paused)}
+.trailer-placement[data-trailer-side=right]{left:auto;right:max(6px,calc((100vw - 1740px)/2));top:14vh;animation-duration:21s;animation-delay:-8s}
+.trailer-depth{position:absolute;inset:0;transform:translate3d(calc(var(--trace-x,0px)*.45),calc(var(--trace-y,0px)*.45),0)}
+.trailer-art{position:absolute;inset:0}
+.trailer-art img,.trailer-art canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
+.trailer-art img{opacity:0;transition:opacity 1s ease}
+.trailer-art[data-ready] img{opacity:1}
+.trailer-art:not([data-flow-active]) canvas{visibility:hidden}
+.trailer-art[data-flow-active] img{visibility:hidden}
+.page-atmosphere[data-background-layout=page] .trailer-placement{top:10%}
+.page-atmosphere[data-background-layout=page] .trailer-placement[data-trailer-side=right]{top:48%}
+.page-atmosphere[data-art-motion=still] .trailer-placement{animation-play-state:paused}
+@keyframes trailer-drift{from{translate:0 -8px}to{translate:0 10px}}
+@media(max-width:1040px){.trailer-scene{display:none}}
+@media(prefers-reduced-motion:reduce){.trailer-placement{animation:none}.trailer-depth{transform:none}.trailer-art[data-flow-active] img{visibility:visible}.trailer-art canvas{visibility:hidden!important}.trailer-art img{transition:none}}

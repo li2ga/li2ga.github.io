@@ -94,4 +94,5 @@ def background_art(trajectory):
             +scene('lotus-classic','background-fire-lotus')
             +runpy.run_path(str(Path(__file__).with_name('cinematic_art.py')))['scenes']()
             +runpy.run_path(str(Path(__file__).with_name('emperor_art.py')))['scene']()
-            +runpy.run_path(str(Path(__file__).with_name('soul_art.py')))['scene']()+'</div>'+ambient['meteors']()+ambient['autumn_leaves']())
+            +runpy.run_path(str(Path(__file__).with_name('soul_art.py')))['scene']()
+            +runpy.run_path(str(Path(__file__).with_name('trailer_art.py')))['scene']()+'</div>'+ambient['meteors']()+ambient['autumn_leaves']())
