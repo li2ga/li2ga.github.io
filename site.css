@@ -329,8 +329,9 @@ strong,h3{font-weight:700}
 .character-form:not([hidden]){animation:character-reveal 1.4s ease both}
 .character-energy{isolation:isolate}
 .character-energy img{position:relative;z-index:1;filter:none}
-.character-energy [data-character-flow]{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:2;pointer-events:none}
-.character-energy[data-flow-active] img{opacity:0!important}
+.character-energy [data-character-flow]{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:2;pointer-events:none;visibility:hidden}
+.character-energy[data-flow-active] [data-character-flow]{visibility:visible}
+.character-energy[data-flow-active] img{visibility:hidden}
 @keyframes character-reveal{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.character-form:not([hidden]){animation:none}}
 .page-atmosphere[data-background-layout=page] .lotus-companion-4{top:60%}

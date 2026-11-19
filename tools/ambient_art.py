@@ -11,6 +11,7 @@ ASSETS = {
     'emperor': ('emperor-v2.png', 1086, 1448),
     'seven-star': ('xiaoyan-seven-star-v4-lossless.webp', 1122, 1402),
     'young-emperor': ('xiaoyan-young-emperor-v2-lossless.webp', 1199, 1312),
+    'henggu-ruler': ('xiaoyan-henggu-v1-lossless.webp', 1672, 941),
     'lindong-six': ('lindong-six-v1-lossless.webp', 1154, 1363),
     'lindong-seven': ('lindong-seven-v1-lossless.webp', 1086, 1448),
 }
@@ -32,7 +33,7 @@ def artwork(name):
         return ('<div class="ambient-presence seven-star-art" data-seven-star>'
                 '<canvas data-thunder-back aria-hidden="true"></canvas>'
                 + raster(name) + '<canvas data-thunder-front aria-hidden="true"></canvas></div>')
-    if name in {'young-emperor', 'lindong-six', 'lindong-seven'}:
+    if name in {'young-emperor', 'lindong-six', 'lindong-seven', 'henggu-ruler'}:
         return (f'<div class="ambient-presence character-energy" data-character-energy="{name}">'
                 + raster(name) + '<canvas data-character-flow aria-hidden="true"></canvas></div>')
     return f'<div class="ambient-presence">{raster(name)}</div>'
@@ -55,7 +56,7 @@ def line_parade():
 
 def lotus_companions():
     return ''.join(f'<div class="lotus-companion lotus-companion-{index}" data-lotus-companion="{name}"><div class="companion-depth">'
-                   + (character_group('left', ['seven-star', 'young-emperor']) if index == 4 else
+                   + (character_group('left', ['seven-star', 'young-emperor', 'henggu-ruler']) if index == 4 else
                       character_group('right', ['lindong-six', 'lindong-seven', 'emperor']) if index == 1 else artwork(name))
                    + '</div></div>'
                    for index, name in enumerate(['ruler', 'emperor', 'ruler', 'emperor', 'seven-star']))

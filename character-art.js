@@ -20,8 +20,36 @@
       if(kind<.5)return smoothstep(.07,.23,c.r-c.b)*smoothstep(.32,.7,c.g);
       return smoothstep(.10,.32,max(c.g,c.b)-c.r)*smoothstep(.38,.7,max(c.g,c.b));
     }
+    float rulerFire(vec4 c){
+      vec3 rgb=c.rgb/max(c.a,.001);
+      return smoothstep(.06,.22,rgb.r-rgb.b)*smoothstep(.36,.73,rgb.g)*smoothstep(.08,.32,c.a);
+    }
+    vec4 rulerFlow(vec4 base,float keep){
+      // Premultiplied texture interpolation prevents dark fringes on the soft fire edges.
+      if(keep>.97)return vec4(base.rgb/max(base.a,.001),base.a);
+      float broad=noise(uv*vec2(10.,7.)+vec2(time*.8,-time*1.6));
+      float detail=noise(uv*vec2(26.,19.)+vec2(-time*1.3,-time*2.7));
+      vec2 offset=vec2((broad-.5)*.024,(detail-.5)*.036)*(1.-keep);
+      vec4 bent=art(uv+offset);
+      float fuel=rulerFire(base)*(1.-keep);
+      vec4 color=mix(base,bent,fuel*.88);
+      color.rgb*=1.+fuel*(.06+.16*detail);
+      for(int i=0;i<3;i++){
+        float phase=fract(time*.58+float(i)/3.);
+        vec2 source=uv+vec2(phase*.065+(broad-.5)*.018,-phase*.095);
+        vec4 flame=art(source);
+        float sourceKeep=texture2D(protection,clamp(source,0.,1.)).r;
+        float life=pow(sin(phase*3.14159265),1.9);
+        float amount=rulerFire(flame)*(1.-sourceKeep)*(1.-keep)*life*.28;
+        amount*=smoothstep(.34,.75,broad+.23*detail);
+        vec4 plume=flame*amount;
+        color+=plume*(1.-color.a);
+      }
+      return vec4(color.rgb/max(color.a,.001),color.a);
+    }
     void main(){
       vec4 base=art(uv);float keep=texture2D(protection,uv).r;
+      if(kind>1.5){gl_FragColor=rulerFlow(base,keep);return;}
       float field=noise(vec2(uv.x*11.+time*.31,uv.y*9.-time*1.5));
       float fine=noise(vec2(uv.x*27.-time*.83,uv.y*21.-time*2.7));
       vec2 bend=vec2((field-.5)*.020+(fine-.5)*.006,(fine-.5)*.010);
@@ -49,7 +77,9 @@
   const masks={
     'young-emperor':{polygon:[[.28,0],[.75,0],[.66,.17],[.60,.28],[.75,.33],[.79,.43],[.88,.47],[.81,.60],[.62,.62],[.72,1],[.17,1],[.23,.70],[.08,.94],[.04,.91],[.10,.70],[.22,.52],[.23,.32],[.27,.24]],face:[.39,.23,.17,.18]},
     'lindong-six':{polygon:[[.35,.23],[.68,.22],[.78,.40],[.75,.64],[.92,.79],[.92,.85],[.80,.83],[.93,1],[.11,1],[.31,.66],[.28,.44]],face:[.52,.15,.14,.15]},
-    'lindong-seven':{polygon:[[.30,0],[.68,0],[.79,.18],[.82,.27],[.72,.34],[.88,.50],[.83,.69],[.90,.79],[.75,.86],[.57,.75],[.62,1],[.04,1],[.20,.74],[.03,.90],[.01,.84],[.12,.66],[.20,.44],[.27,.26]],face:[.39,.18,.17,.16]}
+    'lindong-seven':{polygon:[[.30,0],[.68,0],[.79,.18],[.82,.27],[.72,.34],[.88,.50],[.83,.69],[.90,.79],[.75,.86],[.57,.75],[.62,1],[.04,1],[.20,.74],[.03,.90],[.01,.84],[.12,.66],[.20,.44],[.27,.26]],face:[.39,.18,.17,.16]},
+    'henggu-ruler':{polygon:[[.087,.169],[.18,.219],[.35,.244],[.52,.237],[.66,.224],[.74,.253],[.77,.40],[.68,.49],[.58,.50],[.47,.66],[.39,.76],[.24,.80],[.15,.70],[.10,.58],[.03,.46],[.06,.34]],face:[.82,.24,.095,.21],
+      body:[[.85,.18],[.895,.23],[.91,.37],[.92,.57],[.92,.87],[.84,.96],[.69,.89],[.60,.79],[.54,.76],[.59,.67],[.70,.57],[.75,.41],[.79,.32]]}
   };
   function prepare(e){
     if(e.gl||e.failed)return !!e.gl;
@@ -65,9 +95,11 @@
       ctx.fillStyle='black';ctx.fillRect(0,0,512,512);ctx.fillStyle='white';ctx.shadowColor='white';ctx.shadowBlur=9;
       ctx.beginPath();shape.polygon.forEach(([x,y],i)=>ctx[i?'lineTo':'moveTo'](x*512,y*512));ctx.closePath();ctx.fill();
       const [x,y,rx,ry]=shape.face;ctx.beginPath();ctx.ellipse(x*512,y*512,rx*512,ry*512,0,0,Math.PI*2);ctx.fill();
-      [e.image,mask].forEach((image,i)=>{gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,gl.createTexture());gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);});
+      if(shape.body){ctx.beginPath();shape.body.forEach(([x,y],i)=>ctx[i?'lineTo':'moveTo'](x*512,y*512));ctx.closePath();ctx.fill();}
+      const ruler=e.host.dataset.characterEnergy==='henggu-ruler';
+      [e.image,mask].forEach((image,i)=>{gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,gl.createTexture());gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,ruler&&i===0);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);});
       gl.uniform1i(gl.getUniformLocation(program,'picture'),0);gl.uniform1i(gl.getUniformLocation(program,'protection'),1);
-      gl.uniform1f(gl.getUniformLocation(program,'kind'),e.host.dataset.characterEnergy==='young-emperor'?0:1);
+      gl.uniform1f(gl.getUniformLocation(program,'kind'),ruler?2:e.host.dataset.characterEnergy==='young-emperor'?0:1);
       e.gl=gl;e.program=program;e.time=gl.getUniformLocation(program,'time');e.canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();e.failed=true;e.host.removeAttribute('data-flow-active');});
       return true;
     }catch(error){e.failed=String(error);e.host.removeAttribute('data-flow-active');return false;}
@@ -76,12 +108,12 @@
     if(!prepare(e))return;
     const displayHeight=Math.min(e.host.clientHeight,e.host.clientWidth*e.image.naturalHeight/e.image.naturalWidth);
     const bottom=(e.host.clientHeight+displayHeight)/2;
-    const fade=`linear-gradient(#000 ${bottom-displayHeight*.13}px,transparent ${bottom}px)`;
+    const fade=e.host.dataset.characterEnergy==='henggu-ruler'?'none':`linear-gradient(#000 ${bottom-displayHeight*.13}px,transparent ${bottom}px)`;
     e.canvas.style.maskImage=fade;e.image.style.maskImage=fade;
     const w=Math.max(1,Math.min(e.image.naturalWidth,Math.ceil(e.host.clientWidth*Math.min(devicePixelRatio||1,2))));
     const h=Math.ceil(w*e.image.naturalHeight/e.image.naturalWidth);
     if(e.canvas.width!==w||e.canvas.height!==h){e.canvas.width=w;e.canvas.height=h;}
-    e.gl.viewport(0,0,w,h);e.gl.useProgram(e.program);e.gl.uniform1f(e.time,t);e.gl.drawArrays(e.gl.TRIANGLES,0,6);e.host.setAttribute('data-flow-active','');e.paints++;
+    e.gl.viewport(0,0,w,h);e.gl.useProgram(e.program);e.gl.uniform1f(e.time,t);e.gl.drawArrays(e.gl.TRIANGLES,0,6);e.canvas.style.opacity=getComputedStyle(e.image).opacity;e.host.setAttribute('data-flow-active','');e.paints++;
   }
   function choose(group,index){
     group.index=(index+group.forms.length)%group.forms.length;group.age=0;
@@ -105,5 +137,8 @@
   new MutationObserver(wake).observe(root,{attributes:true,subtree:true,attributeFilter:['data-background-current','data-art-motion','hidden']});
   document.addEventListener('visibilitychange',wake);reduced.addEventListener('change',wake);wide.addEventListener('change',wake);window.addEventListener('resize',wake);
   window.JiaCharacterArt={select:(side,name)=>{const g=groups.find(g=>g.host.dataset.characterCycle===side);if(g){const i=g.forms.findIndex(f=>f.dataset.characterForm===name);if(i>=0)choose(g,i);}},inspect:()=>({moving:moving(),running:!!frame,clock,source:'independent generated transparent art; no footage',groups:groups.map(g=>({side:g.host.dataset.characterCycle,form:g.forms[g.index].dataset.characterForm,age:g.age})),entries:entries.map(e=>({name:e.host.dataset.characterEnergy,visible:visible(e),paints:e.paints,failed:e.failed||false,width:e.canvas.width,height:e.canvas.height}))}),renderAt:t=>{cancelAnimationFrame(frame);frame=0;entries.filter(visible).forEach(e=>paint(e,t));},wake};
+  const requested=new URLSearchParams(location.search).get('character');
+  const requestedGroup=groups.find(g=>g.forms.some(f=>f.dataset.characterForm===requested));
+  if(requestedGroup)choose(requestedGroup,requestedGroup.forms.findIndex(f=>f.dataset.characterForm===requested));
   wake();
 })();

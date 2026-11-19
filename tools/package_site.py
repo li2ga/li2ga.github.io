@@ -72,6 +72,7 @@ PUBLIC_FILES = [
     "assets/backgrounds/anime-v2/ruler-emperor-v2.svg",
     "seven-star.js", "seven-star-preview.html", "assets/backgrounds/anime-v2/xiaoyan-seven-star-v3.png",
     "character-art.js",
+    "henggu-ruler-preview.html", "assets/backgrounds/anime-v2/xiaoyan-henggu-v1-lossless.webp",
     *[f"assets/backgrounds/anime-v2/{name}-lossless.webp" for name in (
         'xiaoyan-seven-star-v4', 'xiaoyan-young-emperor-v1', 'lindong-six-v1', 'lindong-seven-v1')],
     "assets/backgrounds/anime-v2/xiaoyan-young-emperor-v2-lossless.webp",
