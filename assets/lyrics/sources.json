@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T12:02:53.146881-06:00",
+  "updated": "2026-11-19",
   "tracks": [
     {
       "key": "shou-ni-suo-wang",
@@ -365,6 +365,43 @@
       "source_duration_seconds": 230,
       "source_duration_delta_seconds": -0.4,
       "source_type": "Public platform timing matched to the recording supplied by the user"
+    },
+    {
+      "key": "shou-ni-suo-wang-alt",
+      "title": "守你所望 · 刘端端（新增音源）",
+      "audio": "assets/audio/shou-ni-suo-wang-alt-v1.flac",
+      "subtitle": "assets/lyrics/shou-ni-suo-wang-alt-v1.lrc",
+      "audio_duration_seconds": 198.753313,
+      "timed_lines": 97,
+      "last_timestamp_seconds": 180.84,
+      "subtitle_sha256": "213163f7c2fbc91b981aed819753a6b1806b9e7de7e9a361358024028d7bfa3b",
+      "source_platform": "qq",
+      "source_url": "https://y.qq.com/n/ryqq/songDetail/0032sUU30Z6o96",
+      "source_title": "守你所望",
+      "source_artists": [
+        "刘端端"
+      ],
+      "source_album": "守你所望 (《斗破苍穹年番4》动画插曲&片尾曲)",
+      "source_duration_seconds": 198,
+      "source_duration_delta_seconds": -0.753,
+      "source_type": "Existing public platform LRC reused for user-supplied additional recording. Three 16-second diagnostic waveform windows align within 0.008 seconds; lyrics timing unchanged.",
+      "source_timing_checks": [
+        {
+          "old_at_seconds": 30,
+          "new_minus_old_seconds": 0.008000000000000007,
+          "correlation": 0.7087352773403187
+        },
+        {
+          "old_at_seconds": 90,
+          "new_minus_old_seconds": 0.008000000000000007,
+          "correlation": 0.7615604563599981
+        },
+        {
+          "old_at_seconds": 150,
+          "new_minus_old_seconds": 0.008000000000000007,
+          "correlation": 0.7559533300775022
+        }
+      ]
     },
     {
       "key": "our-adventure",

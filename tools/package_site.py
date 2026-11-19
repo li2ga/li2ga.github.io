@@ -43,6 +43,7 @@ PUBLIC_FILES = [
     "assets/audio/wen-v1.flac",
     "assets/audio/wen-xing-v1.flac",
     "assets/audio/shou-ni-suo-wang-v1.flac",
+    "assets/audio/shou-ni-suo-wang-alt-v1.flac", "assets/lyrics/shou-ni-suo-wang-alt-v1.lrc",
     "assets/lyrics/bu-mie-instrumental-v1.lrc", "assets/lyrics/wen-ding-v1.lrc",
     *[f"assets/lyrics/{name}.lrc" for name in (
         'shou-ni-suo-wang-v1', 'chi-nian-v1', 'far-beyond-us-instrumental-v1',
