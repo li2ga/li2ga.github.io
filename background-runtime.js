@@ -12,6 +12,7 @@
   const surface = document.createElement('canvas');
   const period = 8000;
   let gl, program, locations, transportProgram, transportLocations, quad, attempted = false;
+  let rulerMaskImage, rulerMaskFailed=false;
   let fuelEnabled = true;
   let coldSnowEnabled = true;
   const fieldSize = 768;
@@ -53,29 +54,17 @@
     void main(){uv=position*.5+.5;gl_Position=vec4(position,0.,1.);}`;
   const flameLayers = `
     bool groundedRuler(){return variant>199.5&&variant<200.5;}
+    uniform sampler2D weaponMask;
     float rulerMetal(vec2 uv){
-      // The outline follows weapon-body in the unchanged official-frame SVG.
-      // Protect the guard, hilt and complete blade before transporting fire.
-      vec2 p=vec2(275.,80.)+vec2(uv.x,1.-uv.y)*vec2(285.,300.);
-      vec2 v[16];
-      v[0]=vec2(326.,102.);v[1]=vec2(337.,115.);v[2]=vec2(376.,109.);
-      v[3]=vec2(376.,120.);v[4]=vec2(363.,126.);v[5]=vec2(487.,335.);
-      v[6]=vec2(474.,352.);v[7]=vec2(438.,365.);v[8]=vec2(410.,357.);
-      v[9]=vec2(381.,303.);v[10]=vec2(315.,143.);v[11]=vec2(306.,145.);
-      v[12]=vec2(299.,140.);v[13]=vec2(306.,133.);v[14]=vec2(325.,121.);
-      v[15]=vec2(326.,102.);
-      bool inside=false;float distance=1000.;vec2 a=v[15];
-      for(int i=0;i<16;i++){
-        vec2 b=v[i],edge=b-a;
-        float u=clamp(dot(p-a,edge)/max(dot(edge,edge),.001),0.,1.);
-        distance=min(distance,length(p-a-u*edge));
-        if((a.y>p.y)!=(b.y>p.y)){
-          float crossing=(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x;
-          if(p.x<crossing)inside=!inside;
-        }
-        a=b;
-      }
-      return inside?1.:1.-smoothstep(4.,9.,distance);
+      // The same model-assisted matte used by the SVG: whole metal face and
+      // visible thickness, rather than guessed edges along bright lava veins.
+      vec2 p=(vec2(275.,80.)+vec2(uv.x,1.-uv.y)*vec2(285.,300.))/vec2(700.,380.);
+      p.y=1.-p.y;
+      vec2 e=vec2(1.5/700.,1.5/380.);
+      float value=texture2D(weaponMask,p).r;
+      value=max(value,max(texture2D(weaponMask,p+vec2(e.x,0.)).r,texture2D(weaponMask,p-vec2(e.x,0.)).r));
+      value=max(value,max(texture2D(weaponMask,p+vec2(0.,e.y)).r,texture2D(weaponMask,p-vec2(0.,e.y)).r));
+      return smoothstep(.10,.60,value);
     }
     bool hasFramework(){return (variant>4.5&&variant<5.5)||(variant>8.5&&variant<13.);}
     float goldMaterial(vec4 c){return smoothstep(.04,.17,c.r-c.b)*smoothstep(.01,.1,c.g-c.b);}
@@ -580,18 +569,23 @@
       const position = gl.getAttribLocation(program, 'position');
       gl.enableVertexAttribArray(position);
       gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-      locations = Object.fromEntries(['picture','phase','mode','variant','flameClock','referenceFlow','noiseField','heatField','imageRect','motionProfile','motionShape'].map(name => [name, gl.getUniformLocation(program,name)]));
+      locations = Object.fromEntries(['picture','phase','mode','variant','flameClock','referenceFlow','noiseField','heatField','imageRect','motionProfile','motionShape','weaponMask'].map(name => [name, gl.getUniformLocation(program,name)]));
       gl.uniform1i(locations.picture, 0);
       gl.uniform1i(locations.heatField, 2);
+      gl.uniform1i(locations.weaponMask, 3);
       transportProgram=gl.createProgram();
       gl.attachShader(transportProgram,compile(gl.VERTEX_SHADER,vertex));
       gl.attachShader(transportProgram,compile(gl.FRAGMENT_SHADER,transport));
       gl.linkProgram(transportProgram);
       if(!gl.getProgramParameter(transportProgram,gl.LINK_STATUS))throw new Error('Flame transport unavailable');
-      transportLocations=Object.fromEntries(['previous','picture','noiseField','imageRect','dt','clock','variant','inject','initialize','texel'].map(name=>[name,gl.getUniformLocation(transportProgram,name)]));
+      transportLocations=Object.fromEntries(['previous','picture','noiseField','imageRect','dt','clock','variant','inject','initialize','texel','weaponMask'].map(name=>[name,gl.getUniformLocation(transportProgram,name)]));
       gl.useProgram(transportProgram);
-      gl.uniform1i(transportLocations.picture,0);gl.uniform1i(transportLocations.noiseField,1);gl.uniform1i(transportLocations.previous,2);
+      gl.uniform1i(transportLocations.picture,0);gl.uniform1i(transportLocations.noiseField,1);gl.uniform1i(transportLocations.previous,2);gl.uniform1i(transportLocations.weaponMask,3);
       gl.useProgram(program);
+      // Supply a complete neutral mask before any grounded ruler is requested.
+      const neutralWeaponMask=gl.createTexture();gl.activeTexture(gl.TEXTURE3);gl.bindTexture(gl.TEXTURE_2D,neutralWeaponMask);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([255,255,255,255]));
       const emptyField=gl.createTexture();gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,emptyField);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
       gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(4));
@@ -704,9 +698,24 @@
     return box.width > 0 && box.height > 0 && box.right > 0 && box.left < innerWidth && box.bottom > 0 && box.top < innerHeight;
   }
 
+  function groundedMaskReady() {
+    if (!rulerMaskImage) {
+      rulerMaskImage=new Image();
+      rulerMaskImage.onload=wake;
+      rulerMaskImage.onerror=()=>{rulerMaskFailed=true;wake();};
+      rulerMaskImage.src='assets/backgrounds/anime-v2/ruler-emperor-body-mask-v4.png?v=3647b135f479';
+    }
+    return rulerMaskImage.complete&&rulerMaskImage.naturalWidth>0;
+  }
+
   function draw(entry, time, nativeProof=false) {
     try {
       const image = entry.image;
+      if(entry.variant===200){
+        if(rulerMaskFailed)throw new Error('Weapon matte unavailable');
+        if(!groundedMaskReady()){show(entry,false);return;}
+        gl.activeTexture(gl.TEXTURE3);gl.bindTexture(gl.TEXTURE_2D,texture(rulerMaskImage));
+      }
       const sourceWidth=image.naturalWidth*entry.rect[2],sourceHeight=image.naturalHeight*entry.rect[3];
       const displayScale=(entry.mode===1||entry.mode===7||entry.mode===8)&&!nativeProof
         ? Math.min(1,(devicePixelRatio||1)*Math.min(entry.host.clientWidth/sourceWidth,entry.host.clientHeight/sourceHeight)) : 1;

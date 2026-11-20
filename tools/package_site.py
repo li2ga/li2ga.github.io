@@ -72,6 +72,8 @@ PUBLIC_FILES = [
     "assets/backgrounds/anime-v2/ruler-emperor-v1.svg",
     "assets/backgrounds/anime-v2/ruler-emperor-v2.svg",
     "assets/backgrounds/anime-v2/ruler-emperor-v3.svg",
+    "assets/backgrounds/anime-v2/ruler-emperor-v4.svg",
+    "assets/backgrounds/anime-v2/ruler-emperor-body-mask-v4.png",
     "seven-star.js", "seven-star-preview.html", "assets/backgrounds/anime-v2/xiaoyan-seven-star-v3.png",
     "character-art.js",
     "henggu-ruler-preview.html", "assets/backgrounds/anime-v2/xiaoyan-henggu-v1-lossless.webp",
