@@ -18,7 +18,7 @@ img{max-width:100%;display:block}
 img[data-src]{visibility:hidden}
 p{margin:12px 0}
 strong,h3{font-weight:700}
-.homepage{width:100%;max-width:800px;margin:0 auto;position:relative;z-index:1;padding-top:4px;background:#fff}
+.homepage{width:100%;max-width:800px;margin:0 auto;position:relative;z-index:1;padding-top:4px}
 .page-atmosphere{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
 .page-atmosphere[data-background-visibility]{--lotus-frame-peak:1;--lotus-fade-peak:1;--lotus-fade-mid:.92;--lotus-fade-high:.97;--lotus-fade-late:.8}
 .page-atmosphere[data-background-visibility] .ambient-raster{filter:none}
