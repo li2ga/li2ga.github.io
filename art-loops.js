@@ -56,14 +56,15 @@
       // The outline follows weapon-body in the unchanged official-frame SVG.
       // Protect the guard, hilt and complete blade before transporting fire.
       vec2 p=vec2(275.,80.)+vec2(uv.x,1.-uv.y)*vec2(285.,300.);
-      vec2 v[14];
+      vec2 v[16];
       v[0]=vec2(326.,102.);v[1]=vec2(337.,115.);v[2]=vec2(376.,109.);
-      v[3]=vec2(376.,120.);v[4]=vec2(363.,126.);v[5]=vec2(451.,319.);
-      v[6]=vec2(448.,347.);v[7]=vec2(410.,357.);v[8]=vec2(381.,303.);
-      v[9]=vec2(315.,143.);v[10]=vec2(306.,145.);v[11]=vec2(299.,140.);
-      v[12]=vec2(306.,133.);v[13]=vec2(325.,121.);
-      bool inside=false;float distance=1000.;vec2 a=v[13];
-      for(int i=0;i<14;i++){
+      v[3]=vec2(376.,120.);v[4]=vec2(363.,126.);v[5]=vec2(487.,335.);
+      v[6]=vec2(474.,352.);v[7]=vec2(438.,365.);v[8]=vec2(410.,357.);
+      v[9]=vec2(381.,303.);v[10]=vec2(315.,143.);v[11]=vec2(306.,145.);
+      v[12]=vec2(299.,140.);v[13]=vec2(306.,133.);v[14]=vec2(325.,121.);
+      v[15]=vec2(326.,102.);
+      bool inside=false;float distance=1000.;vec2 a=v[15];
+      for(int i=0;i<16;i++){
         vec2 b=v[i],edge=b-a;
         float u=clamp(dot(p-a,edge)/max(dot(edge,edge),.001),0.,1.);
         distance=min(distance,length(p-a-u*edge));
@@ -380,7 +381,30 @@
       vec3 rgb=body.rgb*body.a+emitted*(1.-body.a*.7);
       return vec4(min(rgb,vec3(alpha)),alpha);
     }
+    vec4 groundedFire(vec2 at){
+      vec4 original=artwork(at);
+      // Keep the complete native weapon and its hot engraved face rigid.
+      if(rulerMetal(at)>.02)return vec4(original.rgb*original.a,original.a);
+      float flame=movingMaterial(at,original)*smoothstep(.28,.66,max(original.r,original.g));
+      float t=flameClock;
+      vec2 drift=vec2(fireNoise(vec3(at*vec2(9.,13.)+vec2(0.,-t*1.8),t*.31))-.5,
+                      fireNoise(vec3(at*vec2(13.,9.)+vec2(0.,-t*2.1),t*.23))-.5);
+      vec2 source=at+drift*vec2(.045,.032)*flame;
+      float freeSource=1.-rulerMetal(source);
+      vec4 flowing=artwork(mix(at,source,freeSource));
+      vec4 base=mix(vec4(original.rgb*original.a,original.a),
+                    vec4(flowing.rgb*flowing.a,flowing.a),flame*.72*freeSource);
+      // Retain the original plume while finite source-colored fuel rises around
+      // it. Replacing every orange pixel left a hollow oval after warm-up.
+      vec4 fuel=texture2D(heatField,at);
+      float alpha=smoothstep(.045,.63,fuel.a)*.55;
+      alpha*=smoothstep(0.,.025,at.x)*(1.-smoothstep(.975,1.,at.x))*(1.-smoothstep(.87,.995,at.y));
+      vec3 color=clamp(fuel.rgb/max(fuel.a,.003),0.,1.);
+      vec4 emitted=vec4(color*alpha,alpha);
+      return base+emitted*(1.-base.a);
+    }
     vec4 livingFlame(vec2 at){
+      if(groundedRuler())return groundedFire(at);
       vec4 original=artwork(at);
       if(groundedRuler()&&rulerMetal(at)>.02)return vec4(original.rgb*original.a,original.a);
       float rigid=rigidMaterial(original);
@@ -921,7 +945,11 @@
       }
       const object=image.closest('.imagery-object');
       if (object) install(image,image.parentElement,image,subjects[object.dataset.imageryObject]??0);
-      // The grounded ruler keeps its original still artwork, without a flame overlay.
+      const grounded=image.closest('[data-grounded-ruler]');
+      if (grounded) {
+        grounded.dataset.flameMotion='原片火焰从底部上升、卷曲、冷却；完整尺身保持刚性';
+        install(image,grounded,image,1,200);
+      }
     },
     wake,
     emperorProfiles:()=>emperorProfiles.map((profile,i)=>({rank:i+1,...profile})),

@@ -71,6 +71,7 @@ PUBLIC_FILES = [
     *[f"assets/backgrounds/anime-v2/{name}" for name in ['pikachu-smash-v1.png', 'miris-light-v1.png', 'dimo-royal-v1.png']],
     "assets/backgrounds/anime-v2/ruler-emperor-v1.svg",
     "assets/backgrounds/anime-v2/ruler-emperor-v2.svg",
+    "assets/backgrounds/anime-v2/ruler-emperor-v3.svg",
     "seven-star.js", "seven-star-preview.html", "assets/backgrounds/anime-v2/xiaoyan-seven-star-v3.png",
     "character-art.js",
     "henggu-ruler-preview.html", "assets/backgrounds/anime-v2/xiaoyan-henggu-v1-lossless.webp",
