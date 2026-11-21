@@ -313,14 +313,20 @@ def music_control():
         ('zhan-ge', '战歌 · CoCo李玟', 'zhan-ge-v1.flac'),
         ('wen', '问 · 陈家淇', 'wen-v1.flac'),
         ('shou-ni-suo-wang-alt', '守你所望 · 刘端端（新增音源）', 'shou-ni-suo-wang-alt-v1.flac'),
+        ('bu-wen', '不问 · 王浩然', 'bu-wen-v1.flac'),
+        ('yi-wo-film', '以我 · 张赫煊（剧场版音源）', 'yi-wo-film-v1.flac'),
+        ('yi-wo', '以我 · 张赫煊', 'yi-wo-v1.flac'),
+        ('bu-wen-film', '不问 · 王浩然（剧场版音源）', 'bu-wen-film-v1.flac'),
         ('our-adventure', '我们的冒险 · 曹寅', 'our-adventure-v1.mp3'),
     )
     choices = []
+    timed_lyrics_count = 0
     for key, title, file in tracks:
         music_hash = hashlib.sha256((ROOT / 'assets/audio' / file).read_bytes()).hexdigest()[:10]
         lyrics = ROOT / 'assets/lyrics' / (Path(file).stem + '.lrc')
         subtitle_attr = ''
         if lyrics.is_file():
+            timed_lyrics_count += 1
             lyric_hash = hashlib.sha256(lyrics.read_bytes()).hexdigest()[:10]
             subtitle_attr = f' data-lyrics-src="assets/lyrics/{lyrics.name}?v={lyric_hash}"'
         choices.append(f'<option value="{key}" data-music-src="assets/audio/{file}?v={music_hash}"{subtitle_attr}>{esc(title)}</option>')
@@ -340,7 +346,7 @@ def music_control():
 <div class="music-transport"><button type="button" data-music-previous>{pair('‹ Previous','‹ 上一首')}</button><button type="button" data-music-play aria-pressed="false">{pair('Play / pause','播放／暂停')}</button><button type="button" data-music-next>{pair('Next ›','下一首 ›')}</button></div>
 <fieldset class="music-lyrics-settings"><legend>{pair('Lyrics subtitles','歌词字幕')}</legend>
 <label class="music-lyrics-switch"><input data-lyrics-toggle type="checkbox" aria-controls="music-captions">{pair('Show lyrics · off by default','显示歌词字幕 · 默认关闭')}</label>
-<p class="music-lyrics-help">{pair(f'Timed lyrics are included for all {len(tracks)} tracks. You can also import your own subtitles below.',f'内置 {len(tracks)} 首均已配时间轴歌词，也可以在下方导入自己的字幕。')}</p>
+<p class="music-lyrics-help">{pair(f'The playlist has {len(tracks)} tracks; timed lyrics are included for {timed_lyrics_count}. You can also import your own subtitles below.',f'内置 {len(tracks)} 首音乐，其中 {timed_lyrics_count} 首已配时间轴歌词，也可以在下方导入自己的字幕。')}</p>
 <label>{pair('Import subtitles for the selected track','为当前歌曲导入字幕')}<input data-lyrics-upload type="file" accept=".lrc,.srt,.vtt"></label>
 <label class="music-lyrics-delay">{pair('Subtitle delay (seconds; negative = earlier)','字幕延迟（秒，负数提前）')}<input data-lyrics-delay type="number" min="-30" max="30" step="0.1" value="0" inputmode="decimal"></label>
 <p class="music-lyrics-status" data-lyrics-status role="status"></p>
