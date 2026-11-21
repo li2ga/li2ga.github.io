@@ -28,6 +28,7 @@
     let entranceTimer = 0;
     function finishEntrance() {
       clearTimeout(entranceTimer);
+      entrance.dispatchEvent(new Event('entrance:finish'));
       document.documentElement.classList.remove('intro-pending');
       entrance.remove();
       document.removeEventListener('visibilitychange', finishWhenHidden);
@@ -38,7 +39,15 @@
     if (new URLSearchParams(location.search).get('intro') !== 'preview') {
       try { localStorage.setItem('jia-li-intro-seen', '1'); } catch (_) { /* The page remains readable without storage. */ }
     }
-    entranceTimer = setTimeout(finishEntrance, Number(entrance.dataset.duration) || 6400);
+    const lotusRuntime = entrance.querySelector('.entrance-lotus')?.dataset.runtime;
+    if (lotusRuntime) {
+      const runtime = document.createElement('script');
+      runtime.src = lotusRuntime;
+      runtime.async = true;
+      document.head.appendChild(runtime);
+    }
+    const entranceAnimation = entrance.getAnimations().find(animation => animation.animationName === 'entrance-clear');
+    entranceTimer = setTimeout(finishEntrance, Math.max(0, (Number(entrance.dataset.duration) || 12000) - Number(entranceAnimation?.currentTime || 0)));
     document.addEventListener('visibilitychange', finishWhenHidden);
     reducedMotion.addEventListener('change', finishOnReducedMotion);
   } else if (entrance) entrance.remove();
