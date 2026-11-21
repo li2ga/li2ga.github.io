@@ -25,7 +25,7 @@ def fire_lotus():
     return f'''<div class="entrance-lotus" data-runtime="assets/entrance/golden-lotus-v1.js?v={version}">
       <div class="lotus-entrance-halo"></div><canvas class="entrance-lotus-canvas"></canvas>
       <svg class="lotus-entrance-fallback" viewBox="-240 -240 480 480" focusable="false">
-        <defs><linearGradient id="entry-lotus-gold" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#fff8d5"/><stop offset=".23" stop-color="#f4ce72"/><stop offset=".43" stop-color="#fff0b9"/><stop offset=".64" stop-color="#c08a29"/><stop offset=".82" stop-color="#ffe3a0"/><stop offset="1" stop-color="#f3c45c"/></linearGradient></defs>
+        <defs><linearGradient id="entry-lotus-gold" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#fff6d7"/><stop offset=".2" stop-color="#e9bd65"/><stop offset=".38" stop-color="#b8dfdb"/><stop offset=".51" stop-color="#bea3d3"/><stop offset=".64" stop-color="#e5b5ad"/><stop offset=".8" stop-color="#f8daa0"/><stop offset="1" stop-color="#fff0c4"/></linearGradient></defs>
         {''.join(petals)}<circle class="lotus-fallback-heart" r="12"/>
       </svg>
     </div>'''

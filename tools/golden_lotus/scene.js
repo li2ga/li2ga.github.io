@@ -70,13 +70,15 @@ function environment(renderer) {
   const c = document.createElement('canvas'); c.width = 512; c.height = 256;
   const ctx = c.getContext('2d');
   const g = ctx.createLinearGradient(0, 0, 0, 256);
-  g.addColorStop(0, '#fff8df'); g.addColorStop(.35, '#e9cb81');
-  g.addColorStop(.55, '#7f6439'); g.addColorStop(1, '#fff5dd');
+  g.addColorStop(0, '#fff9ed'); g.addColorStop(.35, '#c2ced9');
+  g.addColorStop(.55, '#45485e'); g.addColorStop(1, '#fff1d2');
   ctx.fillStyle = g; ctx.fillRect(0, 0, 512, 256);
   for (const [x, w] of [[24, 55], [161, 23], [302, 77], [461, 25]]) {
     ctx.fillStyle = '#fffef8'; ctx.fillRect(x, 6, w, 210);
   }
   ctx.fillStyle = '#423b30'; ctx.fillRect(225, 25, 28, 150);
+  ctx.fillStyle = '#a4edee'; ctx.fillRect(88, 45, 36, 150);
+  ctx.fillStyle = '#c0a0e9'; ctx.fillRect(390, 50, 35, 145);
   const texture = new T.CanvasTexture(c); texture.colorSpace = T.SRGBColorSpace;
   texture.mapping = T.EquirectangularReflectionMapping;
   const pmrem = new T.PMREMGenerator(renderer);
@@ -101,8 +103,9 @@ export function createLotus(canvas) {
   const root = new T.Group(); scene.add(root);
   const geometries = new Set(), materials = new Set();
   const material = (m) => { materials.add(m); return m; };
-  const gold = [0xe9af31, 0xf4c04e, 0xf5cb65, 0xf5d47e].map(color => material(new T.MeshPhysicalMaterial({
-    color, metalness: .84, roughness: .24, clearcoat: .9, clearcoatRoughness: .17,
+  const gold = [0xe9b94f, 0xf4d078, 0xf5d691, 0xf5dda1].map(color => material(new T.MeshPhysicalMaterial({
+    color, metalness: .8, roughness: .21, clearcoat: 1, clearcoatRoughness: .13,
+    iridescence: .58, iridescenceIOR: 1.31, iridescenceThicknessMinimum: 180, iridescenceThicknessMaximum: 560,
     emissive: 0xf9ac1c, emissiveIntensity: .045, side: T.DoubleSide
   })));
   const vein = material(new T.MeshBasicMaterial({color: 0xfff0ac}));
@@ -112,16 +115,26 @@ export function createLotus(canvas) {
     mat.onBeforeCompile = shader => {
       shader.uniforms.lotusTime = fireUniforms.time;
       shader.uniforms.lotusHeat = fireUniforms.intensity;
-      shader.vertexShader = 'varying vec2 lotusUV;\n' + shader.vertexShader;
-      shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nlotusUV=uv;');
-      shader.fragmentShader = 'varying vec2 lotusUV; uniform float lotusTime; uniform float lotusHeat;\n' + shader.fragmentShader;
+      shader.vertexShader = 'varying vec2 lotusUV; varying vec2 lotusWorld;\n' + shader.vertexShader;
+      shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nlotusUV=uv;lotusWorld=(modelMatrix*vec4(position,1.)).xy;');
+      shader.fragmentShader = 'varying vec2 lotusUV; varying vec2 lotusWorld; uniform float lotusTime; uniform float lotusHeat;\n' + shader.fragmentShader;
       shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
         float u=lotusUV.x,v=lotusUV.y;
         float vein=pow(.5+.5*sin(v*44.+sin(u*17.)*1.6+sin(v*12.+u*8.)*.8),22.);
         float fleck=pow(.5+.5*sin(u*193.+v*73.)*sin(v*219.-u*61.),16.);
         float flow=pow(.5+.5*sin(u*19.-lotusTime*4.+v*7.),6.);
         float heat=(vein*.27+fleck*.9)*(flow*.7+.3)*lotusHeat*sin(u*3.14159);
-        totalEmissiveRadiance+=vec3(1.,.43,.045)*heat*1.4;
+        float grazing=1.-abs(dot(normal,normalize(vViewPosition)));
+        float phase=u*1.38+v*.36+grazing*.5+sin(u*5.+v*3.)*.1+lotusTime*.006;
+        phase+=sin(atan(lotusWorld.y,lotusWorld.x)*3.+u*4.)*.16;
+        vec3 spectrum=.54+.46*cos(6.28318*(phase+vec3(.0,.34,.67)));
+        // Gold remains the base; the curved facets carry cyan, violet and red
+        // interference highlights instead of a uniform yellow coating.
+        vec3 jewel=mix(vec3(.94,.62,.18),spectrum,.82);
+        float fold=.5+.5*sin(u*10.+v*4.+sin(v*5.)*.8);
+        float sheen=(.22+.46*fold+.2*grazing)*smoothstep(.16,.72,u);
+        diffuseColor.rgb=mix(diffuseColor.rgb,jewel,sheen);
+        totalEmissiveRadiance+=mix(vec3(1.,.43,.045),spectrum,.25)*heat*1.4;
         diffuseColor.rgb*=.91+.09*sin(u*34.+v*11.);`);
     };
   });

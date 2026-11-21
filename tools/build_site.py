@@ -294,7 +294,9 @@ def honors_list(items):
 def music_control():
     tracks = (
         ('shou-ni-suo-wang', '守你所望 · 刘端端', 'shou-ni-suo-wang-v1.flac'),
+        ('bu-wen', '不问 · 王浩然（伴奏）', 'bu-wen-v1.flac'),
         ('chi-nian', '炽念 · 柯淳', 'chi-nian-v1.mp3'),
+        ('yi-wo', '以我 · 张赫煊（伴奏）', 'yi-wo-v1.flac'),
         ('far-beyond-us-instrumental', '远不止你我 · 伴奏', 'far-beyond-us-instrumental-v1.flac'),
         ('our-adventure-instrumental', '我们的冒险 · 伴奏（AI分离）', 'our-adventure-instrumental-v1.flac'),
         ('bu-mie-instrumental', '不灭 · 伴奏', 'bu-mie-instrumental-v1.mp3'),
@@ -313,9 +315,7 @@ def music_control():
         ('zhan-ge', '战歌 · CoCo李玟', 'zhan-ge-v1.flac'),
         ('wen', '问 · 陈家淇', 'wen-v1.flac'),
         ('shou-ni-suo-wang-alt', '守你所望 · 刘端端（新增音源）', 'shou-ni-suo-wang-alt-v1.flac'),
-        ('bu-wen', '不问 · 王浩然', 'bu-wen-v1.flac'),
         ('yi-wo-film', '以我 · 张赫煊（剧场版音源）', 'yi-wo-film-v1.flac'),
-        ('yi-wo', '以我 · 张赫煊', 'yi-wo-v1.flac'),
         ('bu-wen-film', '不问 · 王浩然（剧场版音源）', 'bu-wen-film-v1.flac'),
         ('our-adventure', '我们的冒险 · 曹寅', 'our-adventure-v1.mp3'),
     )
