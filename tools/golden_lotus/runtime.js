@@ -3,6 +3,7 @@ import {createLotus, PRELUDE} from './scene.js';
 const entrance = document.querySelector('.site-entrance');
 const canvas = entrance?.querySelector('.entrance-lotus-canvas');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+const preview = new URLSearchParams(location.search).get('intro') === 'preview';
 if (canvas && entrance.isConnected && document.documentElement.classList.contains('intro-pending') && !reduce.matches) {
   let scene, frame = 0, stopped = false;
   const timeline = entrance.getAnimations().find(a => a.animationName === 'entrance-clear');
@@ -22,7 +23,9 @@ if (canvas && entrance.isConnected && document.documentElement.classList.contain
   function tick() {
     if (stopped) return;
     if (!entrance.isConnected || !document.documentElement.classList.contains('intro-pending') || time() >= PRELUDE) { stop(); return; }
-    scene.pose(time()); frame = requestAnimationFrame(tick);
+    const state = scene.pose(time());
+    if (preview) canvas.__sealFrame = state;
+    frame = requestAnimationFrame(tick);
   }
   try {
     if (time() < PRELUDE - 1 && !document.hidden) {

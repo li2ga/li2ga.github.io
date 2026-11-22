@@ -92,7 +92,7 @@ export function createLotus(canvas) {
   const renderer = new T.WebGLRenderer({canvas, alpha: true, antialias: true, powerPreference: 'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, innerWidth < 600 ? 1.25 : 1.5));
   renderer.outputColorSpace = T.SRGBColorSpace;
-  renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = .68;
+  renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = .86;
   const scene = new T.Scene(), env = environment(renderer);
   scene.environment = env.texture; scene.environmentIntensity = 1.08;
   const camera = new T.PerspectiveCamera(38, 1, .1, 80);
@@ -104,15 +104,15 @@ export function createLotus(canvas) {
   const root = new T.Group(); scene.add(root);
   const geometries = new Set(), materials = new Set();
   const material = (m) => { materials.add(m); return m; };
-  const gold = [0xb2842b, 0xc69536, 0xcfaa52, 0xd2b162, 0xdbbf7a, 0xe5cb91].map(color => material(new T.MeshPhysicalMaterial({
-    color, metalness: .94, roughness: .29, clearcoat: .75, clearcoatRoughness: .2,
+  const gold = [0xc7a362, 0xe0bd7b, 0x62658d, 0xa6a5c6, 0xd8b873, 0xecd5a2].map((color, tier) => material(new T.MeshPhysicalMaterial({
+    color, metalness: tier===2||tier===3?.68:.9, roughness: .31, clearcoat: .85, clearcoatRoughness: .23,
     iridescence: .26, iridescenceIOR: 1.38, iridescenceThicknessMinimum: 180, iridescenceThicknessMaximum: 480,
-    emissive: 0x6e380b, emissiveIntensity: .06, side: T.DoubleSide
+    emissive: tier===2||tier===3?0x342a79:0x8c5c1b, emissiveIntensity: .12, side: T.DoubleSide
   })));
-  const vein = material(new T.MeshBasicMaterial({color: 0xfff0ac}));
+  const vein = material(new T.MeshStandardMaterial({color: 0xffe1a0, metalness:.8, roughness:.2, emissive:0xffcd73, emissiveIntensity:.72}));
   const engraving = material(new T.MeshStandardMaterial({color: 0xa96d21, metalness: .8, roughness: .28}));
   const fireUniforms = {time: {value: 0}, intensity: {value: 0}};
-  gold.forEach(mat => {
+  gold.forEach((mat, tier) => {
     mat.onBeforeCompile = shader => {
       shader.uniforms.lotusTime = fireUniforms.time;
       shader.uniforms.lotusHeat = fireUniforms.intensity;
@@ -132,10 +132,11 @@ export function createLotus(canvas) {
         // Gold remains the base; the curved facets carry cyan, violet and red
         // interference highlights instead of a uniform yellow coating.
         vec3 jewel=mix(vec3(.94,.62,.18),spectrum,.35);
+        ${tier===2||tier===3?'jewel=mix(vec3(.38,.31,.79),spectrum,.4);':''}
         float fold=.5+.5*sin(u*10.+v*4.+sin(v*5.)*.8);
         float sheen=(.08+.12*fold+.13*grazing)*smoothstep(.16,.72,u);
         diffuseColor.rgb=mix(diffuseColor.rgb,jewel,sheen);
-        totalEmissiveRadiance+=mix(vec3(3.4,1.5,.28),spectrum*2.,.13)*heat*.4;
+        totalEmissiveRadiance+=mix(vec3(3.4,1.5,.28),spectrum*2.,.13)*heat*.95;
         diffuseColor.rgb*=.91+.09*sin(u*34.+v*11.);`);
     };
   });
@@ -146,17 +147,17 @@ export function createLotus(canvas) {
   }
   const petals = [];
   const layers = [
-    {count: 16, length: 4.35, width: .85, z: -1.12, start: 3.3, end: 5.45, closed: 1.12, open: -.14},
-    {count: 16, length: 3.82, width: .80, z: -.72, start: 4.7, end: 6.85, closed: 1.22, open: .04},
-    {count: 16, length: 3.22, width: .71, z: -.25, start: 6.25, end: 8.35, closed: 1.29, open: .23},
-    {count: 12, length: 2.58, width: .65, z: .2, start: 7.85, end: 9.75, closed: 1.37, open: .37},
-    {count: 12, length: 1.91, width: .52, z: .65, start: 9.2, end: 10.85, closed: 1.41, open: .54},
-    {count: 8, length: 1.25, width: .38, z: 1.06, start: 10.35, end: 11.75, closed: 1.45, open: .64}
+    {count:12,length:4.52,width:.86,z:-1.12,start:5.25,end:7.65,closed:1.28,open:-.12},
+    {count:12,length:3.93,width:.77,z:-.72,start:5.9,end:8.25,closed:1.30,open:.04},
+    {count:24,length:3.12,width:.42,z:-.25,start:6.65,end:8.95,closed:1.35,open:.20},
+    {count:24,length:2.48,width:.34,z:.2,start:7.2,end:9.35,closed:1.38,open:.32},
+    {count:12,length:1.42,width:.27,z:.65,start:7.8,end:9.8,closed:1.41,open:.48},
+    {count:12,length:.89,width:.2,z:1.06,start:8.4,end:10.3,closed:1.45,open:.61}
   ];
   layers.forEach((layer, tier) => {
     const geo = petalGeometry(layer.length, layer.width); geometries.add(geo);
     for (let i = 0; i < layer.count; i++) {
-      const radial = new T.Group(); radial.rotation.z = i * TAU / layer.count + tier * .25 + Math.PI / 2;
+      const radial = new T.Group(); radial.rotation.z = i * TAU / layer.count + (tier % 2 ? .5 : 0) * TAU / layer.count + Math.PI / 2;
       radial.position.z = layer.z; root.add(radial);
       const hinge = new T.Group(); radial.add(hinge); hinge.position.x = .16 + tier * .035;
       mesh(geo, gold[tier], hinge);
@@ -167,13 +168,15 @@ export function createLotus(canvas) {
         for (let k = 1; k < 34; k++) { const p = surface(k / 35, v, layer.length, layer.width); p.z += .012; line.push(p); }
         tube(line, v === 0 ? .014 : .009, v === 0 ? vein : engraving, hinge);
       }
-      for (const side of [-1, 1]) for (const base of [.2, .39, .57]) {
-        const points = [];
-        for (let k = 0; k <= 8; k++) {
-          const p = surface(base + k / 8 * .22, side * k / 8 * .9, layer.length, layer.width);
-          p.z += .014; points.push(p);
+      // Curled flame relief follows the actual curved surface on both sides.
+      // The ribs join a common midrib rather than floating across the blossom.
+      for (const side of [-1, 1]) for (const base of [.12,.28,.44,.60]) {
+        const points=[];
+        for(let k=0;k<=22;k++) {
+          const t=k/22,u=base+t*.22-.064*Math.sin(t*Math.PI*1.8),v=side*(.09+.73*Math.sin(t*Math.PI*.83));
+          const p=surface(u,v,layer.length,layer.width);p.z+=.022;points.push(p);
         }
-        tube(points, .007, vein, hinge);
+        tube(points,.017,vein,hinge);
       }
       petals.push({radial, hinge, layer, tier, index: i, delay: (i % 4) * .13, angle: radial.rotation.z});
     }
@@ -189,7 +192,7 @@ export function createLotus(canvas) {
     }
   });
   const heartMaterial = material(new T.MeshStandardMaterial({color: 0xffd15f, emissive: 0xffb52e, emissiveIntensity: .4, metalness: .75, roughness: .16}));
-  const heart = mesh(new T.OctahedronGeometry(.18, 1), heartMaterial, root); heart.position.z = 1;
+  const heart = mesh(new T.OctahedronGeometry(.09, 1), heartMaterial, root); heart.position.z = 1;
   const heartLight = new T.PointLight(0xffd35a, 1.5, 6, 2); heartLight.position.z = 1.7; root.add(heartLight);
   const mechanism = addMechanism({renderer, scene, camera, root, mesh, material, geometries, petals, surface, fireUniforms});
   let latest = 0, disposed = false;
@@ -198,28 +201,29 @@ export function createLotus(canvas) {
     latest = t;
     const arrival = at(t, 0, 1.15), passage = at(t, 12.6, PRELUDE);
     root.visible = t < PRELUDE;
-    root.scale.setScalar(mix(.79, 1, arrival) * (1 + passage * 1.3));
+    root.scale.setScalar(mix(.79, 1, arrival) * (1 + at(t,5.5,9)*.1) * (1 + passage * 1.3));
     camera.position.z = (17.4 - passage * 8.8) / Math.min(1, camera.aspect);
     // The axis remains exactly frontal. Local hinges, not a camera orbit,
     // supply the depth and the staged transformations.
     petals.forEach(({radial, hinge, layer, tier, index, delay, angle}) => {
       const open = at(t, layer.start + delay, layer.end + delay);
+      hinge.scale.setScalar(Math.max(.0001,at(t,layer.start-.55+delay,layer.start+.45+delay)));
       const unlock = at(t, layer.start - .32 + delay, layer.start + delay);
       hinge.rotation.y = -mix(layer.closed, layer.open, open);
-      const indexStep = at(t, 1.75 + tier * .2, 3.0 + tier * .22);
-      const weave = at(t, 5.65 + tier * .27, 7.35 + tier * .34);
+      const indexStep = at(t, 5.05 + tier * .2, 6.8 + tier * .22);
+      const weave = at(t, 7.25 + tier * .17, 9.05 + tier * .18);
       radial.rotation.z = angle + (tier % 2 ? -1 : 1) * (indexStep * .11 + weave * .16);
-      const exchange = Math.sin(at(t, 5.65 + tier * .27, 8.05 + tier * .34) * Math.PI);
-      hinge.rotation.x = exchange * (tier % 2 ? -.64 : .64);
+      const exchange = Math.sin(at(t, 6.95 + tier * .17, 9.25 + tier * .18) * Math.PI);
+      hinge.rotation.x = exchange * (tier % 2 ? -.32 : .32);
       hinge.rotation.z = Math.sin(open * Math.PI) * (tier % 2 ? -.21 : .21) + exchange * (index % 2 ? -.08 : .08);
       hinge.position.x = .16 + tier * .035 + unlock * .09 + exchange * (.22 + tier * .06) + passage * (.7 + tier * .16);
       radial.position.z = layer.z + Math.sin(indexStep * Math.PI) * (tier % 2 ? -.12 : .12) + exchange * (tier % 2 ? -.34 : .34) - passage * .9;
     });
     fireUniforms.time.value = t;
     fireUniforms.intensity.value = arrival * (.38 + at(t, 3, 9.5) * .62) * (1 - at(t, 13.4, PRELUDE));
-    heart.scale.setScalar((1 + .08 * Math.sin(t * 2)) * (1 - at(t, 11.6, 12.6)));
+    heart.scale.setScalar((1 + .08 * Math.sin(t * 2)) * (1 - at(t, 10.8, 12.1)));
     heartMaterial.emissiveIntensity = .5 + at(t, 8, 11) * .7;
-    heartLight.intensity = 3 + at(t, 3, 10) * 12 + passage * 30;
+    heartLight.intensity = 1 + at(t, 3, 10) * 3 + passage * 15;
     root.updateMatrixWorld(true);
     const detail = mechanism.pose(t);
     canvas.style.opacity = String(arrival);
