@@ -47,7 +47,7 @@
       document.head.appendChild(runtime);
     }
     const entranceAnimation = entrance.getAnimations().find(animation => animation.animationName === 'entrance-clear');
-    entranceTimer = setTimeout(finishEntrance, Math.max(0, (Number(entrance.dataset.duration) || 12000) - Number(entranceAnimation?.currentTime || 0)));
+    entranceTimer = setTimeout(finishEntrance, Math.max(0, (Number(entrance.dataset.duration) || 18000) - Number(entranceAnimation?.currentTime || 0)));
     document.addEventListener('visibilitychange', finishWhenHidden);
     reducedMotion.addEventListener('change', finishOnReducedMotion);
   } else if (entrance) entrance.remove();

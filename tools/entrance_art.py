@@ -1,7 +1,7 @@
 """A frontal golden fire lotus unfolds into first-visit trajectories."""
 
 TRACE_DURATION_MS = 3600
-PRELUDE_DURATION_MS = 8400
+PRELUDE_DURATION_MS = 14400
 INTRO_DURATION_MS = PRELUDE_DURATION_MS + TRACE_DURATION_MS
 
 
@@ -13,8 +13,9 @@ def fire_lotus():
     version = hashlib.sha256(bundle.read_bytes()).hexdigest()[:12]
     petals = []
     for tier, (count, length, width, start, end) in enumerate([
-        (12, 202, 39, 1300, 3500), (12, 162, 36, 2800, 4800),
-        (8, 116, 31, 4100, 6100), (6, 70, 22, 5150, 6600)
+        (16, 202, 32, 3300, 5450), (16, 179, 30, 4700, 6850),
+        (16, 151, 27, 6250, 8350), (12, 121, 25, 7850, 9750),
+        (12, 90, 20, 9200, 10850), (8, 59, 16, 10350, 11750)
     ]):
         row = []
         for i in range(count):

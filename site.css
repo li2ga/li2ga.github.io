@@ -118,13 +118,13 @@ strong,h3{font-weight:700}
 .background-choices [data-background=auto]{grid-column:1 / -1}
 
 /* Oversized articulated planes: index, interlock, unfold, then travel through. */
-.site-entrance{display:none;position:fixed;inset:0;z-index:80;overflow:hidden;background:#fff;pointer-events:none}
+.site-entrance{display:none;position:fixed;inset:0;z-index:80;overflow:hidden;background:#050910;pointer-events:none}
 .intro-pending .site-entrance{display:block;animation:entrance-clear var(--intro-duration) linear both}
 .site-entrance>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .entrance-lotus,.entrance-lotus-canvas,.lotus-entrance-halo{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .entrance-lotus{animation:lotus-entrance-clear var(--intro-prelude) linear both}
 .entrance-lotus-canvas{opacity:0}
-.lotus-entrance-halo{background:radial-gradient(ellipse closest-side at 50% 50%,#fff5cc66,transparent 85%);animation:lotus-entry-light var(--intro-prelude) ease both}
+.lotus-entrance-halo{background:radial-gradient(ellipse closest-side at 50% 50%,#d7a54e19,transparent 85%);animation:lotus-entry-light var(--intro-prelude) ease both}
 .lotus-entrance-fallback{position:absolute;left:50%;top:50%;width:min(88vw,88vh);height:min(88vw,88vh);overflow:visible;transform:translate(-50%,-50%);animation:lotus-fallback-arrive var(--intro-prelude) ease both}
 .lotus-rendered .lotus-entrance-fallback{visibility:hidden}
 .lotus-fallback-body{fill:url(#entry-lotus-gold);stroke:#c9993c;stroke-width:.55;stroke-linejoin:round}
@@ -132,9 +132,9 @@ strong,h3{font-weight:700}
 .lotus-fallback-petal{transform-box:fill-box;transform-origin:0 50%;animation:lotus-fallback-open var(--open-duration) var(--open-start) cubic-bezier(.3,.1,.2,1) both}
 .lotus-fallback-heart{fill:#fff3ba;stroke:#efc564;stroke-width:1;filter:drop-shadow(0 0 7px #efc564)}
 @keyframes lotus-fallback-open{0%{transform:scaleX(.3) scaleY(.82)}35%{transform:scaleX(.45) scaleY(.94)}100%{transform:scaleX(1) scaleY(1)}}
-@keyframes lotus-fallback-arrive{0%{opacity:0;transform:translate(-50%,-50%) scale(.8)}13%,84%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.7)}}
+@keyframes lotus-fallback-arrive{0%{opacity:0;transform:translate(-50%,-50%) scale(.8)}13%,87%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.7)}}
 @keyframes lotus-entry-light{0%{opacity:0}20%,80%{opacity:1}100%{opacity:0}}
-@keyframes lotus-entrance-clear{0%,88%{opacity:1}100%{opacity:0;visibility:hidden}}
+@keyframes lotus-entrance-clear{0%,96%{opacity:1}100%{opacity:0;visibility:hidden}}
 .entrance-traces{fill:none;stroke:#91a9bf;stroke-width:1.1;stroke-linecap:round;transform-box:view-box;transform-origin:50% 50%}
 .entrance-traces path{stroke-dasharray:1;animation:entrance-gather calc(var(--intro-trace-duration)*.433333) cubic-bezier(.2,.55,.2,1) both;animation-delay:calc(var(--intro-prelude) + var(--trace-delay))}
 .entrance-traces path:nth-child(3n){stroke:#c7ac7d;stroke-width:1.4}
@@ -147,7 +147,7 @@ strong,h3{font-weight:700}
 @keyframes entrance-scatter-left{0%{transform:translateX(0) scale(1);opacity:1}100%{transform:translateX(-40%) scale(.72);opacity:0}}
 @keyframes entrance-scatter-right{0%{transform:translateX(0) scale(1);opacity:1}100%{transform:translateX(40%) scale(.72);opacity:0}}
 @keyframes entrance-name{0%,26%{opacity:0;transform:translateY(5px);filter:blur(4px)}42%,68%{opacity:1;transform:translateY(0);filter:blur(0)}100%{opacity:0;transform:translateY(-3px)}}
-@keyframes entrance-clear{0%,79.75%{background:#fff}100%{background:#ffffff00;visibility:hidden}}
+@keyframes entrance-clear{0%,75%{background:#050910}80%,85%{background:#fff}100%{background:#ffffff00;visibility:hidden}}
 .cinematic-scene .motif-top-left{top:13vh}
 .cinematic-scene .motif-top-right{top:52vh}
 .demon-petal{stroke:#cf8cbe;stroke-width:.65;opacity:var(--petal-light,.8)}

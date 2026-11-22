@@ -34,5 +34,8 @@ if (canvas && entrance.isConnected && document.documentElement.classList.contain
       reduce.addEventListener('change', changed);
       scene.pose(time()); entrance.classList.add('lotus-rendered'); tick();
     }
-  } catch (_) { stop(); /* The inline SVG runs on the same timeline without WebGL. */ }
+  } catch (error) {
+    if (new URLSearchParams(location.search).get('intro') === 'preview') console.error(error);
+    stop(); /* The inline SVG runs on the same timeline without WebGL. */
+  }
 }

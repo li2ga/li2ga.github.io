@@ -85,7 +85,7 @@ PUBLIC_FILES = [
         'xiaoyan-seven-star-v4', 'xiaoyan-young-emperor-v1', 'lindong-six-v1', 'lindong-seven-v1')],
     "assets/backgrounds/anime-v2/xiaoyan-young-emperor-v2-lossless.webp",
     "assets/entrance/golden-lotus-v1.js", "tools/entrance_art.py",
-    "tools/golden_lotus/scene.js", "tools/golden_lotus/runtime.js", "tools/golden_lotus/build.cjs",
+    "tools/golden_lotus/scene.js", "tools/golden_lotus/mechanism.js", "tools/golden_lotus/runtime.js", "tools/golden_lotus/build.cjs",
     "vault-preview.html", "assets/entrance/vault-preview-v1.js", "assets/entrance/THREE-LICENSE.txt",
     "assets/backgrounds/fire-lotus-emperor-v1.svg",
     "assets/backgrounds/fire-lotus-tuoshe-v1.png",
